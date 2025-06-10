@@ -87,15 +87,15 @@ db.define_table('orders',
 
 db.define_table('order_line_items',
                 Field('order_number', 'reference orders', default='orders.order_number'),
-                # Field('product_id', 'reference products', default='products.id'),
-                # Field('price', 'reference products', default='products.price'),
+                Field('product_id', 'reference products', default='products.id'),
+                Field('price', 'reference products', default='products.price'),
                 Field('quantity_of_item', type='integer')
                 )
 
 
 db.define_table('line_item_attributes',
                 Field('line_item_id', 'reference order_line_items', default='order_line_items.id'),
-                # Field('attribute_id', 'reference attribute', default='attribute.id'
+                Field('attribute_id', 'reference attribute_description', default='attribute.id')
                 )
 
 # # -------------- PAYMENTS TABLES ------------------------
@@ -115,10 +115,10 @@ db.define_table('payment_info',
 
 db.define_table('shopping_cart',
                 Field('user_id', 'reference auth_user', default='auth.user_id'),
-                # Field('product_id', 'reference products', default='products.id'),
+                Field('product_id', 'reference products', default='products.id'),
                 Field('quantity', type='integer')
                 )
 
 db.define_table('shopping_cart_attribute',
-                # Field('attribute_id', 'reference attribute', default='attribute.id')
+                Field('attribute_id', 'reference attribute_description', default='attribute.id')
                 )
