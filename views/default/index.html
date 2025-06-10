@@ -13,6 +13,19 @@
     {{if 'message' in globals():}}
     <h2>MISE Computers</h2>
     <p class="lead">Welcome to MISE Computers</p>
+    <a href="{{=URL('customers')}}">{{=T('Customers Table')}}</a><br>
+    <a href="{{=URL('orders')}}">{{=T('Orders Table')}}</a><br>
+    <a href="{{=URL('order_line_items')}}">{{=T('Order Line Items Table')}}</a><br>
+      <a href="{{=URL('line_item_attributes')}}">{{=T('Line Item Attributes Table')}}</a><br>
+      <a href="{{=URL('payment_type')}}">{{=T('Payment Type Table')}}</a><br>
+      <a href="{{=URL('payment_info')}}">{{=T('Payment Info Table')}}</a><br>
+      <a href="{{=URL('shopping_cart')}}">{{=T('Shopping Cart Table')}}</a><br>
+      <a href="{{=URL('shopping_cart_attribute')}}">{{=T('Shopping Cart Attribute Table')}}</a><br>
+      <h1>
+          Simulated Customer Flow
+      </h1>
+      <a href="{{=URL('laptop-test.html')}}">Laptops</a>
+      
     <div class="jumbotron jumbotron-fluid" style="padding:30px;word-wrap:break-word;">
       <div class="container center">
         <a class="btn btn-primary" href="{{=URL('admin','default','index')}}">
