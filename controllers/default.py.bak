@@ -12,7 +12,7 @@ def index():
 
 # ---- define pages ----
 def laptop_test():
-    response.view='laptop_test.html'
+    response.view='laptop-test.html'
     return locals()
 
 
