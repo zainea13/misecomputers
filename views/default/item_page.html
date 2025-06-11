@@ -1,0 +1,47 @@
+{{extend 'layout.html'}}
+
+<div class="container">
+    <div class="row">
+        <div class="col-6" style="border:1px solid red">
+            <div class="swiper-window">
+                <div class="swiper-wrapper" style="translate: 0px;">
+                    {{for image in images:
+                        img_src = image['image_filename']
+                        img_alt = image['image_alt']
+                    }}
+                    <div class="swiper-item"><img src={{=URL('static/images/test_products', img_src)}} alt={{=img_alt}}></div>
+                    {{pass}}
+                </div>
+            </div>
+            <div class="product-view-bar">
+                {{
+                    for count, image in enumerate(images):
+                        img_src = image['image_filename']
+                        img_alt = image['image_alt']
+                }}
+                <div class="thumbnail" data-count={{=count}}><img src={{=URL('static/images/test_products', img_src)}} alt={{=img_alt}}></div>
+                {{pass}}
+            </div>
+            
+        </div>
+        <div class="col-6" style="border:1px solid red">
+            <h4>{{=product['product_name']}}</h4>
+            <h5>${{=product['price']}}</h5>
+            <ul>
+                {{
+                key_features = product['key_features']
+                # features = key_features[1:-1].split("|")
+                for feature in key_features:
+                    =LI(*feature)
+                }}
+                {{pass}}
+            </ul>
+            <h5>Product Description</h5>
+            <p>{{=product['description']}}</p>
+            <button class="add-to-cart" data-product-id={{=product['id']}}>Add To Cart</button>
+        </div>
+    </div>
+</div>
+<script src={{=URL('static','js/mise_slider.js')}}></script>
+
+{{=BEAUTIFY(response._vars)}}

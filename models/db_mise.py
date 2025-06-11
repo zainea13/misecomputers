@@ -18,7 +18,7 @@ db.define_table('customers',
                 Field('street_2', type='string'),
                 Field('city', type='string'),
                 Field('zip', type='string'),
-                Field('state_code', 'reference states'),
+                Field('state_code', 'reference states', label="State"),
                 Field('phone', type='string'),
                 Field('user_id', 'reference auth_user', default='auth.user_id')
                 )
@@ -28,6 +28,7 @@ db.define_table('customers',
 
 db.define_table('categories',
                 Field('category_name', type='string', notnull=True, unique=True),
+                format='%(category_name)s'
                 )
 
 
@@ -35,24 +36,26 @@ db.define_table('brand',
                 Field('brand_name', type='string', notnull=True, unique=True),
                 Field('brand_details', type='string'),
                 Field('brand_logo'),
+                format='%(brand_name)s'
                 )
 
 db.define_table('products',
-                Field('product_name', type='string', notnull=True, unique=True),
+                Field('product_name', type='string', notnull=True),
                 Field('stock_qty', type='integer', notnull=True),
-                Field('price', type='decimal(7,2)', notnull=True), ###Check Decimal Place
+                Field('price', type='decimal(7,2)', notnull=True),
                 Field('category_id', 'reference categories'),
-                Field('key_features', type='list:string'), ###CONFIRM
-                Field('description', type='string'), ###ADD LIMIT
-                Field('brand_id', 'reference brand')
+                Field('key_features', type='list:string'),
+                Field('description', type='text'),
+                Field('brand_id', 'reference brand'),
+                format='%(product_name)s'
                 )
 
 
 db.define_table('product_images',
                 Field('product_id', 'reference products'),
-                Field('image_filename', type='string'), ###ADD REGEX
-                Field('brand_id', 'reference brand'),
-                Field('image_alt_desc', type='string')
+                Field('image_filename', type='string'), # ADD REGEX
+                Field('image_alt', type='string'),
+                Field('main_image', type='boolean')
                 )
 
 db.define_table('attribute_description',
@@ -62,7 +65,7 @@ db.define_table('attribute_description',
 
 db.define_table('product_attribute',
                 Field('attribute_id', 'reference attribute_description'),
-                Field('attribute_value', type='string'), ###can be null?
+                Field('attribute_value', type='string', notnull=True), ###can be null?
                 )
 
 

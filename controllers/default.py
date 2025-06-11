@@ -13,7 +13,20 @@ def index():
 # ---- define pages ----
 def laptop_test():
     response.view='laptop_test.html'
+    user_info = auth.user
+    first_name = user_info.first_name
+    last_name = auth.user('last_name')
+    sqlstmt = "SELECT products.*, product_images.image_filename, product_images.product_id, product_images.image_alt, product_images.main_image FROM products INNER JOIN product_images ON products.id = product_images.product_id WHERE product_images.main_image = 'T'"
+    rows = db.executesql(sqlstmt, as_dict=True)
     return locals()
+
+def item_page():
+    item = request.args(0).split("--")
+    product_id = item[0]
+    product = db.products[product_id]
+    images = db(db.product_images.product_id == product_id).select()
+    return dict(product=product, images=images)
+
 
 
 # mise grid pages
@@ -65,6 +78,11 @@ def shopping_cart():
 @auth.requires_login()
 def shopping_cart_attribute():
     grid = SQLFORM.grid(db.shopping_cart_attribute)
+    return dict(grid=grid)
+
+@auth.requires_login()
+def products():
+    grid = SQLFORM.grid(db.products)
     return dict(grid=grid)
 
 
