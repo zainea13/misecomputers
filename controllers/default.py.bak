@@ -12,7 +12,12 @@ def index():
 
 # ---- define pages ----
 def laptop_test():
-    response.view='laptop-test.html'
+    response.view='laptop_test.html'
+    user_info = auth.user
+    first_name = user_info.first_name
+    last_name = auth.user('first_name')
+    sqlstmt = "SELECT products.* FROM products"
+    rows = db.executesql(sqlstmt, as_dict=True)
     return locals()
 
 

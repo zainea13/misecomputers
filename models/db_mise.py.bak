@@ -28,6 +28,7 @@ db.define_table('customers',
 
 db.define_table('categories',
                 Field('category_name', type='string', notnull=True, unique=True),
+                format='%(category_name)s'
                 )
 
 
@@ -35,22 +36,23 @@ db.define_table('brand',
                 Field('brand_name', type='string', notnull=True, unique=True),
                 Field('brand_details', type='string'),
                 Field('brand_logo'),
+                format='%(brand_name)s'
                 )
 
 db.define_table('products',
                 Field('product_name', type='string', notnull=True, unique=True),
                 Field('stock_qty', type='integer', notnull=True),
-                Field('price', type='decimal(7,2)', notnull=True), ###Check Decimal Place
+                Field('price', type='decimal(7,2)', notnull=True),
                 Field('category_id', 'reference categories'),
-                Field('key_features', type='list:string'), ###CONFIRM
-                Field('description', type='string'), ###ADD LIMIT
+                Field('key_features', type='list:string'),
+                Field('description', type='string'), # Need to increase limit by a lot, currenntly capped at 512
                 Field('brand_id', 'reference brand')
                 )
 
 
 db.define_table('product_images',
                 Field('product_id', 'reference products'),
-                Field('image_filename', type='string'), ###ADD REGEX
+                Field('image_filename', type='string'), # ADD REGEX
                 Field('brand_id', 'reference brand'),
                 Field('image_alt_desc', type='string')
                 )
@@ -62,7 +64,7 @@ db.define_table('attribute_description',
 
 db.define_table('product_attribute',
                 Field('attribute_id', 'reference attribute_description'),
-                Field('attribute_value', type='string'), ###can be null?
+                Field('attribute_value', type='string', notnull=True), ###can be null?
                 )
 
 
@@ -115,10 +117,10 @@ db.define_table('payment_info',
 
 db.define_table('shopping_cart',
                 Field('user_id', 'reference auth_user', default='auth.user_id'),
-                # Field('product_id', 'reference products', default='products.id'),
+                Field('product_id', 'reference products', default='products.id'),
                 Field('quantity', type='integer')
                 )
 
 db.define_table('shopping_cart_attribute',
-                # Field('attribute_id', 'reference attribute', default='attribute.id')
+                Field('attribute_id', 'reference attribute_description', default='attribute.id')
                 )
