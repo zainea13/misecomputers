@@ -7,7 +7,8 @@
 # ---- example index page ----
 def index():
     response.flash = T("Hello World")
-    return dict(message=T('Welcome to web2py!'))
+    categories = db(db.categories).select()
+    return dict(message=T('Welcome to web2py!'), categories=categories)
 
 
 # ---- define pages ----
@@ -26,6 +27,23 @@ def item_page():
     product = db.products[product_id]
     images = db(db.product_images.product_id == product_id).select()
     return dict(product=product, images=images)
+
+def category_page():
+
+    link_arg = request.args(0).split("--")
+    cat_id = link_arg[0]
+    cat_name = ""
+    sqlstmt = "SELECT products.*, product_images.image_filename, product_images.product_id, product_images.image_alt, product_images.main_image FROM products INNER JOIN product_images ON products.id = product_images.product_id WHERE product_images.main_image = 'T' AND products.category_id = " + cat_id 
+    for row in db(db.categories).select():
+        if row['id'] == int(cat_id):
+             cat_name = row['category_name'].capitalize()           
+        else:
+            pass
+    
+    products = db.executesql(sqlstmt, as_dict=True)
+                
+        
+    return locals()
 
 
 
