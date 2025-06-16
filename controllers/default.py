@@ -10,6 +10,10 @@ def index():
     categories = db(db.categories).select()
     return dict(message=T('Welcome to web2py!'), categories=categories)
 
+def testmdb():
+    response.view="testmdb.html"
+    return locals()
+
 # ---- define pages ----
 def laptop_test():
     response.view='laptop_test.html'
