@@ -94,6 +94,19 @@
     </nav>
 
     <!-- Ian's extra menu -->
+     {{categories = db(db.categories).select()}}
+     <nav class="navbar navbar-light navbar-expand-md bg-faded bg-dark navbar-dark justify-content-center">
+        <ul class="navbar-nav w-100 justify-content-center">
+          {{
+            for category in categories:
+              cat_id = category['id']
+              cat_name = category['category_name']
+              cat_link = cat_name.replace(" ", "-")
+          }}
+            <li class="nav-item"><a class="nav-link" style="border:1px solid red" href="{{=URL('category_page', args=(str(cat_id) + '--' + cat_link))}}" data-product-id={{=cat_id}}>{{=cat_name}}</a></li>
+          {{pass}}
+        </ul>
+      </nav>
    
 
     <!-- Masthead ===================================== -->

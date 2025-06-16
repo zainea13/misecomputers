@@ -10,7 +10,6 @@ def index():
     categories = db(db.categories).select()
     return dict(message=T('Welcome to web2py!'), categories=categories)
 
-
 # ---- define pages ----
 def laptop_test():
     response.view='laptop_test.html'
@@ -22,29 +21,29 @@ def laptop_test():
     return locals()
 
 def item_page():
-    item = request.args(0).split("--")
-    product_id = item[0]
-    product = db.products[product_id]
-    images = db(db.product_images.product_id == product_id).select()
+    item = request.args(0).split("--") # value: 2--Test-Laptop-Product-2
+    product_id = item[0] # 2 
+    product = db.products[product_id] # returns rows for that product id
+    images = db(db.product_images.product_id == product_id).select() # grabs images that match product id
     return dict(product=product, images=images)
 
 def category_page():
-
     link_arg = request.args(0).split("--")
     cat_id = link_arg[0]
-    cat_name = ""
-    sqlstmt = "SELECT products.*, product_images.image_filename, product_images.product_id, product_images.image_alt, product_images.main_image FROM products INNER JOIN product_images ON products.id = product_images.product_id WHERE product_images.main_image = 'T' AND products.category_id = " + cat_id 
+    cat_name_fix = ""
+    sqlstmt = "SELECT p.*, pi.image_filename, pi.product_id, pi.image_alt, pi.main_image FROM products AS p INNER JOIN product_images AS pi ON p.id = pi.product_id WHERE pi.main_image = 'T' AND p.category_id = " + cat_id 
     for row in db(db.categories).select():
         if row['id'] == int(cat_id):
-             cat_name = row['category_name'].capitalize()           
+            cat_name_fix = row['category_name'].capitalize() 
         else:
             pass
-    
     products = db.executesql(sqlstmt, as_dict=True)
-                
-        
     return locals()
 
+
+def display_form():
+    form = FORM('Your name:', INPUT(_name='name'), INPUT(_type='submit'))
+    return dict(form=form) 
 
 
 # mise grid pages
