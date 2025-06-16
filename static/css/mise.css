@@ -1,0 +1,141 @@
+
+/* Color Variables */
+:root {
+    --body:  hsl(300, 9%, 18%);
+    --product-color: hsl(202, 65%, 58%);
+    --highlight:hsl(202, 65%, 58%);
+    --highlight-hover: hsl(202, 65%, 78%);
+    --peach: hsl(25, 100%, 80%);
+}
+
+p {
+    word-wrap: break-word;
+}
+
+.container {
+    margin-bottom:250px;
+}
+
+/* Adjusting product items */
+
+.product-row {
+    gap: 1rem;
+}
+
+.product {
+    display:flex;
+    flex-direction: column;
+    /* background-color: var(--product-color); */
+    border-radius: 0.5rem;
+    overflow: hidden;
+    flex: 1 1 360px;
+    padding:1rem;
+    border: 1px solid var(--peach);
+}
+
+.empty {
+    background-color: transparent;
+    border-color: transparent;
+}
+
+.product img {
+    width: 100%;
+    max-height: 150px;
+    display: block;
+    object-fit: scale-down;
+    /* object-position: 0 20%; */
+}
+
+.product > :not(img) {
+    margin-inline:0rem;
+}
+
+.price-info {
+    margin-block-start: auto;
+    margin-block-end: 1rem;
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.price-info > p {
+    margin:0;
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.add-to-cart {
+    line-height: 1;
+    border: 2px solid var(--highlight);
+    cursor: pointer;
+    background-color: transparent;
+    color:var(--highlight);
+    font-weight: bold;
+    font-size:1rem;
+    border-radius: 100vw;
+    padding: .75rem 1.25rem;
+    &:hover {
+        background-color: var(--highlight);
+        color:white;
+    }
+}
+
+
+/* Item Page Stuff */
+
+.swiper-window {
+    overflow: clip;
+}
+
+.swiper-wrapper {
+    display: flex;
+    gap:1rem;
+    translate: 0px;
+    transition: translate 500ms;
+}
+
+.swiper-item {
+    flex-shrink: 0;
+    display: flex;
+    aspect-ratio: 4 / 3;
+    align-items: center;
+    justify-content: center;
+    width:100%;
+}
+
+.swiper-item > img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.product-view-bar {
+    display: flex;
+    gap:1rem;
+    justify-content: center;
+    align-items: center;
+    margin-block-start: 1rem;
+}
+
+.thumbnail {
+    width: 66px;
+    height: 66px;
+    padding:6px;
+    border: 1px solid slategray;
+    border-radius: 8px;
+    display:flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.thumbnail.active {
+    border: 3px solid var(--highlight);
+    padding:4px;
+}
+
+.thumbnail img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}

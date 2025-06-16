@@ -11,20 +11,36 @@
 <div class="row">
   <div class="col-md-12">
     {{if 'message' in globals():}}
-    <h2>{{=message}}</h2>
-    <p class="lead">{{=T('How did you get here?')}}</p>
-    <ol style="word-wrap:break-word;">
-      <li>{{=T('You are successfully running web2py')}}</li>
-      <li>{{=XML(T('You visited the url %s', A(request.env.path_info,_href=request.env.path_info)))}}</li>
-      <li>{{=XML(T('Which called the function %s located in the file %s',
-        (A(request.function+'()',_href='#'),
-        A('web2py/applications/%(application)s/controllers/%(controller)s.py' % request,
-        _href=URL('admin','default','peek', args=(request.application,'controllers',request.controller+'.py'))))))}}</li>
-      <li>{{=XML(T('The output of the file is a dictionary that was rendered by the view %s',
-        A('web2py/applications/%(application)s/views/%(controller)s/index.html' % request,
-        _href=URL('admin','default','peek',args=(request.application,'views',request.controller,'index.html')))))}}</li>
-      <li>{{=T('You can modify this application and adapt it to your needs')}}</li>
-    </ol>
+    <h2>MISE Computers</h2>
+    <p class="lead">Welcome to MISE Computers</p>
+    <h4>Simulated Customer Flow</h4>
+      <p style="margin:1rem 0; font-weight: bold;">New dynamically generated category pages</p>
+      <nav class="navbar navbar-light navbar-expand-md bg-faded bg-dark navbar-dark justify-content-center">
+        <ul class="navbar-nav w-100 justify-content-center">
+          {{
+            for category in categories:
+              cat_id = category['id']
+              cat_name = category['category_name']
+              cat_link = cat_name.replace(" ", "-")
+          }}
+            <li class="nav-item"><a class="nav-link" style="border:1px solid red" href="{{=URL('category_page', args=(str(cat_id) + '--' + cat_link))}}" data-product-id={{=cat_id}}>{{=cat_name}}</a></li>
+          {{pass}}
+        </ul>
+      </nav>
+
+    <br>
+    <br>
+    <h2>Extra stuff</h2>
+    <a href="{{=URL('laptop_test.html')}}">Old Laptops page</a>
+    <a href="{{=URL('customers')}}">{{=T('Customers Table')}}</a><br>
+    <a href="{{=URL('orders')}}">{{=T('Orders Table')}}</a><br>
+    <a href="{{=URL('order_line_items')}}">{{=T('Order Line Items Table')}}</a><br>
+      <a href="{{=URL('line_item_attributes')}}">{{=T('Line Item Attributes Table')}}</a><br>
+      <a href="{{=URL('payment_type')}}">{{=T('Payment Type Table')}}</a><br>
+      <a href="{{=URL('payment_info')}}">{{=T('Payment Info Table')}}</a><br>
+      <a href="{{=URL('shopping_cart')}}">{{=T('Shopping Cart Table')}}</a><br>
+      <a href="{{=URL('shopping_cart_attribute')}}">{{=T('Shopping Cart Attribute Table')}}</a><br>
+      
     <div class="jumbotron jumbotron-fluid" style="padding:30px;word-wrap:break-word;">
       <div class="container center">
         <a class="btn btn-primary" href="{{=URL('admin','default','index')}}">
@@ -46,6 +62,3 @@
     {{pass}}
   </div>
 </div>
-
-
-

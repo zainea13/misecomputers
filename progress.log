@@ -1,6 +1,5 @@
 [2025-06-09 17:58:15] START
-<<<<<<< Updated upstream
-=======
+
 [2025-06-09 19:00:49] EDIT misecomputers/views/default/index.html: -12
 [2025-06-09 19:01:03] EDIT misecomputers/views/default/index.html: 0
 [2025-06-09 19:27:05] CREATE db_mise.py: 0
@@ -128,6 +127,7 @@
 [2025-06-10 22:46:16] EDIT misecomputers/views/laptop_test.html: 0
 [2025-06-10 22:46:35] EDIT misecomputers/views/laptop_test.html: 0
 [2025-06-10 22:47:24] EDIT misecomputers/views/laptop_test.html: 0
+
 [2025-06-11 18:56:05] EDIT misecomputers/controllers/default.py: 3
 [2025-06-11 18:57:10] EDIT misecomputers/views/default/testmdb.html: -2
 [2025-06-11 18:58:09] CREATE testmdb.html: 0
@@ -214,4 +214,4 @@
 [2025-06-12 19:31:16] EDIT misecomputers/views/layout_mise_template.html: 0
 [2025-06-12 19:40:58] EDIT misecomputers/views/default/index.html: 0
 [2025-06-12 19:41:50] EDIT misecomputers/views/default/index.html: 0
->>>>>>> Stashed changes
+

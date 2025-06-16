@@ -11,6 +11,7 @@ def index():
     return dict(message=T('Welcome to web2py!'), categories=categories)
 
 
+
 # ---- define pages ----
 def laptop_test():
     response.view='laptop_test.html'
@@ -39,12 +40,11 @@ def category_page():
              cat_name = row['category_name'].capitalize()           
         else:
             pass
-    
     products = db.executesql(sqlstmt, as_dict=True)
-                
-        
+    last_name = auth.user('first_name')
+    sqlstmt = "SELECT products.* FROM products"
+    rows = db.executesql(sqlstmt, as_dict=True)
     return locals()
-
 
 
 # mise grid pages
@@ -98,11 +98,11 @@ def shopping_cart_attribute():
     grid = SQLFORM.grid(db.shopping_cart_attribute)
     return dict(grid=grid)
 
+
 @auth.requires_login()
 def products():
     grid = SQLFORM.grid(db.products)
     return dict(grid=grid)
-
 
 
 

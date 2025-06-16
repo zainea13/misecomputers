@@ -7,12 +7,8 @@
 # ---- example index page ----
 def index():
     response.flash = T("Hello World")
-<<<<<<< Updated upstream
-    return dict(message=T('Welcome to web2py!'))
-=======
     categories = db(db.categories).select()
     return dict(message=T('Welcome to web2py!'), categories=categories)
-
 
 def testmdb():
     response.view="testmdb.html"
@@ -112,7 +108,6 @@ def products():
 
 
 
->>>>>>> Stashed changes
 
 # ---- API (example) -----
 @auth.requires_login()
