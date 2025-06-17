@@ -14,6 +14,10 @@ def testmdb():
     response.view="testmdb.html"
     return locals()
 
+def layoutmise():
+    response.view="layoutmise.html"
+    return locals()
+
 # ---- define pages ----
 def laptop_test():
     response.view='laptop_test.html'
