@@ -2,3 +2,4 @@
 *.log
 *.sqlite
 sessions/*
+progress.log
