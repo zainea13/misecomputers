@@ -39,7 +39,8 @@ if "GAE_APPLICATION" not in os.environ:
     db = DAL(configuration.get("db.uri"),
              pool_size=configuration.get("db.pool_size"),
              migrate_enabled=configuration.get("db.migrate"),
-             check_reserved=["all"])
+             check_reserved=["all"],
+             fake_migration_all=True)
 else:
     # ---------------------------------------------------------------------
     # connect to Google Firestore
@@ -97,9 +98,7 @@ auth = Auth(db, host_names=configuration.get("host.names"))
 # -------------------------------------------------------------------------
 # create all tables needed by auth, maybe add a list of extra fields
 # -------------------------------------------------------------------------
-auth.settings.extra_fields["auth_user"] = [
-    Field('first_name'),
-    Field('last_name')]
+auth.settings.extra_fields["auth_user"] = []
 
 auth.define_tables(username=False, signature=False)
 
