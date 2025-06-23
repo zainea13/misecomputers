@@ -42,71 +42,72 @@
   </head>
 
   <body>
-    <div class="w2p_flash alert alert-dismissable">{{=response.flash or ''}}</div>
+    <!--<div class="w2p_flash alert alert-dismissable">{{=response.flash or ''}}</div>-->
       
-    <!-- Navbar ======================================= -->
-    <nav class="navbar navbar-light navbar-expand-md bg-faded bg-dark navbar-dark justify-content-center">
-       <!-- MISE Computers logo and logo hyperlinked to Home /index page" -->
-       <a href="{{=URL('default','index')}}" class="navbar-brand d-flex w-50 mr-auto"><img src="/misetestmdb/static/images/template/MISELogo.png" alt="Company Logo"/></a>
+   <!-- Navbar ======================================= -->
+    <nav class="navbar navbar-light navbar-expand-md d-flex justify-content-around" style="background-color:#B2DDF7; border-radius:5px">
         
-       <!-- Hamburger icon, this exists only for smaller screen sizes, otherwise it is hidden -->
-       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+       <!-- MISE Computers logo and logo hyperlinked to Home /index page-->
+       <a href="{{=URL('default','index')}}"><img width="150px" src="/misetestmdb/static/images/template/miselogo1copy.png" alt="Company Logo"/></a>
+
+        
+        <!--Categories Drop Down Menu-->
+        <div class='nav-item dropdown d-flex align-items-center justify-content-around'>
+         {{categories = db(db.categories).select()}}
+            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"style="color:#3399CC; font-weight:bold"> 
+                <div class="fa fa-bars fa-2x align-items-center" aria-hidden="true" style="color:#3399CC"></div> MENU</a>
+             
+         <div class="dropdown-menu dropdown-menu-right">
+             <ul>
+            
+          {{
+            for category in categories:
+              cat_id = category['id']
+              cat_name = category['category_name']
+              cat_link = cat_name.replace(" ", "-")
+          }}
+            <li class="nav-item dropdown"><a class="nav-link" style="text-transform: capitalize; color:black;" href="{{=URL('category_page', args=(str(cat_id) + '--' + cat_link))}}" data-product-id={{=cat_id}}>{{=cat_name}}</a></li>
+          {{pass}}
+        </ul>
+        </div>
+        </div>
+             &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
+        
+         <!-- Hamburger icon, this exists only for smaller screen sizes, otherwise it is hidden -->
+       <!--<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
          <span class="navbar-toggler-icon"></span>
        </button>
         
-       <div class="navbar-collapse collapse w-100" id="navbarNavDropdown">
-         <ul class="navbar-nav w-100 justify-content-center">
-             
-             <!-- This begins to build out the menu. It references models/menu.py file. 
-				Use this file too create the custom menu that gets used on all pages
-				The first thing it does is say for every item in the response.menu variable (defined on menu.py)
-				create an li for it -->	
-          <!--{{for _item in response.menu or []:}}-->
-             
-             <!-- response.menu is a list, inside the list are tuples
-			This first "if" statement will only run on '_item's whose
-			tuple has 0,1,2,3 sub-items, but no more, OR will only run if the
-			3th sub-item in the tuple is not filled -->
-             
-          <!--{{if len(_item)<4 or not _item[3]:}}--> <!--</4> --> <!--WHAT IS THIS /mdb-->
-                            
-           <!-- if the 1th sub-item is True, then add the active class -->
-          <!--<li class="nav-item {{if _item[1]:}}active{{pass}}">-->
-              
-              <!-- the href is set to the 2th sub-item, the text area to the 0th sub-item -->
-            <!--<a class="nav-link" href="{{=_item[2]}}">{{=_item[0]}}</a>
-          </li>
-           
-          {{else:}}
-          <li class="nav-item dropdown">
-              <!-- the href is set to the 2th sub-item, the text area to the 0th sub-item-->
-            <!--<a class="nav-link dropdown-toggle" href="{{=_item[2]}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{=_item[0]}}</a>-->
-              
-            <div class="dropdown-menu">
-                <!-- because _item[3] is a list within the tuple, we are looping over that list
-				and then creating a link for each sub-item-->
-              {{for _subitem in _item[3]:}}
-                  <a class="dropdown-item" href="{{=_subitem[2]}}">{{=_subitem[0]}}</a>
-              {{pass}}
-            </div>
-          </li>
-          {{pass}}
-          {{pass}}
-        </ul>
+        
+       <div class="navbar-collapse collapse w-100" id="navbarNavDropdown" style= "color:white;">-->
+        
         
         <!-- SEARCH BAR -->
-         <form class="form-inline my-2 my-lg-0">
+         <!--<form class="form-inline my-2 my-lg-0 d-flex justify-content-around">
              <input class="form-control mr-sm-2" type="text" style="width:700px" placeholder="Search...">
          </form>
+           <div class="fa fa-search fa-2x" aria-hidden="true" style="border:3px solid #3399CC; border-radius:5px; color:#3399CC; class="btn btn-outline-secondary"></div>-->
+      <div class="input-group mb-3">
+          <input type="text" class="form-control" placeholder="What would you like to see today?" aria-label="Search" aria-describedby="button-addon2">
+              <div class="input-group-append">
+            <button class="fa fa-search fa-2x btn-lg" aria-hidden="true" style="border:3px solid #3399CC; border-radius:5px; color:#3399CC;" type="button" id="button-addon2"></button>
+          </div>
+        </div>
+        
+        &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
+        
+        
+        
         
         <!-- BEGIN LOGIN MENU ITEM AND DROPDOWN -->
-        <div class="fa fa-user-circle-o" aria-hidden="true" style="color:#ffffff; width:50px">
+        <div class='d-flex align-items-center justify-content-around'>
+			<div  class="fa fa-user-circle-o fa-2x" aria-hidden="true" style="color:#3399CC"></div>
         {{if 'auth' in globals():}}
         <ul class="nav navbar-nav ml-auto w-100 justify-content-end">
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <!-- Checks to see if there is a user logged in, if so, display their name, if not display "login" -->
-              {{if auth.user:}}{{=auth.user.first_name}}{{else:}}LOGIN{{pass}}
+            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"style="color:#3399CC; font-weight:bold">
+                <!-- Checks to see if there is a user logged in, if so, display their name, if not display "login-->
+              {{if auth.user:}}{{=auth.user.first_name}}{{else:}}LOG-IN / SIGN-UP{{pass}}
             </a>
             <div class="dropdown-menu dropdown-menu-right">
                 <!-- If you are logged in, you get these options -->
@@ -135,26 +136,12 @@
         {{pass}}
         </div>
         <!-- END LOGIN MENU -->
-      </div>
+        
+         &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
+        
+        <div class="fa fa-cart-plus fa-3x d-flex justify-content-around" aria-hidden="true" style="color:#3399CC"></div> 
     </nav>
 
-<br/>
-
-<!--2nd NAV BAR-->
-{{categories = db(db.categories).select()}}
-     <nav class="navbar navbar-light navbar-expand-md bg-faded bg-info navbar-dark justify-content-center">
-        <ul class="navbar-nav w-100 justify-content-center">
-          {{
-            for category in categories:
-              cat_id = category['id']
-              cat_name = category['category_name']
-              cat_link = cat_name.replace(" ", "-")
-          }}
-            <li class="nav-item"><a class="nav-link" style="border:2px solid white; color:#ffffff; border-radius:20px; width:200px; font-size:20px; text-align:center" href="{{=URL('category_page', args=(str(cat_id) + '--' + cat_link))}}" data-product-id={{=cat_id}}>{{=cat_name}}</a></li>
-          {{pass}}
-        </ul>
-      </nav>
-	  <p>I made a change</p>
 
     <!-- Masthead ===================================== -->
 		<!-- Here is where you can add custom header section on any page without
@@ -166,34 +153,44 @@
 
     <!-- Begin page content -->
     <div class="container-fluid main-container">
-      <!-- This 'include' statment is where any code that is in a page that says "extend 'layoutmise.html'" 
-      will be inserted into --> 
+      <!-- This 'include' statment is where any code that is in a page that says "extend 'layoutmise.html'" will be inserted into -->
       {{include}}
         
        <!-- if show_toolbar is True, then run response.toolbar(), else do nothing
-	   not sure what "response.toolbar()" does though, will look into it --> 
+	   not sure what "response.toolbar()" does though, will look into it -->
       {{=response.toolbar() if response.show_toolbar else ''}}
     </div>
 
 <!-- BEGIN FOOTER -->
 		<!-- this is default footer 
 		 	this will show up on every page, UNLESS you put a custom footer on that page
-			and surround it by {{block footer}} and {{end}} -->
+			and surround it by block footer and end -->
     
     {{block footer}} <!-- this is default footer -->
-    <footer class="footer container-fluid" style="background-color:black; color:white">
-      <div class="row">
-        <div class="col-md-12">
-          <div class="copyright pull-left">{{=T('Copyright')}} &#169; {{=request.now.year}}</div>
-          <div id="poweredBy" class="pull-right">
-            {{=T('Powered by')}}
-            <a href="http://www.web2py.com/">web2py</a>
+    <footer class="footer container-fluid" style="background-color:#B2DDF7; border-radius:5px">
+          <div class="row">
+              <div class="float-left"><a href="{{=URL('privacy')}}" style="color:black">Privacy Notice | </a></div> &nbsp;
+              <div class = "float-left"> <a href="{{=URL('default','terms')}}" style="color:black">Terms of Use</a> </div>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              
+            <div class="float-right">{{=T('Copyright')}} &#169; {{=request.now.year}} MISE Computers, LLC</div>
           </div>
-        </div>
-      </div>
+           
     </footer>
     {{end}}
 
+
+        
+            <!--<div class="container">
+            <div class="row">
+                <div class="col-sm"> ABOUT THE SHOP</div>
+                <div class="col-sm"> CUSTOMER CARE</div>
+                <div class="col-sm"> STORE INFO</div>
+                <div class="col-sm"> SPECIAL OFFERS</div>
+            </div>
+        </div>-->
+    
+     
 
     <!-- The javascript =============================== -->
     <script src="{{=URL('static','js/bootstrap.bundle.min.js')}}"></script>
