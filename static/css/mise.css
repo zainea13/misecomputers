@@ -139,3 +139,17 @@ p {
     max-height: 100%;
     object-fit: contain;
 }
+
+
+.checkout-table {
+    width:100%;
+}
+
+.checkout-table th {
+    font-weight: normal;
+}
+
+.checkout-table th, .checkout-table td {
+    padding-block-end: .5rem;
+    padding-inline: .5rem;;
+}

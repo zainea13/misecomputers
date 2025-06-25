@@ -72,7 +72,7 @@
 							tuple has 0,1,2,3 sub-items, but no more, OR will only run if the
 							3th sub-item in the tuple is not filled -->
 
-					{{if len(_item)<4 or not _item[3]:}} <!-- ></4> -->
+					{{if len(_item)<4 or not _item[3]:}} 
 
 						<!-- if the 1th sub-item is True, then add the active class -->
 						<li class="nav-item {{if _item[1]:}}active{{pass}}">

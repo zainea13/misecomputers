@@ -1,5 +1,8 @@
 {{extend 'layout.html'}}
 
+<br>
+    
+
 <div class="container">
     <div class="row">
         <div class="col-6" style="border:1px solid red">
@@ -37,10 +40,32 @@
             </ul>
             <h5>Product Description</h5>
             <p>{{=product['description']}}</p>
-            <button class="add-to-cart" data-product-id={{=product['id']}}>Add To Cart</button>
+            <form id="add-to-cart">
+                <input type="hidden" value="{{=product.id}}" name="product_id" id="product_id">
+                {{if auth.user:}}
+                    <input type="hidden" value="{{=auth.user.id}}" name="user_id" id="user_id">
+                {{else:}}
+                    <span>User not logged in</span>
+                {{pass}}
+                <input type="hidden" value="{{=response.session_id}}" name="session_id" id="session_id">
+                <input type="number" value="1" name="quantity" id="quantity">
+                <button type="submit" class="add-to-cart">Add To Cart</button>
+            </form>
+            
         </div>
     </div>
 </div>
+
+<div id="target"></div>
+
+<script>
+jQuery('#add-to-cart').submit(function() {
+  ajax('{{=URL('add_to_cart')}}',
+       ['product_id', 'quantity', 'user_id', 'session_id'], 'target');
+  return false;
+});
+</script>
+
 <script src={{=URL('static','js/mise_slider.js')}}></script>
 
 {{=BEAUTIFY(response._vars)}}

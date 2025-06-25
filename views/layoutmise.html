@@ -54,6 +54,7 @@
         
         <!--Categories Drop Down Menu-->
         <div class='nav-item dropdown d-flex align-items-left justify-content-around'>
+
          {{categories = db(db.categories).select()}}
             <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"style="color:#3399CC; font-weight:bold"> 
                 <div class="fa fa-bars fa-2x align-items-center" aria-hidden="true" style="color:#3399CC"></div> MENU</a>
@@ -109,6 +110,7 @@
             <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"style="color:#3399CC; font-weight:bold; text-align:center;">
                 <!-- Checks to see if there is a user logged in, if so, display their name, if not display "login-->
               {{if auth.user:}}{{=auth.user.first_name}}{{else:}}LOG-IN /<br/>SIGN-UP{{pass}}
+
             </a>
             <div class="dropdown-menu dropdown-menu-right">
                 <!-- If you are logged in, you get these options -->
@@ -142,6 +144,7 @@
         
         
         <a href="{{=URL('default','shopping_cart2')}}"><div class="fa fa-cart-plus fa-3x d-flex justify-content-around" aria-hidden="true" style="color:#3399CC"></div></a>
+        <div class="fa fa-cart-plus fa-3x d-flex justify-content-around" aria-hidden="true" style="color:#3399CC"></div> 
     </nav>
 
 

@@ -1,0 +1,79 @@
+{{extend 'layout.html'}}
+
+
+<div class="container">
+    <div class="row">
+        <h2 class="mb-4">Shopping Cart</h2>
+    </div>
+    <div class="row">
+    <div class="col-8">
+        <div class="row product-row">
+            {{
+            if not cart_items:
+            }}
+            <p>Your shopping cart is empty.</p>
+            {{
+            else:
+                for item in cart_items:
+                    product_id= item['product_id']
+                    product = db(db.products.id == product_id).select().as_list()[0]
+                    image = db((db.product_images.product_id == product_id) & (db.product_images.main_image == True)).select().as_list()[0]
+            }}
+            <div class="col product">
+                {{=IMG(_src=URL('static/images/test_products', image['image_filename']), _width='100px')}}
+                <h4>{{=product['product_name']}}</h4>
+                <h5>${{=f"{product['price']:.2f}"}}</h5>
+                <form method="post" action="#">
+                    <input type="hidden" name="product_id" value="{{=product_id}}">
+                    <input class="quantityAmt" name="quantityAmt" type="number" value="{{=item['quantity']}}" min="0" data-start-value="{{=item['quantity']}}" data-product-id="{{=product_id}}">
+                    <button type="submit" class="quantityBtn invisible" data-product-id="{{=product_id}}">update quantity</button>
+                    <button type="submit" class="remove-item" data-product-id="{{=product_id}}">Remove from Cart</button>
+                </form>
+            </div>
+
+                {{pass}}
+            {{pass}}
+        </div>
+    </div>
+
+    <div class="col-4">
+        <h4>Summary</h4>
+        <p>Total Items: {{=total_items}}</p>     
+        <p>Subtotal: {{=subtotal}}</p>
+        <p>Tax: </p>
+        <p>Total Price: </p>
+        <a class="btn btn-primary text-white" href="{{=URL('checkout')}}">Check out</a>
+    </div>
+
+    </div>
+</div>
+
+
+{{=BEAUTIFY(response._vars)}}
+
+{{block page_js}}
+<script>
+    "use strict"
+    const quantityAmts = document.querySelectorAll('.quantityAmt');
+    const removeItem = document.querySelectorAll('.remove-item')
+
+    function quantityChange() {
+        const productId = this.dataset.productId
+        const quantityBtn = document.querySelector(`.quantityBtn[data-product-id='${productId}']`)
+        if (this.value != this.dataset.startValue) {
+            quantityBtn.classList.remove("invisible");
+        } else {
+            quantityBtn.classList.add("invisible");
+        }
+    }
+
+    function removeCartItem() {
+        const productId = this.dataset.productId
+        let quantity = document.querySelector(`.quantityAmt[data-product-id='${productId}']`)
+        quantity.value = 0
+    }
+
+    quantityAmts.forEach(input => input.addEventListener("change", quantityChange))
+    removeItem.forEach(button => button.addEventListener("click", removeCartItem))
+</script>
+{{end page_js}}
