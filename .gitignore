@@ -2,4 +2,5 @@
 *.log
 *.sqlite
 sessions/*
+progress.log
 errors/*

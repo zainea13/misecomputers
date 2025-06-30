@@ -1,0 +1,71 @@
+/* CSS HEX */
+/*--rich-black: #11151cff;
+--picton-blue: #4ea5d9ff;
+--papaya-whip: #ffefd3ff;
+--peach: #ffc49bff;
+--magenta-dye: #ba2c73ff;*/
+
+/* SCSS Gradient */
+/*$gradient-top: linear-gradient(0deg, #11151cff, #4ea5d9ff, #ffefd3ff, #ffc49bff, #ba2c73ff);
+$gradient-right: linear-gradient(90deg, #11151cff, #4ea5d9ff, #ffefd3ff, #ffc49bff, #ba2c73ff);
+$gradient-bottom: linear-gradient(180deg, #11151cff, #4ea5d9ff, #ffefd3ff, #ffc49bff, #ba2c73ff);
+$gradient-left: linear-gradient(270deg, #11151cff, #4ea5d9ff, #ffefd3ff, #ffc49bff, #ba2c73ff);
+$gradient-top-right: linear-gradient(45deg, #11151cff, #4ea5d9ff, #ffefd3ff, #ffc49bff, #ba2c73ff);
+$gradient-bottom-right: linear-gradient(135deg, #11151cff, #4ea5d9ff, #ffefd3ff, #ffc49bff, #ba2c73ff);
+$gradient-top-left: linear-gradient(225deg, #11151cff, #4ea5d9ff, #ffefd3ff, #ffc49bff, #ba2c73ff);
+$gradient-bottom-left: linear-gradient(315deg, #11151cff, #4ea5d9ff, #ffefd3ff, #ffc49bff, #ba2c73ff);
+$gradient-radial: radial-gradient(#11151cff, #4ea5d9ff, #ffefd3ff, #ffc49bff, #ba2c73ff);*/
+
+
+div.background {
+	background-color:#202A25;
+}
+
+input.searchbar {
+	display: block;
+	margin-left:auto;
+	margin-right:auto;
+	height:30px;
+	font-size:1em;
+}
+
+/*.searchbar input[type="text"] {
+	position:absolute;
+	top:50%;
+	left:50%;
+	transform:translate(-50%,-50%);
+	display:block;
+	color:black;
+	text-align:left;
+	width:50%;
+	height:40px;
+	font-size:20px;
+	vertical-align:middle;
+}*/
+
+body {
+	background-color:#EAEBED;
+}
+
+nav.center {
+	text-align:center;
+}
+
+nav {
+	  background-color: #4EA5D9;
+	  height:30px;
+	  border: 1px black solid;
+	 }
+
+
+nav a {
+	   text-decoration: none;
+	   color:#000000;
+	   font-family:Ariel, Helvetica;
+	   font-weight: bold;
+	   font-size: 1em;
+	   text-align: center;
+	   padding: 1em;
+	  }
+
+a:hover{color:#FFFFFF}

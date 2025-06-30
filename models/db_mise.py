@@ -58,21 +58,21 @@ db.define_table('products',
 
 db.define_table('product_images',
                 Field('product_id', 'reference products'),
-                Field('image_filename', type='string'), # ADD REGEX
+                Field('image_filename', type='string'),
                 Field('image_alt', type='string'),
                 Field('main_image', type='boolean'),
        
                 )
 
 db.define_table('attribute_description',
-                Field('attribute_name', notnull=True, unique=True), ###can be null?
+                Field('attribute_name', notnull=True, unique=True),
                 format='%(attribute_name)s'
                 )
 
 
 db.define_table('product_attribute',
                 Field('attribute_id', 'reference attribute_description'),
-                Field('attribute_value', type='string', notnull=True), ###can be null?
+                Field('attribute_value', type='string', notnull=True),
                 Field('product_id', 'reference products')
                 )
 
