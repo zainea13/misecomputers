@@ -91,14 +91,91 @@ def category_page():
     link_arg = request.args(0).split("--")
     cat_id = link_arg[0]
     cat_name_fix = ""
-    sqlstmt = "SELECT p.*, pi.image_filename, pi.product_id, pi.image_alt, pi.main_image FROM products AS p INNER JOIN product_images AS pi ON p.id = pi.product_id WHERE pi.main_image = 'T' AND p.category_id = " + cat_id 
+    filter_dict = get_selected_filters()
+    order = request.vars.ORDER or ''
+    products = filtered_products(cat_id, filter_dict, order)
+    filters = get_filter_options()
+    filter_options = get_filter_options()
+
+    return locals()
+
+def get_products(cat_id, order):
+    sqlstmt = "SELECT p.*, pi.image_filename, pi.product_id, pi.image_alt, pi.main_image FROM products AS p INNER JOIN product_images AS pi ON p.id = pi.product_id WHERE pi.main_image = 'T' AND p.category_id = " + cat_id + order 
     for row in db(db.categories).select():
         if row['id'] == int(cat_id):
             cat_name_fix = row['category_name'].capitalize() 
         else:
             pass
     products = db.executesql(sqlstmt, as_dict=True)
-    return locals()
+    return products
+
+def filtered_products(cat_id, filter_dict, order):
+    product_list = get_products(cat_id, get_order_string(order))
+    results = []
+
+    if 'Price' in filter_dict:
+        price_range = filter_dict['Price'][0]
+        min_price, max_price = map(float, price_range.split("--"))
+        del filter_dict['Price']
+
+        product_list = [product for product in product_list if min_price <= product['price'] <= max_price]
+
+    if not filter_dict:
+        return product_list
+
+    for attribute, values in filter_dict.items():
+
+        if (attribute != 'Price') and values:
+                attr_row = db(db.attribute_description.attribute_name == attribute).select().first()
+                
+                if not attr_row:
+                    continue
+                rows = db((db.product_attribute.attribute_id == attr_row.id) & (db.product_attribute.attribute_value.belongs(values))).select(db.product_attribute.product_id)
+                product_ids = set([row.product_id for row in rows])
+                results.append(product_ids)
+        
+    if results:
+        common_product_ids = set.intersection(*results)
+    else:
+        common_product_ids = set()
+
+    products = [p for p in product_list if p['id'] in common_product_ids]
+        
+    return products
+
+# eventually should filter categories and options dynamically by 
+# querying category attributes. Will keep here
+def get_filter_options():
+    filter_options = {
+        'CPU': ['Intel i5', 'Intel i7', 'AMD Ryzen 5', 'AMD Ryzen 7'],
+        'RAM' : ['8 GB', '16 GB', '32 GB'],
+        'Screen Size[]' : ['13"', '15"', '17"']
+    }
+    return filter_options
+
+def get_order_string(order):
+        order_dict = {
+        'default': ' ORDER BY p.price ASC',
+        'price-asc': ' ORDER BY p.price ASC',
+        'price-desc': ' ORDER BY p.price DESC'
+        }
+
+        if not order:
+            return ''
+        else:
+            return order_dict[order]
+
+def get_selected_filters():
+    filter_dict = {}
+    categories = ['RAM', 'CPU', 'Screen Size', 'Price']
+    
+    for category in categories:
+        name = category + '[]'
+        values = request.vars.getlist(name)
+        if values:
+            filter_dict[category] = values
+
+    return filter_dict
 
 
 def add_to_cart():
