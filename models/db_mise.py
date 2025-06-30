@@ -65,8 +65,8 @@ db.define_table('product_images',
                 )
 
 db.define_table('attribute_description',
-                Field('attribute_name', type='string', notnull=True, unique=True), ###can be null?
-          
+                Field('attribute_name', notnull=True, unique=True), ###can be null?
+                format='%(attribute_name)s'
                 )
 
 

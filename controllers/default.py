@@ -72,12 +72,47 @@ def category_page():
 def add_to_cart():
     form = SQLFORM(db.shopping_cart2)
     if form.accepts:
+        # get form details
         user_id = request.vars['user_id']
         product_id = request.vars['product_id']
         session_id = request.vars['session_id']
-        quantity = request.vars['quantity']
-        db.shopping_cart2.insert(user_id=user_id, product_id=product_id, quantity=quantity, session_id=session_id)
-        product = db.products[product_id]
+        quantity = int(request.vars['quantity'])
+        
+        product = None
+        existing_quantity = 0
+
+        # flag used if the item already exists in the cart
+        matched_cart = False
+
+        # if logged in, use the user id, if not, use the session_id
+        # gets the current cart on click
+        cart = None
+        if auth.user:
+            cart = db(db.shopping_cart2.user_id == user_id).select().as_list()
+        else:
+            cart = db(db.shopping_cart2.session_id == session_id).select().as_list()
+
+        # check all cart items
+        for item in cart:
+            # if the currently clicked item matches on in the cart already
+            if int(item['product_id']) == int(product_id):
+                # check if logged in, get the current quantity in the cart
+                if auth.user:
+                    product = db.shopping_cart2(user_id=user_id, product_id=product_id)
+                else:
+                    product = db.shopping_cart2(session_id=session_id, product_id=product_id)
+                
+                # if matched, set the existing quantity and  matched_cart
+                existing_quantity = int(product['quantity'])
+                matched_cart = True
+
+        # if there was a match, then update the quanity, otherwise add to cart
+        if matched_cart:
+            new_quantity = quantity + existing_quantity
+            product.update_record(quantity=new_quantity)
+        else:
+            db.shopping_cart2.insert(user_id=user_id, product_id=product_id, quantity=quantity, session_id=session_id)
+
         response.flash = "Added to cart"
 
 
