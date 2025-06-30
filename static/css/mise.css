@@ -12,6 +12,10 @@ p {
     word-wrap: break-word;
 }
 
+input[type="checkbox"]{
+    margin-inline-end: .25rem;
+}
+
 .container {
     margin-bottom:250px;
 }
