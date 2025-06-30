@@ -10,13 +10,13 @@
         <div class="col-6">
             <hr>
             <h5>Shipping Information</h5>
-            <form name="shipping-info">
-                <input type="text" placeholder="First name" name="first_name">
-                <input type="text" placeholder="Last name" name="last_name">
-                <input type="text" placeholder="Street" name="street_1">
-                <input type="text" placeholder="Apt." name="street_2">
-                <input type="text" placeholder="City" name="city">
-                <input type="text" placeholder="Zip" name="zip">
+            <form name="shipping-info" id="shipping-info" class="order-forms">
+                <input type="text" placeholder="First name" name="s_first_name">
+                <input type="text" placeholder="Last name" name="s_last_name">
+                <input type="text" placeholder="Street" name="s_street_1">
+                <input type="text" placeholder="Apt." name="s_street_2">
+                <input type="text" placeholder="City" name="s_city">
+                <input type="text" placeholder="Zip" name="s_zip">
                 <select name="state">
                     <option value="0">Choose a state...</option>
                     {{
@@ -29,13 +29,14 @@
             </form>
             <hr>
             <h5>Billing Information</h5>
-            <form name="billing-info">
-                <input type="text" placeholder="First name" name="first_name">
-                <input type="text" placeholder="Last name" name="last_name">
-                <input type="text" placeholder="Street" name="street_1">
-                <input type="text" placeholder="Apt." name="street_2">
-                <input type="text" placeholder="City" name="city">
-                <input type="text" placeholder="Zip" name="zip">
+            <input type="checkbox" id="use-shipping"><label for="use-shipping">Same as shipping info?</label>
+            <form name="billing-info" id="billing-info" class="order-forms">
+                <input type="text" placeholder="First name" name="b_first_name">
+                <input type="text" placeholder="Last name" name="b_last_name">
+                <input type="text" placeholder="Street" name="b_street_1">
+                <input type="text" placeholder="Apt." name="b_street_2">
+                <input type="text" placeholder="City" name="b_city">
+                <input type="text" placeholder="Zip" name="b_zip">
                 <select name="state">
                     <option value="0">Choose a state...</option>
                     {{
@@ -48,16 +49,26 @@
             </form>
             <hr>
             <h5>Payment Information</h5>
-            <form name="payment-info">
+            <form name="credit-info" id="credit-info" class="order-forms">
                 <input type="text" name="credit-card" placeholder="Credit Card Number">
-                <select name="month">
-                    <options value="0">Choose a month...</options>
+                <select name="cc-month">
+                    <options value="0">Exp. month...</options>
                     {{
                         for i in range(12):
                     }}
                         <option value="{{=(i+1)}}">{{=(i+1)}}</option>
                     {{pass}}
                 </select>
+
+                <select name="cc-year">
+                    <options value="0">Exp. year...</options>
+                    {{
+                        for year in next_ten_years:
+                    }}
+                        <option value="{{=year}}">{{=year}}</option>
+                    {{pass}}
+                </select>
+                <input type="text" name="cvv" placeholder="CVV">
             </form>
         </div>
         <div class="col-6">
@@ -113,11 +124,61 @@
             </div>
             <hr>
             <form>
-                <button>Place Order</button>
+                <button id="place-order">Place Order</button>
             </form>
 
         </div>
     </div>
 </div>
+
+<script>
+
+const useShipping = document.querySelector('#use-shipping');
+const shippingForm = document.querySelector('#shipping-info');
+const billingForm = document.querySelector('#billing-info');
+
+function useShippingFunc() {
+    if (this.checked == true) {
+    const shippingArray = Array.from(shippingForm);
+    const billingArray = Array.from(billingForm);
+    let counter = 0;
+    console.log(shippingArray[1].value)
+    billingArray.forEach(input => {
+        input.value = shippingArray[counter].value;
+        counter++;
+    })
+    }
+}
+
+useShipping.addEventListener('change', useShippingFunc);
+
+jQuery('#place-order').click(function() {
+    let valuesToSend = ""
+    jQuery(".order-forms").each(function() {
+        valuesToSend += $(this).serialize() + "&";
+        
+    });
+    jQuery.ajax({
+        url: '{{=URL("checkout")}}',
+        data: valuesToSend
+    });
+    return false;
+});
+
+
+const creditForm = document.querySelector('#credit-info');
+console.log(shippingForm);
+console.log(billingForm);
+console.log(creditForm);
+
+
+// jQuery('#place-order').click(function() {
+//   ajax('{{=URL('checkout')}}',
+//        ['product_id', 'quantity', 'user_id', 'session_id'], 'target');
+//   return false;
+// });
+
+
+</script>
 
 {{=BEAUTIFY(response._vars)}}

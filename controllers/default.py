@@ -6,6 +6,8 @@
 
 # ---- example index page ----
 from gluon import *
+import datetime
+
 
 # Menu Stuff
 response.menu = [
@@ -71,6 +73,7 @@ def category_page():
 
 def add_to_cart():
     form = SQLFORM(db.shopping_cart2)
+    print(request.vars)
     if form.accepts:
         # get form details
         user_id = request.vars['user_id']
@@ -163,6 +166,30 @@ def shopping_cart2():
     return locals()
 
 
+def shopping_cart_count():
+    session_id = response.session_id
+    user_id = auth.user_id
+
+    # here we get the results from the database table, based on if the user is logged in or not
+    where_stmt = ""
+    if auth.user:
+        where_stmt = f"sc.user_id = {str(auth.user.id)}"
+    else:
+        where_stmt = f"sc.session_id = '{str(response.session_id)}'"
+
+    # here we fetch it, and then start adding up items
+    query = "SELECT sc.* FROM shopping_cart2 AS sc WHERE " + where_stmt
+    cart_items = db.executesql(query, as_dict=True)
+
+    total_items = 0
+    for item in cart_items:
+        total_items += int(item['quantity'])
+    
+    print(total_items)
+
+    return locals()
+
+
 # useful info:
 # print(response.session_id)
 # print(auth.user_id)
@@ -182,6 +209,14 @@ def shopping_cart2():
 
 
 def checkout():
+    # some help building year dropdown
+    current_year = datetime.datetime.now().year
+    next_ten_years = []
+    for i in range(10):
+        next_ten_years.append(current_year + i)
+
+    print(request.vars)
+
     session_id = response.session_id
     user_id = auth.user_id
     config = db(db.config).select().as_list()[0]
@@ -190,14 +225,14 @@ def checkout():
     total_items = 0
     
     
-
+    # determine if a user is logged in
     where_stmt = ""
     if auth.user:
         where_stmt = f"sc.user_id = {str(auth.user.id)}"
     else:
         where_stmt = f"sc.session_id = '{str(response.session_id)}'"
 
-    # here we fetch it, and then start adding up items
+    # here we fetch the cart, and then start adding up items
     cart_query = "SELECT sc.* FROM shopping_cart2 AS sc WHERE " + where_stmt
     cart_items = db.executesql(cart_query, as_dict=True)
     
@@ -211,6 +246,9 @@ def checkout():
     tax_amt = tax * subtotal
     total = tax_amt + subtotal
     return locals()
+
+
+
 
 
 
