@@ -39,7 +39,7 @@
                 {{pass}}
             </ul>
             <h5>Product Description</h5>
-            <p>{{=product['description']}}</p>
+            <p>{{=XML(product['description'])}}</p>
             <form id="add-to-cart">
                 <input type="hidden" value="{{=product.id}}" name="product_id" id="product_id">
                 {{if auth.user:}}
