@@ -87,7 +87,7 @@
         
         <!-- SEARCH BAR -->
       <div class="input-group mb-3">
-          <input type="text" class="form-control" placeholder="What would you like to search for today?" aria-label="Search" aria-describedby="button-addon2">
+          <input type="text" class="form-control mr-sm-2" placeholder="What would you like to search for today?" aria-label="Search" aria-describedby="button-addon2">
               <div class="input-group-append">
             <button class="fa fa-search fa-2x btn-lg" aria-hidden="true" style="border:3px solid #3399CC; border-radius:5px; color:#3399CC;" type="button" id="button-addon2"></button>
           </div> <!--HOW DO I CONNECT THIS BUTTON TO THE SEARCH FUNCTION IN THE CONTROLLER?-->

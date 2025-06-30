@@ -20,7 +20,7 @@ for category in db(db.categories).select():
         (T(cat_name), False,URL('default/category_page', (str(cat_id) + '--' + cat_link)), [])
     )
 
-# End Menu
+# Page Views
 
 def index():
     response.flash = T("Hello World")
@@ -32,9 +32,37 @@ def testmdb():
     response.view="testmdb.html"
     return locals()
 
+def indexmise():
+    response.view="indexmise.html"
+    return locals()
+
+
 def layoutmise():
     response.view="layoutmise.html"
     return locals()
+
+def privacy():
+    response.view="privacy.html"
+    return locals()
+
+def terms():
+    response.view="terms.html"
+    return locals()
+
+def search():
+    form = FORM(INPUT(_name='keyword', _type='text', _placeholder='Search...'),
+                INPUT(_type='submit', _value='Search'))
+
+    results = []
+    if form.process().accepted:
+        keyword = form.vars.keyword
+        if keyword:
+            results = db((db.products.product_name.contains(keyword))).select()
+                        
+
+    return dict(form=form, results=results)
+
+
 
 # ---- define pages ----
 def laptop_test():
@@ -108,6 +136,10 @@ def shopping_cart2():
         else:
             # print(product)
             product.update_record(quantity=quantity)
+            
+
+
+
 
     # here we get the results from the database table, based on if the user is logged in or not
     where_stmt = ""
@@ -186,19 +218,6 @@ def checkout():
 def display_form():
     form = FORM('Your name:', INPUT(_name='name'), INPUT(_type='submit'))
     return dict(form=form) 
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

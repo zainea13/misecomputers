@@ -11,4 +11,4 @@ Etiam pharetra velit eu felis tristique, at aliquet augue blandit. Nulla facilis
 <br/>
 <br/>
 
-<a href="{{=URL('terms')}}"><h5>Terms of Use </h5></a>
+<a href="{{=URL('privacy')}}"><h5>Terms of Use </h5></a>
