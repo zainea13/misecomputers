@@ -6,6 +6,8 @@
 
 # ---- example index page ----
 from gluon import *
+import datetime
+
 
 # Menu Stuff
 response.menu = [
@@ -74,6 +76,7 @@ def laptop_test():
     rows = db.executesql(sqlstmt, as_dict=True)
     return locals()
 
+
 def item_page():
     item = request.args(0).split("--") # value: 2--Test-Laptop-Product-2
     product_id = item[0] # 2 
@@ -87,10 +90,20 @@ def item_page():
     session_id = response.session_id
     return locals()
 
+
 def category_page():
+
     link_arg = request.args(0).split("--")
     cat_id = link_arg[0]
     cat_name_fix = ""
+
+    # this gets the category name
+    for row in db(db.categories).select():
+        if row['id'] == int(cat_id):
+            cat_name_fix = row['category_name'].capitalize() 
+        else:
+            pass
+
     filter_dict = get_selected_filters()
     order = request.vars.ORDER or ''
     products = filtered_products(cat_id, filter_dict, order)
@@ -99,15 +112,13 @@ def category_page():
 
     return locals()
 
+
 def get_products(cat_id, order):
     sqlstmt = "SELECT p.*, pi.image_filename, pi.product_id, pi.image_alt, pi.main_image FROM products AS p INNER JOIN product_images AS pi ON p.id = pi.product_id WHERE pi.main_image = 'T' AND p.category_id = " + cat_id + order 
-    for row in db(db.categories).select():
-        if row['id'] == int(cat_id):
-            cat_name_fix = row['category_name'].capitalize() 
-        else:
-            pass
+    
     products = db.executesql(sqlstmt, as_dict=True)
     return products
+
 
 def filtered_products(cat_id, filter_dict, order):
     product_list = get_products(cat_id, get_order_string(order))
@@ -165,8 +176,10 @@ def get_order_string(order):
         else:
             return order_dict[order]
 
+
 def get_selected_filters():
     filter_dict = {}
+    # rename to "attribute" ... to avoid confusion
     categories = ['RAM', 'CPU', 'Screen Size', 'Price']
     
     for category in categories:
@@ -180,6 +193,7 @@ def get_selected_filters():
 
 def add_to_cart():
     form = SQLFORM(db.shopping_cart2)
+    print(request.vars)
     if form.accepts:
         # get form details
         user_id = request.vars['user_id']
@@ -211,7 +225,7 @@ def add_to_cart():
                 else:
                     product = db.shopping_cart2(session_id=session_id, product_id=product_id)
                 
-                # if matched, set the existing quantity and  matched_cart
+                # if matched, set the existing quantity and matched_cart
                 existing_quantity = int(product['quantity'])
                 matched_cart = True
 
@@ -221,6 +235,8 @@ def add_to_cart():
             product.update_record(quantity=new_quantity)
         else:
             db.shopping_cart2.insert(user_id=user_id, product_id=product_id, quantity=quantity, session_id=session_id)
+
+        print("product:", product)
 
         response.flash = "Added to cart"
 
@@ -249,10 +265,6 @@ def shopping_cart2():
             # print(product)
             product.update_record(quantity=quantity)
             
-
-
-
-
     # here we get the results from the database table, based on if the user is logged in or not
     where_stmt = ""
     if auth.user:
@@ -276,25 +288,40 @@ def shopping_cart2():
     return locals()
 
 
-# useful info:
-# print(response.session_id)
-# print(auth.user_id)
+# NOT FINISHED, this function is a work in progress
+def shopping_cart_count():
+    session_id = response.session_id
+    user_id = auth.user_id
 
-# db.define_table('orders',
-#                 Field('order_number', 'integer', length=10, notnull=True, unique=True, required=True),
-#                 Field('user_id', 'reference auth_user', default='auth.user_id'),
-#                 Field('order_date'),
-#                 Field('ship_date'),
-#                 Field('subtotal', 'decimal(7,2)'),
-#                 Field('tax', 'decimal(7,2)'),
-#                 Field('shipping_cost', 'decimal(7,2)'),
-#                 Field('total_cost', 'decimal(7,2)'),
-#                 Field('status'),
-#                 Field('tracking_number'),
-#                 )
+    # here we get the results from the database table, based on if the user is logged in or not
+    where_stmt = ""
+    if auth.user:
+        where_stmt = f"sc.user_id = {str(auth.user.id)}"
+    else:
+        where_stmt = f"sc.session_id = '{str(response.session_id)}'"
+
+    # here we fetch it, and then start adding up items
+    query = "SELECT sc.* FROM shopping_cart2 AS sc WHERE " + where_stmt
+    cart_items = db.executesql(query, as_dict=True)
+
+    total_items = 0
+    for item in cart_items:
+        total_items += int(item['quantity'])
+    
+    print(total_items)
+
+    return locals()
 
 
 def checkout():
+    # some help building year dropdown, used on the checkout page
+    current_year = datetime.datetime.now().year
+    next_ten_years = []
+    for i in range(10):
+        next_ten_years.append(current_year + i)
+
+    print(request.vars)
+
     session_id = response.session_id
     user_id = auth.user_id
     config = db(db.config).select().as_list()[0]
@@ -303,19 +330,19 @@ def checkout():
     total_items = 0
     
     
-
+    # determine if a user is logged in
     where_stmt = ""
     if auth.user:
         where_stmt = f"sc.user_id = {str(auth.user.id)}"
     else:
         where_stmt = f"sc.session_id = '{str(response.session_id)}'"
 
-    # here we fetch it, and then start adding up items
+    # here we fetch the cart, and then start adding up items
     cart_query = "SELECT sc.* FROM shopping_cart2 AS sc WHERE " + where_stmt
     cart_items = db.executesql(cart_query, as_dict=True)
     
     for item in cart_items:
-        product_id= item['product_id']
+        product_id = item['product_id']
         product = db(db.products.id == product_id).select().as_list()[0]
         subtotal += (float(product['price']) * int(item['quantity']))
         total_items += int(item['quantity'])
@@ -324,6 +351,52 @@ def checkout():
     tax_amt = tax * subtotal
     total = tax_amt + subtotal
     return locals()
+
+
+def account():
+    # select auth user database table based on current id
+    user_info = db(db.auth_user.id == auth.user.id).select().first()
+
+    # look up customer details based on the auth user id
+    customer_info = db(db.customers.user_id == auth.user.id).select().first()
+
+    # get the state for the user
+    state = db(db.states.id == customer_info.state_code).select().first()
+
+    return locals()
+
+# account details page, to update account details
+def account_details():
+    # select auth user database table based on current id
+    user_info = db(db.auth_user.id == auth.user.id).select().first()
+
+    # look up user details based on the auth user id
+    customer_info = db(db.customers.user_id == auth.user.id).select().first()
+
+    try:
+        if request.vars:
+            
+            r = request.vars
+            user_info.update_record(first_name=r.first_name, last_name=r.last_name)
+            customer_info.update_record(
+                                    street_1 = r.street_1, 
+                                    street_2 = r.street_2, 
+                                    city = r.city,
+                                    state_code = r.state,
+                                    zip = r.zip,                            
+                                    phone = r.phone
+                                    )
+            print("requested end")
+        
+    except:
+        pass
+    
+    # after updating the data, we put you back to the account page
+    if request.vars:
+        redirect(URL('account'))
+
+    return locals()
+
 
 
 

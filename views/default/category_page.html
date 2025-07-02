@@ -42,7 +42,7 @@
         </ul>
             
             
-        <ul class=" w-25 d-flex justify-content-end list-unstyled h-100">
+        <ul class="w-25 d-flex justify-content-end list-unstyled h-100">
             <li class="dropdown w-75 d-flex justify-content-end">
             <p class="dropdown-toggle btn btn-primary btn-sm w-75" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sort By:</p>
             <fieldset class="dropdown-menu dropdown-menu-right w-100">
@@ -72,20 +72,22 @@
             const sortRadios = document.querySelectorAll('input[name="ORDER"]');
             
             sortRadios.forEach(radio => {
-              radio.addEventListener('change', () => {
-              const ORDER = filter_form.querySelector('input[name="ORDER"]:checked');
-              filter_form.submit();});
+                radio.addEventListener('change', () => {
+                    const ORDER = filter_form.querySelector('input[name="ORDER"]:checked');
+                    filter_form.submit();
+                });
             });
         }
                                
         
         function applyFilters() {
-            filter_form.submit();}
+            filter_form.submit();
+        }
+
         function clearFilters() {
             filter_form = document.getElementById("filter_form");
             // clear all checked 
             filter_form.reset();
-            
         }
     </script>
 
@@ -140,7 +142,7 @@
     </div>
 </div>
 
-    
+   
     
     
 {{=BEAUTIFY(response._vars)}}
