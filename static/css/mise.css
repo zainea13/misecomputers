@@ -1,12 +1,41 @@
 
 /* Color Variables */
 :root {
-    --body:  hsl(300, 9%, 18%);
-    --product-color: hsl(202, 65%, 58%);
+
+    --primary: hsl(200, 60%, 50%); 
+    --secondary: hsl(203, 81%, 83%);
+
     --highlight:hsl(202, 65%, 58%);
-    --highlight-hover: hsl(202, 65%, 78%);
     --peach: hsl(25, 100%, 80%);
 }
+
+/* override some bootstrap colors */
+a {
+    color: var(--primary);
+}
+
+.bg-secondary {
+    background-color: var(--secondary) !important;
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+.text-primary, a.text-primary:visited {
+    color: var(--primary) !important;
+}
+
+a.text-primary:hover, a.text-primary:focus {
+    color: var(--highlight) !important;
+}
+
+a.text-primary:active {
+    color: var(--primary) !important;
+}
+
+
 
 p {
     word-wrap: break-word;
@@ -19,6 +48,18 @@ input[type="checkbox"]{
 .container {
     margin-bottom:250px;
 }
+
+.font-small  {
+    font-size: .75rem;
+}
+
+
+/*------------------------------------------------------------*/
+/* Nav Bar classes */
+
+
+
+
 
 /* Adjusting product items */
 

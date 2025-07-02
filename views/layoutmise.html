@@ -1,232 +1,225 @@
 <!DOCTYPE html>
 <!--[if (gt IE 9)|!(IE)]><!--> 
 <html class="no-js" lang="{{=T.accepted_language or 'en'}}">
- <!--<![endif]-->
-  <head>
-    <meta charset="utf-8">
-    <!-- www.phpied.com/conditional-comments-block-downloads/ -->
-    <!-- Always force latest IE rendering engine
-         (even in intranet) & Chrome Frame
-         Remove this if you use the .htaccess -->
-    <meta http-equiv="X-UA-Compatible" content="IE=edge{{=not request.is_local and ',chrome=1' or ''}}">
-    <!--  Mobile Viewport Fix
-          j.mp/mobileviewport & davidbcalhoun.com/2010/viewport-metatag
-          device-width: Occupy full width of the screen in its current orientation
-          initial-scale = 1.0 retains dimensions instead of zooming out if page height > device height
-          user-scalable = yes allows the user to zoom in -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{=response.title or request.application}}</title>
-    <!-- http://dev.w3.org/html5/markup/meta.name.html -->
-    <meta name="application-name" content="{{=request.application}}">
-    <!-- Speaking of Google, don't forget to set your site up:
-         http://google.com/webmasters -->
-    <meta name="google-site-verification" content="">
-    <!-- include stylesheets -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
-    <link rel="stylesheet" href="{{=URL('static','css/bootstrap.min.css')}}"/>
-    <link rel="stylesheet" href="{{=URL('static','css/web2py-bootstrap4.css')}}"/>
-      
-    <!-- Our custom css for mise computers -->
-    <link rel="stylesheet" href="{{=URL('static','css/mise.css')}}"/>
-    
-     <!-- Favicons --> 
-    <link rel="shortcut icon" href="{{=URL('static','images/favicon.ico')}}" type="image/x-icon">
-    <link rel="apple-touch-icon" href="{{=URL('static','images/favicon.png')}}">
-    
-      <!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
-    <script src="{{=URL('static','js/modernizr-2.8.3.min.js')}}"></script>
-    
-    {{include 'web2py_ajax.html'}} <!-- this includes jquery.js, calendar.js/.css and web2py.js -->
-    
-      <!-- Here you can add stuff to the <head> element on an indiviual page, like one page needs specific css page but not others -->
-      {{block head}}
-      {{end}}
-  </head>
+<!--<![endif]-->
+<head>
+	<meta charset="utf-8">
+	<!-- www.phpied.com/conditional-comments-block-downloads/ -->
+	<!-- Always force latest IE rendering engine
+		(even in intranet) & Chrome Frame
+		Remove this if you use the .htaccess -->
+	<meta http-equiv="X-UA-Compatible" content="IE=edge{{=not request.is_local and ',chrome=1' or ''}}">
+	<!--  Mobile Viewport Fix
+		j.mp/mobileviewport & davidbcalhoun.com/2010/viewport-metatag
+		device-width: Occupy full width of the screen in its current orientation
+		initial-scale = 1.0 retains dimensions instead of zooming out if page height > device height
+		user-scalable = yes allows the user to zoom in -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>{{=response.title or request.application}}</title>
+	<!-- http://dev.w3.org/html5/markup/meta.name.html -->
+	<meta name="application-name" content="{{=request.application}}">
+	<!-- Speaking of Google, don't forget to set your site up:
+		http://google.com/webmasters -->
+	<meta name="google-site-verification" content="">
+	<!-- include stylesheets -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	<link rel="stylesheet" href="{{=URL('static','css/web2py-bootstrap4.css')}}"/>
+	
+	<!-- Our custom css for mise computers -->
+	<link rel="stylesheet" href="{{=URL('static','css/mise.css')}}"/>
+	
+	<!-- Favicons --> 
+	<link rel="shortcut icon" href="{{=URL('static','images/favicon.ico')}}" type="image/x-icon">
+	<link rel="apple-touch-icon" href="{{=URL('static','images/favicon.png')}}">
+	
+	<!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
+	<script src="{{=URL('static','js/modernizr-2.8.3.min.js')}}"></script>
+	
+	{{include 'web2py_ajax.html'}} <!-- this includes jquery.js, calendar.js/.css and web2py.js -->
+	
+	<!-- Here you can add stuff to the <head> element on an indiviual page, like one page needs specific css page but not others -->
+	{{block head}}
+	{{end}}
+</head>
 
-  <body>
-    <!--<div class="w2p_flash alert alert-dismissable">{{=response.flash or ''}}</div>-->
-      
-   <!-- Navbar ======================================= -->
-    <nav class="navbar navbar-text navbar-light navbar-expand-md d-flex justify-content-around" style="background-color:#B2DDF7; border-radius:5px; vertical-align:top">
-        
-       <!-- MISE Computers logo and logo hyperlinked to Home /index page-->
-       <a class="navbar-brand" href="{{=URL('default','indexmise')}}"><img width="150px" src="/misetestmdb/static/images/template/miselogo1copy.png" alt="Company Logo"/></a>
+<body>
+	<!--<div class="w2p_flash alert alert-dismissable">{{=response.flash or ''}}</div>-->
+	
+<!-- Navbar ======================================= -->
+	<nav class="navbar navbar-light bg-secondary navbar-expand-lg">
+		
+		<div class="container mb-0">
 
-         &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;
-        
-        <!--Categories Drop Down Menu-->
-        <div class='nav-item dropdown d-flex align-items-left justify-content-around'>
+			<!-- MISE Computers logo and logo hyperlinked to Home /index page-->
+			<a class="navbar-brand m-0" href="{{=URL('default','indexmise')}}">
+				<img width="150px" src="/misecomputers/static/images/template/miselogo1copy.png" alt="Company Logo"/>
+			</a>
 
-         {{categories = db(db.categories).select()}}
-            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"style="color:#3399CC; font-weight:bold"> 
-                <div class="fa fa-bars fa-2x align-items-center" aria-hidden="true" style="color:#3399CC"></div> MENU</a>
-             
-         <div class="dropdown-menu dropdown-menu-right">
-             <ul>
-            
-          {{
-            for category in categories:
-              cat_id = category['id']
-              cat_name = category['category_name']
-              cat_link = cat_name.replace(" ", "-")
-          }}
-            <li class="nav-item dropdown"><a class="nav-link" style="text-transform: capitalize; color:black;" href="{{=URL('category_page', args=(str(cat_id) + '--' + cat_link))}}" data-product-id={{=cat_id}}>{{=cat_name}}</a></li>
-          {{pass}}
-        </ul>
-        </div>
-        </div>
-             &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
-        
-         <!-- Hamburger icon, this exists only for smaller screen sizes, otherwise it is hidden -->
-       <!--<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-         <span class="navbar-toggler-icon"></span>
-       </button>
-        
-        
-       <div class="navbar-collapse collapse w-100" id="navbarNavDropdown" style= "color:white;">-->
-        
-        
-        <!-- SEARCH BAR -->
-      <div class="input-group mb-3">
-          <input type="text" class="form-control" placeholder="What would you like to search for today?" aria-label="Search" aria-describedby="button-addon2">
-              <div class="input-group-append">
-            <button class="fa fa-search fa-2x btn-lg" aria-hidden="true" style="border:3px solid #3399CC; border-radius:5px; color:#3399CC;" type="button" id="button-addon2"></button>
-          </div> <!--HOW DO I CONNECT THIS BUTTON TO THE SEARCH FUNCTION IN THE CONTROLLER?-->
-        </div>
-        
-        
-        
-        
-        &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
-        
-        
-        
-        
-        <!-- BEGIN LOGIN MENU ITEM AND DROPDOWN -->
-        <div class='d-flex align-items-center justify-content-around'>
-			<div  class="fa fa-user-circle-o fa-2x" aria-hidden="true" style="color:#3399CC"></div>
-        {{if 'auth' in globals():}}
-        <ul class="nav navbar-nav ml-auto w-100 justify-content-end">
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"style="color:#3399CC; font-weight:bold; text-align:center;">
-                <!-- Checks to see if there is a user logged in, if so, display their name, if not display "login-->
-              {{if auth.user:}}{{=auth.user.first_name}}{{else:}}LOG-IN /<br/>SIGN-UP{{pass}}
+			
 
-            </a>
-            <div class="dropdown-menu dropdown-menu-right">
-                <!-- If you are logged in, you get these options -->
-              {{if auth.user:}}
-              <a class="dropdown-item" href="{{=URL('default','user/profile')}}">{{=T('Profile')}}</a>
-              {{if 'change_password' not in auth.settings.actions_disabled:}}
-              <a class="dropdown-item" href="{{=URL('default','user/change_password')}}">{{=T('Change Password')}}</a>
-              {{pass}}
-              <a class="dropdown-item" href="{{=URL('default','user/logout')}}">{{=T('Logout')}}</a>
-                
-                <!-- If you are not logged in, you get these options, the "else options" -->
-              {{else:}}
-              <a class="dropdown-item" href="{{=URL('default','user/login')}}">{{=T('Login')}} </a>
-                <!-- This just makes sure that registering a new user isn't disabled -->
-              {{if 'register' not in auth.settings.actions_disabled:}}
-              <a class="dropdown-item" href="{{=URL('default','user/register')}}">{{=T('Sign up')}}</a>
-              {{pass}}
-                <!-- This just makes sure that the ability to retrieve a password isnt' disabled -->
-              {{if 'retrieve_password' not in auth.settings.actions_disabled:}}
-              <a class="dropdown-item" href="{{=URL('default','user/retrieve_password')}}">{{=T('Lost Password')}}</a>
-              {{pass}}
-              {{pass}}
-            </div>
-          </li>
-        </ul>
-        {{pass}}
-        </div>
-        <!-- END LOGIN MENU -->
-        
-         &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
-        
-        
-        <a href="{{=URL('default','shopping_cart2')}}"><div class="fa fa-cart-plus fa-3x d-flex justify-content-around" aria-hidden="true" style="color:#3399CC"></div></a>
-        <div class="fa fa-cart-plus fa-3x d-flex justify-content-around" aria-hidden="true" style="color:#3399CC"></div> 
-    </nav>
+			<div class="collapse navbar-collapse" id="navbarNavDropdown">
+				<!--Categories Drop Down Menu-->
+				<ul class="navbar-nav mx-4">
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle font-weight-bold text-primary" href="#" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<div class="fa fa-bars fa-lg align-items-center" aria-hidden="true"></div> 
+							MENU
+						</a>
+						<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+							{{categories = db(db.categories).select()
+							for category in categories:
+								cat_id = category['id']
+								cat_name = category['category_name']
+								cat_link = cat_name.replace(" ", "-")
+							}}
+							<a class="dropdown-item text-capitalize" href="{{=URL('category_page', args=(str(cat_id) + '--' + cat_link))}}" data-product-id={{=cat_id}}>{{=cat_name}}</a>
+							{{pass}}
+						</div>
+					</li>
+				</ul>
+
+				<!-- SEARCH BAR -->
+				<form class="form-inline flex-fill">
+					<div class="input-group w-100">
+						<input class="form-control border-0" type="search" placeholder="What would you like to search for today?" aria-label="Search">
+						<div class="input-group-append">
+							<button class="fa fa-search text-primary" aria-hidden="true" type="submit"></button>
+						</div>
+					</div>
+				</form>
+
+				<!-- BEGIN LOGIN MENU ITEM AND DROPDOWN -->
+				<ul class="nav navbar-nav align-items-center">
+
+				{{if 'auth' in globals():}}
+					<li class="nav-item dropdown mx-4">
+						<a class="nav-link dropdown-toggle font-weight-bold text-primary" href="#" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<div class="fa fa-user-circle-o fa-lg" aria-hidden="true"></div>
+							<!-- Checks to see if there is a user logged in, if so, display their name, if not display "login-->
+							{{if auth.user:}}
+								{{=auth.user.first_name}}
+							{{else:}}
+								LOG-IN /<br>
+								SIGN-UP
+							{{pass}}
+						</a>
+						<div class="dropdown-menu dropdown-menu-right">
+							<!-- If you are logged in, you get these options -->
+							{{if auth.user:}}
+								<a class="dropdown-item" href="{{=URL('default','account')}}">{{=T('Profile')}}</a>
+								{{if 'change_password' not in auth.settings.actions_disabled:}}
+								<a class="dropdown-item" href="{{=URL('default','user/change_password')}}">{{=T('Change Password')}}</a>
+								{{pass}}
+								<a class="dropdown-item" href="{{=URL('default','user/logout')}}">{{=T('Logout')}}</a>
+								
+								<!-- If you are not logged in, you get these options, the "else options" -->
+							{{else:}}
+								<a class="dropdown-item" href="{{=URL('default','user/login')}}">{{=T('Login')}} </a>
+								<!-- This just makes sure that registering a new user isn't disabled -->
+								{{if 'register' not in auth.settings.actions_disabled:}}
+								<a class="dropdown-item" href="{{=URL('default','user/register')}}">{{=T('Sign up')}}</a>
+								{{pass}}
+								<!-- This just makes sure that the ability to retrieve a password isnt' disabled -->
+								{{if 'retrieve_password' not in auth.settings.actions_disabled:}}
+								<a class="dropdown-item" href="{{=URL('default','user/retrieve_password')}}">{{=T('Lost Password')}}</a>
+								{{pass}}
+							{{pass}}
+						</div>
+					</li>
+				{{pass}}
+				<!-- END LOGIN MENU -->	
+					<li class="nav-item">
+						<a class="nav-link text-primary p-0" href="{{=URL('default','shopping_cart2')}}" title="Tooltip on bottom">
+							<div class="fa fa-cart-plus fa-3x" aria-hidden="true"></div>
+						</a>
+					</li>
+				</ul>
+					
+				
+			</div>
+			<!-- Hamburger icon, this exists only for smaller screen sizes, otherwise it is hidden -->
+			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+			</button>
+		</div>
+	</nav>
 
 
-    <!-- Masthead ===================================== -->
+
+		
+		
+		
+		
+		
+		
+		
+		
+	
+	
+
+
+	<!-- Masthead ===================================== -->
 		<!-- Here is where you can add custom header section on any page without
-		 having to edit the layout.html page -->
-    {{block header}}
-    {{end}}
+		having to edit the layout.html page -->
+	{{block header}}
+	{{end}}
 
-    <!-- Main ========================================= -->
+	<!-- Main ========================================= -->
 
-    <!-- Begin page content -->
-    <div class="container-fluid main-container">
-      <!-- This 'include' statment is where any code that is in a page that says "extend 'layoutmise.html'" will be inserted into -->
-      {{include}}
-        
-       <!-- if show_toolbar is True, then run response.toolbar(), else do nothing
-	   not sure what "response.toolbar()" does though, will look into it -->
-      {{=response.toolbar() if response.show_toolbar else ''}}
-    </div>
+	<!-- Begin page content -->
+	<div class="container-fluid main-container">
+	<!-- This 'include' statment is where any code that is in a page that says "extend 'layoutmise.html'" will be inserted into -->
+	{{include}}
+		
+	<!-- if show_toolbar is True, then run response.toolbar(), else do nothing
+	not sure what "response.toolbar()" does though, will look into it -->
+	{{=response.toolbar() if response.show_toolbar else ''}}
+	</div>
 
 <!-- BEGIN FOOTER -->
 		<!-- this is default footer 
-		 	this will show up on every page, UNLESS you put a custom footer on that page
+			this will show up on every page, UNLESS you put a custom footer on that page
 			and surround it by block footer and end -->
-    
-    {{block footer}} <!-- this is default footer -->
-    <footer class="footer container-fluid" style="background-color:#B2DDF7; border-radius:5px">
-          <div class="row">
-              <div class="float-left"><a href="{{=URL('privacy')}}" style="color:black">Privacy Notice | </a></div> &nbsp;
-              <div class = "float-left"> <a href="{{=URL('default','terms')}}" style="color:black">Terms of Use</a> </div>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              
-            <div class="float-right">{{=T('Copyright')}} &#169; {{=request.now.year}} MISE Computers, LLC</div>
-          </div>
-           
-    </footer>
-    {{end}}
+	
+	{{block footer}} <!-- this is default footer -->
+	<footer class="footer container-fluid bg-secondary rounded-top">
+		<div class="row">
+			<div><a href="{{=URL('privacy')}}" style="color:black">Privacy Notice | </a></div> &nbsp;
+			<div> <a href="{{=URL('default','terms')}}" style="color:black">Terms of Use</a> </div>			
+			<div class="ml-auto">{{=T('Copyright')}} &#169; {{=request.now.year}} MISE Computers, LLC</div>
+		</div>
+		
+	</footer>
+	{{end}}
 
 
-        
-            <!--<div class="container">
-            <div class="row">
-                <div class="col-sm"> ABOUT THE SHOP</div>
-                <div class="col-sm"> CUSTOMER CARE</div>
-                <div class="col-sm"> STORE INFO</div>
-                <div class="col-sm"> SPECIAL OFFERS</div>
-            </div>
-        </div>-->
-    
-     
-
-    <!-- The javascript =============================== -->
-    <script src="{{=URL('static','js/bootstrap.bundle.min.js')}}"></script>
-    <script src="{{=URL('static','js/web2py-bootstrap4.js')}}"></script>
-    {{block page_js}}{{end page_js}}
-    {{if response.google_analytics_id:}}
-    <!-- Analytics ==================================== -->
-    <script src="{{=URL('static','js/analytics.min.js')}}"></script>
-    <script type="text/javascript">
-      analytics.initialize({
-      'Google Analytics':{trackingId:'{{=response.google_analytics_id}}'}
-      });
-    </script>
-    {{pass}}
-  </body>
+		
+			<!--<div class="container">
+			<div class="row">
+				<div class="col-sm"> ABOUT THE SHOP</div>
+				<div class="col-sm"> CUSTOMER CARE</div>
+				<div class="col-sm"> STORE INFO</div>
+				<div class="col-sm"> SPECIAL OFFERS</div>
+			</div>
+		</div>-->
 
 
-    <!-- The javascript =============================== -->
-    <script src="{{=URL('static','js/bootstrap.bundle.min.js')}}"></script>
-    <script src="{{=URL('static','js/web2py-bootstrap4.js')}}"></script>
+	<!-- The javascript =============================== -->
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+	<script src="{{=URL('static','js/web2py-bootstrap4.js')}}"></script>
 
-   <!-- You can use this block section to put page-specific javascript in to the bottom of the page -->
-    {{block page_js}}
-    {{end page_js}}
+<!-- You can use this block section to put page-specific javascript in to the bottom of the page -->
+	{{block page_js}}
+	{{end page_js}}
 
-    <!-- checking if there is a google analytics id set in the globals, if not skip it -->
-    {{if response.google_analytics_id:}}
-    <!-- Analytics ==================================== -->
-    <script src="{{=URL('static','js/analytics.min.js')}}"></script>
-    <script type="text/javascript"> analytics.initialize({'Google Analytics':{trackingId:'{{=response.google_analytics_id}}'}});</script>
-    {{pass}}
-  </body>
+	<!-- checking if there is a google analytics id set in the globals, if not skip it -->
+	{{if response.google_analytics_id:}}
+	<!-- Analytics ==================================== -->
+	<script src="{{=URL('static','js/analytics.min.js')}}"></script>
+	<script type="text/javascript"> analytics.initialize({'Google Analytics':{trackingId:'{{=response.google_analytics_id}}'}});</script>
+	{{pass}}
+</body>
 </html>
