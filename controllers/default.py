@@ -313,46 +313,6 @@ def shopping_cart_count():
     return locals()
 
 
-def checkout():
-    # some help building year dropdown, used on the checkout page
-    current_year = datetime.datetime.now().year
-    next_ten_years = []
-    for i in range(10):
-        next_ten_years.append(current_year + i)
-
-    print(request.vars)
-
-    session_id = response.session_id
-    user_id = auth.user_id
-    config = db(db.config).select().as_list()[0]
-    order_num = int(config['order_number'])
-    subtotal = 0
-    total_items = 0
-    
-    
-    # determine if a user is logged in
-    where_stmt = ""
-    if auth.user:
-        where_stmt = f"sc.user_id = {str(auth.user.id)}"
-    else:
-        where_stmt = f"sc.session_id = '{str(response.session_id)}'"
-
-    # here we fetch the cart, and then start adding up items
-    cart_query = "SELECT sc.* FROM shopping_cart2 AS sc WHERE " + where_stmt
-    cart_items = db.executesql(cart_query, as_dict=True)
-    
-    for item in cart_items:
-        product_id = item['product_id']
-        product = db(db.products.id == product_id).select().as_list()[0]
-        subtotal += (float(product['price']) * int(item['quantity']))
-        total_items += int(item['quantity'])
-
-    tax = float(config['tax'])
-    tax_amt = tax * subtotal
-    total = tax_amt + subtotal
-    return locals()
-
-
 def account():
     # select auth user database table based on current id
     user_info = db(db.auth_user.id == auth.user.id).select().first()
@@ -397,6 +357,61 @@ def account_details():
 
     return locals()
 
+
+def checkout():
+    # get details from account function
+    account_context = account()
+
+    # some help building year dropdown, used on the checkout page
+    current_year = datetime.datetime.now().year
+    next_ten_years = []
+    for i in range(10):
+        next_ten_years.append(current_year + i)
+
+    shipping_form = SQLFORM.factory(
+                Field('s_first_name', 'string', label="First Name", requires=IS_NOT_EMPTY()),
+                Field('s_last_name', 'string', label="Last Name", requires=IS_NOT_EMPTY()),
+                Field('s_street_1', 'string', label="Address Line 1", requires=IS_NOT_EMPTY()),
+                Field('s_street_2', 'string', label="Address Line 2", requires=IS_NOT_EMPTY()),
+                Field('s_city', 'string', label="City", requires=IS_NOT_EMPTY()),
+                Field('s_state', 'reference states', label="State", requires=IS_IN_DB(db, 'states.id', '%(state_name)s', zero="Choose a state...")),
+                Field('s_zip', 'string', label="Zip Code", requires=IS_NOT_EMPTY()),
+            )
+    shipping_form.process(formstyle='bootstrap4_stacked')
+
+
+
+    print("checkout:", request.vars)
+
+    session_id = response.session_id
+    user_id = auth.user_id
+    config = db(db.config).select().as_list()[0]
+    order_num = int(config['order_number'])
+    subtotal = 0
+    total_items = 0
+    
+    
+    # determine if a user is logged in
+    where_stmt = ""
+    if auth.user:
+        where_stmt = f"sc.user_id = {str(auth.user.id)}"
+    else:
+        where_stmt = f"sc.session_id = '{str(response.session_id)}'"
+
+    # here we fetch the cart, and then start adding up items
+    cart_query = "SELECT sc.* FROM shopping_cart2 AS sc WHERE " + where_stmt
+    cart_items = db.executesql(cart_query, as_dict=True)
+    
+    for item in cart_items:
+        product_id = item['product_id']
+        product = db(db.products.id == product_id).select().as_list()[0]
+        subtotal += (float(product['price']) * int(item['quantity']))
+        total_items += int(item['quantity'])
+
+    tax = float(config['tax'])
+    tax_amt = tax * subtotal
+    total = tax_amt + subtotal
+    return dict(locals(), **account_context)
 
 
 

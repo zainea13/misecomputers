@@ -1,8 +1,6 @@
 {{extend 'layoutmise.html'}}
 
-{{=shipping_form}}
-{{=repr(shipping_form.custom.label.s_first_name)}}
-
+{{=form}}
 
 <div class="container">
     <h2 class="text-accent mb-2" style="margin-left: -15px;">Check Out</h2>
@@ -15,8 +13,10 @@
                     
                     <div class="row form-group">
                         <div class="col-6">
-                            {{=shipping_form.custom.label.s_first_name}}
-                            {{=shipping_form.custom.widget.s_first_name}}
+                            <div class="label-group">
+                                <label for="s_first_name" class="form-control-label">First Name</label>
+                                <input type="text" class="form-control string" id="s_first_name" name="s_first_name" value="{{=user_info.first_name}}">
+                            </div>
                         </div>
                         <div class="col-6 pl-0">
                             <div class="label-group">
