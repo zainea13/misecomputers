@@ -1,5 +1,7 @@
 <!DOCTYPE html>
-<!--[if (gt IE 9)|!(IE)]><!--> <html class="no-js" lang="{{=T.accepted_language or 'en'}}"> <!--<![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> 
+<html class="no-js" lang="{{=T.accepted_language or 'en'}}">
+ <!--<![endif]-->
   <head>
     <meta charset="utf-8">
     <!-- www.phpied.com/conditional-comments-block-downloads/ -->
@@ -48,12 +50,13 @@
     <nav class="navbar navbar-text navbar-light navbar-expand-md d-flex justify-content-around" style="background-color:#B2DDF7; border-radius:5px; vertical-align:top">
         
        <!-- MISE Computers logo and logo hyperlinked to Home /index page-->
-       <a class="navbar-brand" href="{{=URL('default','index')}}"><img width="150px" src="/misetestmdb/static/images/template/miselogo1copy.png" alt="Company Logo"/></a>
+       <a class="navbar-brand" href="{{=URL('default','indexmise')}}"><img width="150px" src="/misecomputers/static/images/template/miselogo3copy.png" alt="Company Logo"/></a>
 
-         &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
+         &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;
         
         <!--Categories Drop Down Menu-->
-        <div class='nav-item dropdown d-flex align-items-center justify-content-around'>
+        <div class='nav-item dropdown d-flex align-items-left justify-content-around'>
+
          {{categories = db(db.categories).select()}}
             <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"style="color:#3399CC; font-weight:bold"> 
                 <div class="fa fa-bars fa-2x align-items-center" aria-hidden="true" style="color:#3399CC"></div> MENU</a>
@@ -84,16 +87,15 @@
         
         
         <!-- SEARCH BAR -->
-         <!--<form class="form-inline my-2 my-lg-0 d-flex justify-content-around">
-             <input class="form-control mr-sm-2" type="text" style="width:700px" placeholder="Search...">
-         </form>
-           <div class="fa fa-search fa-2x" aria-hidden="true" style="border:3px solid #3399CC; border-radius:5px; color:#3399CC; class="btn btn-outline-secondary"></div>-->
       <div class="input-group mb-3">
-          <input type="text" class="form-control" placeholder="What would you like to see today?" aria-label="Search" aria-describedby="button-addon2">
+          <input type="text" class="form-control" placeholder="What would you like to search for today?" aria-label="Search" aria-describedby="button-addon2">
               <div class="input-group-append">
             <button class="fa fa-search fa-2x btn-lg" aria-hidden="true" style="border:3px solid #3399CC; border-radius:5px; color:#3399CC;" type="button" id="button-addon2"></button>
-          </div>
+          </div> <!--HOW DO I CONNECT THIS BUTTON TO THE SEARCH FUNCTION IN THE CONTROLLER?-->
         </div>
+        
+        
+        
         
         &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
         
@@ -109,6 +111,7 @@
             <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"style="color:#3399CC; font-weight:bold; text-align:center;">
                 <!-- Checks to see if there is a user logged in, if so, display their name, if not display "login-->
               {{if auth.user:}}{{=auth.user.first_name}}{{else:}}LOG-IN /<br/>SIGN-UP{{pass}}
+
             </a>
             <div class="dropdown-menu dropdown-menu-right">
                 <!-- If you are logged in, you get these options -->
@@ -140,7 +143,8 @@
         
          &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp;
         
-        <div class="fa fa-cart-plus fa-3x d-flex justify-content-around" aria-hidden="true" style="color:#3399CC"></div> 
+        
+        <a href="{{=URL('default','shopping_cart2')}}"><div class="fa fa-cart-plus fa-3x d-flex justify-content-around" aria-hidden="true" style="color:#3399CC"></div></a>
     </nav>
 
 
@@ -172,9 +176,7 @@
           <div class="row">
               <div class="float-left"><a href="{{=URL('privacy')}}" style="color:black">Privacy Notice | </a></div> &nbsp;
               <div class = "float-left"> <a href="{{=URL('default','terms')}}" style="color:black">Terms of Use</a> </div>
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<p> 6/23/25 changes made</p>&nbsp;&nbsp;&nbsp;&nbsp;
-              
-              </p>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               
             <div class="float-right">{{=T('Copyright')}} &#169; {{=request.now.year}} MISE Computers, LLC</div>
           </div>
