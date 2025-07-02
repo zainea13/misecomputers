@@ -1,0 +1,94 @@
+{{extend 'layoutmise.html'}}
+
+<div class="row">
+    <div class="col-6 mx-auto mb-5">
+        <h2 class="mb-4">Account Details</h2>
+        <div class="border rounded p-4">
+
+            <form method="post">
+                <input type="hidden" name="user_id" value="{{=auth.user.id}}">
+                <div class="row form-group">
+                    <div class="col-6">
+                        <div class="label-group">
+                            <label for="first_name" class="form-control-label">First Name</label>
+                            <input type="text" class="form-control string" id="first_name" name="first_name" value="{{=user_info.first_name}}">
+                        </div>
+                    </div>
+                    <div class="col-6 pl-0">
+                        <div class="label-group">
+                            <label for="last_name" class="form-control-label">Last Name</label>
+                            <input type="text" class="form-control string" id="last_name" name="last_name" value="{{=user_info.last_name}}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12 form-group">
+                        <div class="label-group">
+                            <label for="street_1" class="form-control-label">Address Line 1</label>
+                            <input type="text" class="form-control string" id="street_1" name="street_1" value="{{=customer_info.street_1}}">
+                        </div>
+                    </div>
+                    <div class="col-12 form-group">
+                        <div class="label-group">
+                            <label for="street_2" class="form-control-label">Address Line 2</label>
+                            <input type="text" class="form-control string" id="street_2" name="street_2" value="{{=customer_info.street_2}}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-4">
+                        <div class="label-group">
+                            <label for="city" class="form-control-label">City</label>
+                            <input type="text" class="form-control string" id="city" name="city" value="{{=customer_info.city}}">
+                        </div>
+                    </div>
+
+                    <div class="col-4 pl-0">
+                        <div class="label-group">
+                            <label for="state" class="form-control-label w-100">State</label>
+                            <select name="state" id="state" class="form-control">
+                                <option value="0">Choose a state...</option>
+                                {{
+                                    states = db(db.states).select()
+                                    for state in states:                        
+                                }}
+                                    <option value="{{=state['id']}}" {{if customer_info.state_code == state['id']:}} selected {{pass}}>{{=state['state_name']}}</option>
+                                {{pass}}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-4 pl-0">
+                        <div class="label-group">
+                            <label for="zip" class="form-control-label">Zip Code</label>
+                            <input type="text" class="form-control string" id="zip" name="zip" value="{{=customer_info.zip}}">
+                        </div>
+                    </div>
+                    
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-4">
+                        <div class="label-group">
+                            <label for="phone" class="form-control-label">Phone</label>
+                            <input type="text" class="form-control string" id="phone" name="phone" value="{{=customer_info.phone}}">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row form-group mb-0">
+                    <div class="col-6 mt-5">
+                        <input type="submit" value="Update" class="btn btn-primary">
+                    </div>
+                </div>
+            </form>
+
+
+
+        </div>
+    </div>
+</div>
+
+{{=BEAUTIFY(response._vars)}}
