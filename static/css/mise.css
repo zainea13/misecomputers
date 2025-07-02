@@ -4,27 +4,56 @@
 
     --primary: hsl(200, 60%, 50%); 
     --secondary: hsl(203, 81%, 83%);
+    --accent: hsl(39, 100%, 50%);
 
     --highlight:hsl(202, 65%, 58%);
     --peach: hsl(25, 100%, 80%);
 }
 
-/* override some bootstrap colors */
+/* override some bootstrap colors and classes */
 a {
     color: var(--primary);
+}
+
+.bg-primary {
+    background-color: var(--primary) !important;
 }
 
 .bg-secondary {
     background-color: var(--secondary) !important;
 }
 
+.bg-accent {
+    background-color: var(--accent);
+}
+
+.btn {
+    border-radius: 100vw;
+}
+
+
+
 .btn-primary {
     background-color: var(--primary);
     border-color: var(--primary);
 }
 
+.btn-secondary {
+    background-color: var(--secondary);
+    border-color: var(--secondary);
+}
+
+.btn-accent {
+    background-color: var(--accent);
+    border-color: var(--accent);
+}
+
 .text-primary, a.text-primary:visited {
     color: var(--primary) !important;
+}
+
+.text-accent {
+    color: var(--accent);
 }
 
 a.text-primary:hover, a.text-primary:focus {
@@ -109,19 +138,18 @@ input[type="checkbox"]{
     font-weight: bold;
 }
 
-.add-to-cart {
+.btn-mise-accent {
     line-height: 1;
-    border: 2px solid var(--highlight);
+    border: 2px solid var(--accent);
     cursor: pointer;
-    background-color: transparent;
-    color:var(--highlight);
+    background-color: var(--accent);
+    color: white;
     font-weight: bold;
     font-size:1rem;
-    border-radius: 100vw;
     padding: .75rem 1.25rem;
     &:hover {
-        background-color: var(--highlight);
-        color:white;
+        background-color: transparent;
+        color: var(--accent) !important;
     }
 }
 
