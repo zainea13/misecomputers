@@ -13,8 +13,6 @@ import stripe
 from gluon.contrib.stripe import Stripe
 
 
-stripe.api_key = "sk_test_51Rh10IH0alBtp0wTEWsNTXDX4fiwVXIkf5ut6EvVo3rAHsuybekKd0nYO0TWqp2YKotUdADjpKlOgZq7Jnydddv000lVYuviwB"
-
 
 # Menu Stuff
 response.menu = [
