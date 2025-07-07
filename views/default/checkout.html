@@ -144,7 +144,7 @@
             
         </div>
         
-        <!-- Right Side Bar -->
+        <!-- Right Side Bar RECEIPT -->
         <div class="col-5">
             <div class="bg-light p-3 rounded">
                 <h5>Items</h5>
@@ -167,7 +167,7 @@
                                 <tr>
                                     <td><strong>{{=product['product_name']}}</strong></td>
                                     <td class="text-center">{{=item['quantity']}}</td>
-                                    <td class="text-right">${{=f"{(product['price'] * item['quantity']):.2f}"}}</td>
+                                    <td class="text-right">${{=f"{(product['price'] * item['quantity']):,.2f}"}}</td>
                                 </tr>
                             {{pass}}
                         </tbody>
@@ -182,7 +182,7 @@
                         Subtotal:
                     </div>
                     <div class="col-auto text-right">
-                        ${{=subtotal}}
+                        ${{=f"{subtotal:,.2f}"}}
                     </div>
                 </div>
                 <div class="row mx-0">
@@ -190,7 +190,7 @@
                         Tax:
                     </div>
                     <div class="col-auto text-right">
-                        ${{=f"{tax_amt:.2f}"}}
+                        ${{=f"{tax_amt:,.2f}"}}
                     </div>
                 </div>
                 <div class="row mx-0 font-weight-bold">
@@ -198,14 +198,17 @@
                         Total:
                     </div>
                     <div class="col-auto text-right">
-                        ${{=f"{total:.2f}"}}
+                        ${{=f"{total:,.2f}"}}
                     </div>
                 </div>
 
                 <hr>
 
                 <!-- PLACE ORDER BUTTON -->
-                <button id="place-order" class="btn btn-mise-accent">Place Order</button>
+                <div class="d-flex justify-content-end">
+                    <button id="place-order" class="btn btn-mise-accent w-100">Place Order</button>
+                </div>
+                
 
             </div>
         <!-- END SIDE BAR -->
