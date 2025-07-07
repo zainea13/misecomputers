@@ -1,73 +1,58 @@
-{{extend 'layout.html'}}CHECK_VERSION
+{{extend 'layout.html'}}
 
-{{block header}}
-<div class="jumbotron jumbotron-fluid background" style="background-color: #333; color:white; padding:30px;word-wrap:break-word;">
-  <div class="container center">
-    <h1 class="display-5">/{{=request.application}}/{{=request.controller}}/{{=request.function}}</h1>
-  </div>
-</div>
-{{end}}
-
+<!--First Row-->
 <div class="row">
-  <div class="col-md-12">
-    {{if 'message' in globals():}}
-    <h2>MISE Computers</h2>
-    <p class="lead">Welcome to MISE Computers</p>
-    <h4>Simulated Customer Flow</h4>
-      <p style="margin:1rem 0; font-weight: bold;">New dynamically generated category pages</p>
-      <nav class="navbar navbar-light navbar-expand-md bg-faded bg-dark navbar-dark justify-content-center">
-        <ul class="navbar-nav w-100 justify-content-center">
-          {{
-            for category in categories:
-              cat_id = category['id']
-              cat_name = category['category_name']
-              cat_link = cat_name.replace(" ", "-")
-          }}
-            <li class="nav-item"><a class="nav-link" style="border:1px solid red" href="{{=URL('category_page', args=(str(cat_id) + '--' + cat_link))}}" data-product-id={{=cat_id}}>{{=cat_name}}</a></li>
-          {{pass}}
-        </ul>
-      </nav>
+	<div class="col-sm-4 h-100">
+		<h3>Welcome...</h3>
+		<p>...to M.I.S.E. Computers, your go-to destination for top-quality desktops, laptops and accessories at
+			affordable prices. Let us guide you in finding the perfect tech companion for all your needs.</p>
+	</div>
 
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
 
-    <br>
-    <br>
-    <br>
-    <br>
-    <h2>Extra stuff</h2>
-    <a href="{{=URL('laptop_test.html')}}">Old Laptops page</a>
-    <a href="{{=URL('customers')}}">{{=T('Customers Table')}}</a><br>
-    <a href="{{=URL('orders')}}">{{=T('Orders Table')}}</a><br>
-    <a href="{{=URL('order_line_items')}}">{{=T('Order Line Items Table')}}</a><br>
-      <a href="{{=URL('line_item_attributes')}}">{{=T('Line Item Attributes Table')}}</a><br>
-      <a href="{{=URL('payment_type')}}">{{=T('Payment Type Table')}}</a><br>
-      <a href="{{=URL('payment_info')}}">{{=T('Payment Info Table')}}</a><br>
-      <a href="{{=URL('shopping_cart')}}">{{=T('Shopping Cart Table')}}</a><br>
-      <a href="{{=URL('shopping_cart_attribute')}}">{{=T('Shopping Cart Attribute Table')}}</a><br>
-      
-    <div class="jumbotron jumbotron-fluid" style="padding:30px;word-wrap:break-word;">
-      <div class="container center">
-        <a class="btn btn-primary" href="{{=URL('admin','default','index')}}">
-          <i class="fa fa-cog"></i>
-          {{=T("admin")}}
-        </a>
-        <a class="btn btn-secondary" href="{{=URL('examples','default','index')}}">{{=T("Online examples")}}</a>
-        <a class="btn btn-secondary" href="http://web2py.com">web2py.com</a>
-        <a class="btn btn-secondary" href="http://web2py.com/book">{{=T('Documentation')}}</a>
-        <a class="btn btn-secondary" href="{{=URL('default','api_get_user_email')}}">{{=T('API Example')}}</a>
-        <a class="btn btn-secondary" href="{{=URL('default','grid/auth_user')}}">{{=T('Grid Example')}}</a>
-        <a class="btn btn-secondary" href="{{=URL('default','wiki')}}">{{=T('Wiki Example')}}</a>
-      </div>
-    </div>
-    {{elif 'content' in globals():}}
-    {{=content}}
-    {{else:}}
-    {{=BEAUTIFY(response._vars)}}
-    {{pass}}
-  </div>
+	<div class="col-sm-6 h-100">
+		<h3>Featured Products</h3>
+
+		<span style="align-items:center;">
+			<div id="carouselExampleSlidesOnly" class="carousel slide" data-ride="carousel">
+				<div class="carousel-inner">
+					<div class="carousel-item active w-50">
+						<img src="/misecomputers/static/images/test_products/Desktop_test_2_trans.png"
+							alt="Desktop Test - 2" class="d-block w-100">
+					</div>
+					<div class="carousel-item w-50">
+						<img src="/misecomputers/static/images/test_products/laptop_test_2_trans.png"
+							alt="Laptop Test - 1" class="d-block w-100">
+					</div>
+				</div>
+			</div>
+		</span>
+	</div>
+
+	<br />
+
+	<!--Second Row-->
+	<div class="top-brands w-100 p-4">
+		<div class="row ">
+			<div class="col">
+				<h3>Top Brands</h3>
+			</div>
+			<div class="col">
+				<img class="w-50" src="/misecomputers/static/images/HomePage/applelogotrans.png" alt="Apple Logo">
+			</div>
+			<div class="col">
+				<img class="w-50" src="/misecomputers/static/images/HomePage/delllogotrans.png" alt="Dell Logo">
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col">
+			</div>
+			<div class="col">
+				<img style="float:right;" class="w-50" src="/misecomputers/static/images/HomePage/acerlogotrans.png" alt="Acer Logo">
+			</div>
+			<div class="col">
+				<img style="float:right;" class="w-10" src="/misecomputers/static/images/HomePage/hplogotrans.png" alt="HP Logo">
+			</div>
+		</div>
+	</div>
 </div>
