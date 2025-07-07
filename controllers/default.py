@@ -60,7 +60,6 @@ def search():
         keyword = form.vars.keyword
         if keyword:
             results = db((db.products.product_name.contains(keyword))).select()
-                        
 
     return dict(form=form, results=results)
 

@@ -1,18 +1,16 @@
 {{extend 'layoutmise.html'}}
 
-<h3>Search Results</h3>
-{{=form}}
+<h2>Search Products</h2>
 
-{{if results:}}
-    <h3>Search Results</h3>
-    <ul>
-    {{for product in results:}}
-        <li><strong>{{=products.product_name}}</strong><br/>
-            {{=products.description}}<br/>
-            <em>Category: {{=products.category_id}}</em>
-        </li>
-    {{pass}}
-    </ul>
-{{elif request.vars.keyword:}}
-    <p>No results found for '{{=request.vars.keyword}}'.</p>
-{{pass}}
+def search():
+    form = FORM(INPUT(_name='keyword', _type='text', _placeholder='Search...'),
+                INPUT(_type='submit', _value='Search'))
+
+
+results = []
+    if form.process().accepted:
+        keyword = form.vars.keyword
+        if keyword:
+            results = db((db.products.product_name.contains(keyword))).select()
+
+    return dict(form=form, results=results)

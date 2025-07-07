@@ -79,15 +79,18 @@
 					</li>
 				</ul>
 
-				<!-- SEARCH BAR -->
-				<form class="form-inline flex-fill">
+				<!-- SEARCH BAR --> 
+                <form class="flex-fill" action="{{=URL('default', 'search')}}" method="get">
 					<div class="input-group w-100">
-						<input class="form-control border-0" type="search" placeholder="What would you like to search for today?" aria-label="Search">
+						<input class="form-control border-0" type="text" placeholder="What would you like to search for today?">
 						<div class="input-group-append">
 							<button class="fa fa-search text-primary" aria-hidden="true" type="submit"></button>
 						</div>
 					</div>
 				</form>
+                
+                
+                
 
 				<!-- BEGIN LOGIN MENU ITEM AND DROPDOWN -->
 				<ul class="nav navbar-nav align-items-center">
