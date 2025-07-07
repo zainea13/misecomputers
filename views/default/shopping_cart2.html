@@ -1,79 +1,114 @@
-{{extend 'layoutmise.html'}}
+{{extend 'layout.html'}}
 
-
-<div class="container">
-    <div class="row">
-        <h2 class="mb-4" style="color:orange;">Shopping Cart</h2>
-    </div>
-    <div class="row">
-    <div class="col-8">
-        <div class="row product-row">
-            {{
-            if not cart_items:
-            }}
-            <p>Your shopping cart is empty.</p>
-            {{
-            else:
-                for item in cart_items:
-                    product_id= item['product_id']
-                    product = db(db.products.id == product_id).select().as_list()[0]
-                    image = db((db.product_images.product_id == product_id) & (db.product_images.main_image == True)).select().as_list()[0]
-            }}
-            <div class="col product">
-                {{=IMG(_src=URL('static/images/test_products', image['image_filename']), _width='100px')}}
-                <h4>{{=product['product_name']}}</h4>
-                <h5>${{=f"{product['price']:.2f}"}}</h5>
-                <form method="post" action="#">
-                    <input type="hidden" name="product_id" value="{{=product_id}}">
-                    <input class="quantityAmt" name="quantityAmt" type="number" value="{{=item['quantity']}}" min="0" data-start-value="{{=item['quantity']}}" data-product-id="{{=product_id}}">
-                    <button type="submit" class="quantityBtn invisible" data-product-id="{{=product_id}}">update quantity</button>
-                    <button type="submit" class="remove-item" data-product-id="{{=product_id}}">Remove from Cart</button>
-                </form>
-            </div>
-
-                {{pass}}
-            {{pass}}
-        </div>
-    </div>
-
-    <div class="col-4">
-        <h4>Summary</h4>
-        <p>Total Items: {{=total_items}}</p>     
-        <p>Subtotal: {{=subtotal}}</p>
-        <p>Tax: </p>
-        <p>Total Price: </p>
-        <a class="btn btn-info text-white" href="{{=URL('checkout')}}">Check out</a>
-    </div>
-
-    </div>
+<div class="row">
+	<h2 class="mb-4 text-accent">Shopping Cart</h2>
 </div>
+<div class="row">
+	<div class="col-8 pr-5">
+		<div class="row product-row flex-gap-2">
+			{{
+			if not cart_items:
+			}}
+			<p>Your shopping cart is empty.</p>
+			{{
+			else:
+			for item in cart_items:
+			product_id= item['product_id']
+			product = db(db.products.id == product_id).select().as_list()[0]
+			image = db((db.product_images.product_id == product_id) & (db.product_images.main_image ==
+			True)).select().as_list()[0]
+			}}
+			<div class="col product">
+				{{=IMG(_src=URL('static/images/test_products', image['image_filename']), _width='100px')}}
+				<h4>{{=product['product_name']}}</h4>
+				<h5>${{=f"{product['price']:.2f}"}}</h5>
+				<form method="post" action="#" class="mt-auto">
+					<input type="hidden" name="product_id" value="{{=product_id}}">
+					<div class="d-flex align-items-center justify-content-between w-100 flex-gap-1">
+						<div class="d-flex align-items">
+							<label for="quantity" class="mr-2 mb-0"><span class="align-middle">QTY.</span></label>
+							<input id="quantity" class="quantityAmt" name="quantityAmt" type="number" value="{{=item['quantity']}}" min="0" data-start-value="{{=item['quantity']}}" data-product-id="{{=product_id}}" size="1">
+						</div>
+						<button type="submit" class="quantityBtn d-none btn-primary"	data-product-id="{{=product_id}}">Update Qty.</button>
+						<button type="submit" class="remove-item btn-primary" data-product-id="{{=product_id}}">
+							Remove 
+							<i class="fa fa-trash ml-1" aria-hidden="true"></i>
+						</button>
+					</div>
+				</form>
+			</div>
 
+			{{pass}}
+			{{pass}}
+		</div>
+	</div>
 
-{{=BEAUTIFY(response._vars)}}
+	<div class="col-4 bg-light py-3 rounded" style="height:fit-content">
+		<h5>Summary</h5>
+		<hr>
+		<!-- RECEIPT TOTALS -->
+		<div class="row mx-0">
+			<div class="col">
+				Total Items:
+			</div>
+			<div class="col-auto text-right">
+				{{=total_items}}
+			</div>
+		</div>
+		<div class="row mx-0">
+			<div class="col">
+				Subtotal:
+			</div>
+			<div class="col-auto text-right">
+				${{=subtotal}}
+			</div>
+		</div>
+		<div class="row mx-0">
+			<div class="col">
+				Tax:
+			</div>
+			<div class="col-auto text-right">
+				${{=f"{tax_amt:.2f}"}}
+			</div>
+		</div>
+		<div class="row mx-0 font-weight-bold">
+			<div class="col text-uppercase">
+				Total:
+			</div>
+			<div class="col-auto text-right">
+				${{=f"{total:.2f}"}}
+			</div>
+		</div>
+
+		<hr>
+		<a class="btn btn-mise-accent text-white w-100" href="{{=URL('checkout')}}">Check out</a>
+	</div>
+
+</div>
 
 {{block page_js}}
 <script>
-    "use strict"
-    const quantityAmts = document.querySelectorAll('.quantityAmt');
-    const removeItem = document.querySelectorAll('.remove-item')
+	"use strict"
+	const quantityAmts = document.querySelectorAll('.quantityAmt');
+	const removeItem = document.querySelectorAll('.remove-item')
 
-    function quantityChange() {
-        const productId = this.dataset.productId
-        const quantityBtn = document.querySelector(`.quantityBtn[data-product-id='${productId}']`)
-        if (this.value != this.dataset.startValue) {
-            quantityBtn.classList.remove("invisible");
-        } else {
-            quantityBtn.classList.add("invisible");
-        }
-    }
+	function quantityChange() {
+		const productId = this.dataset.productId
+		const quantityBtn = document.querySelector(`.quantityBtn[data-product-id='${productId}']`)
+		if (this.value != this.dataset.startValue) {
+			quantityBtn.classList.remove("d-none");
+		} else {
+			quantityBtn.classList.add("d-none");
+		}
+	}
 
-    function removeCartItem() {
-        const productId = this.dataset.productId
-        let quantity = document.querySelector(`.quantityAmt[data-product-id='${productId}']`)
-        quantity.value = 0
-    }
+	function removeCartItem() {
+		const productId = this.dataset.productId
+		let quantity = document.querySelector(`.quantityAmt[data-product-id='${productId}']`)
+		quantity.value = 0
+	}
 
-    quantityAmts.forEach(input => input.addEventListener("change", quantityChange))
-    removeItem.forEach(button => button.addEventListener("click", removeCartItem))
+	quantityAmts.forEach(input => input.addEventListener("change", quantityChange))
+	removeItem.forEach(button => button.addEventListener("click", removeCartItem))
 </script>
 {{end page_js}}

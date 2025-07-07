@@ -6,6 +6,8 @@
     --secondary: hsl(203, 81%, 83%);
     --accent: hsl(39, 100%, 50%);
 
+    --medium-gray: hsl(208, 7%, 92%);
+
     --highlight:hsl(202, 65%, 58%);
     --peach: hsl(25, 100%, 80%);
 }
@@ -27,20 +29,33 @@ a {
     background-color: var(--accent);
 }
 
+.border-primary {
+    border-color: var(--primary);
+}
+
 .btn {
     border-radius: 100vw;
 }
-
-
 
 .btn-primary {
     background-color: var(--primary);
     border-color: var(--primary);
 }
 
+.btn-primary:hover {
+        background-color: var(--highlight) !important;
+        border-color: var(--highlight) !important;
+}
+
+
 .btn-secondary {
     background-color: var(--secondary);
     border-color: var(--secondary);
+}
+
+.btn-medium {
+    background-color: var(--medium-gray);
+    border-color: var(--medium-gray);
 }
 
 .btn-accent {
@@ -78,23 +93,53 @@ input[type="checkbox"]{
     margin-bottom:250px;
 }
 
+
+/* CUSTOM UTILITY CLASSES ------------------------- */
+
 .font-small  {
     font-size: .75rem;
+    line-height: 1rem;
 }
 
+.pill-left {
+    border-radius: 100vw 0 0 100vw;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.flex-gap-1 {
+    gap: .5rem;
+}
+
+.flex-gap-2 {
+    gap: 1rem;
+}
+
+.flex-gap-3 {
+    gap: 1.5rem;
+}
+
+.flex-gap-4 {
+    gap: 2rem;
+}
 
 /*------------------------------------------------------------*/
 /* Nav Bar classes */
 
 
+/*------------------------------------------------------------*/
+/* Home Page */
 
+.top-brands {
+    border:2px solid black; 
+    border-radius:20px; 
+    background-color:#FFCFA3
+}
 
 
 /* Adjusting product items */
-
-.product-row {
-    gap: 1rem;
-}
 
 .product {
     display:flex;
@@ -102,7 +147,7 @@ input[type="checkbox"]{
     /* background-color: var(--product-color); */
     border-radius: 0.5rem;
     overflow: hidden;
-    flex: 1 1 360px;
+    flex: 1 1 330px;
     padding:1rem;
     border: 1px solid var(--peach);
 }

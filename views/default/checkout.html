@@ -1,27 +1,23 @@
-{{extend 'layoutmise.html'}}
+{{extend 'layout.html'}}
 
-{{=shipping_form}}
-{{=repr(shipping_form.custom.label.s_first_name)}}
-
-
-<div class="container">
     <h2 class="text-accent mb-2" style="margin-left: -15px;">Check Out</h2>
     <div class="row">
         <div class="col-7 pt-3">
+            <!-- SHIPPING INFO FORM -->
             <div class="row mb-5">
                 <h5 class="w-100 pb-3 border-bottom mb-4">Shipping Information</h5>
 
-                <form name="shipping-info" enctype="multipart/form-data" id="shipping-info" class="order-forms w-100 px-3">
+                {{=shipping_form.custom.begin}}
                     
                     <div class="row form-group">
                         <div class="col-6">
-                            {{=shipping_form.custom.label.s_first_name}}
-                            {{=shipping_form.custom.widget.s_first_name}}
+                            <label for="{{=shipping_form.custom.widget.first_name['_id']}}" class="form-control-label">{{=shipping_form.custom.label.first_name}}</label>
+                            {{=shipping_form.custom.widget.first_name}}
                         </div>
                         <div class="col-6 pl-0">
                             <div class="label-group">
-                                <label for="s_last_name" class="form-control-label">Last Name</label>
-                                <input type="text" class="form-control string" id="s_last_name" name="s_last_name" value="{{=user_info.last_name}}">
+                                <label for="{{=shipping_form.custom.widget.last_name['_id']}}" class="form-control-label">{{=shipping_form.custom.label.last_name}}</label>
+                                {{=shipping_form.custom.widget.last_name}}
                             </div>
                         </div>
                     </div>
@@ -29,70 +25,67 @@
                     <div class="row">
                         <div class="col-12 form-group">
                             <div class="label-group">
-                                <label for="s_street_1" class="form-control-label">Address Line 1</label>
-                                <input type="text" class="form-control string" id="s_street_1" name="s_street_1" value="{{=customer_info.street_1}}">
+                                <label for="{{=shipping_form.custom.widget.street_1['_id']}}" class="form-control-label">{{=shipping_form.custom.label.street_1}}</label>
+                                {{=shipping_form.custom.widget.street_1}}
                             </div>
                         </div>
                         <div class="col-12 form-group">
                             <div class="label-group">
-                                <label for="s_street_2" class="form-control-label">Address Line 2</label>
-                                <input type="text" class="form-control string" id="s_street_2" name="s_street_2" value="{{=customer_info.street_2}}">
+                                <label for="{{=shipping_form.custom.widget.street_2['_id']}}" class="form-control-label">{{=shipping_form.custom.label.street_2}}</label>
+                                {{=shipping_form.custom.widget.street_2}}
                             </div>
                         </div>
                     </div>
 
                     <div class="row form-group">
-                        <div class="col-4">
+                        <div class="col-5">
                             <div class="label-group">
-                                <label for="s_city" class="form-control-label">City</label>
-                                <input type="text" class="form-control string" id="s_city" name="s_city" value="{{=customer_info.city}}">
+                                <label for="{{=shipping_form.custom.widget.city['_id']}}" class="form-control-label">{{=shipping_form.custom.label.city}}</label>
+                                {{=shipping_form.custom.widget.city}}
                             </div>
                         </div>
 
                         <div class="col-4 pl-0">
                             <div class="label-group">
-                                <label for="s_state" class="form-control-label w-100">State</label>
-                                <select name="s_state" id="s_state" class="form-control">
-                                    <option value="0">Choose a state...</option>
-                                    {{
-                                        states = db(db.states).select()
-                                        for state in states:                        
-                                    }}
-                                        <option value="{{=state['id']}}" {{if customer_info.state_code == state['id']:}} selected {{pass}}>{{=state['state_name']}}</option>
-                                    {{pass}}
-                                </select>
+                                <label for="{{=shipping_form.custom.widget.state['_id']}}" class="form-control-label">{{=shipping_form.custom.label.state}}</label>
+                                {{=shipping_form.custom.widget.state}}
                             </div>
                         </div>
 
-                        <div class="col-4 pl-0">
+                        <div class="col-3 pl-0">
                             <div class="label-group">
-                                <label for="s_zip" class="form-control-label">Zip Code</label>
-                                <input type="text" class="form-control string" id="s_zip" name="s_zip" value="{{=customer_info.zip}}">
+                                <label for="{{=shipping_form.custom.widget.zip['_id']}}" class="form-control-label">{{=shipping_form.custom.label.zip}}</label>
+                                {{=shipping_form.custom.widget.zip}}
                             </div>
                         </div>
-                        
                     </div>
-                    <input type="hidden" name="user_id" value="{{=auth.user.id}}">
-                </form>
+                    <div class="row form-group">
+                        <div class="col-12">
+                            <div class="label-group">
+                                <label for="{{=shipping_form.custom.widget.email['_id']}}" class="form-control-label">{{=shipping_form.custom.label.email}}</label>
+                                {{=shipping_form.custom.widget.email}}
+                            </div>
+                        </div>
+                    </div>
+                    {{=shipping_form.custom.widget.user_id}}                    
+                {{=shipping_form.custom.end}}  
+            <!-- END SHIPPING-->
             </div>
-            
 
             <!-- BILLING INFO FORM -->
             <div class="row mb-5">
                 <h5 class="w-100 pb-3 border-bottom mb-4">Billing Information</h5>
-                
-                <form name="billing-info" enctype="multipart/form-data" id="billing-info" class="order-forms collapse w-100 px-3">
+
+                {{=billing_form.custom.begin}}
                     <div class="row form-group">
                         <div class="col-6">
-                            <div class="label-group">
-                                <label for="b_first_name" class="form-control-label">First Name</label>
-                                <input type="text" class="form-control string" id="b_first_name" name="b_first_name" value="">
-                            </div>
+                            <label for="{{=billing_form.custom.widget.first_name['_id']}}" class="form-control-label">{{=billing_form.custom.label.first_name}}</label>
+                            {{=billing_form.custom.widget.first_name}}
                         </div>
                         <div class="col-6 pl-0">
                             <div class="label-group">
-                                <label for="b_last_name" class="form-control-label">Last Name</label>
-                                <input type="text" class="form-control string" id="b_last_name" name="b_last_name" value="">
+                                <label for="{{=billing_form.custom.widget.last_name['_id']}}" class="form-control-label">{{=billing_form.custom.label.last_name}}</label>
+                                {{=billing_form.custom.widget.last_name}}
                             </div>
                         </div>
                     </div>
@@ -100,121 +93,62 @@
                     <div class="row">
                         <div class="col-12 form-group">
                             <div class="label-group">
-                                <label for="b_street_1" class="form-control-label">Address Line 1</label>
-                                <input type="text" class="form-control string" id="b_street_1" name="b_street_1" value="">
+                                <label for="{{=billing_form.custom.widget.street_1['_id']}}" class="form-control-label">{{=billing_form.custom.label.street_1}}</label>
+                                {{=billing_form.custom.widget.street_1}}
                             </div>
                         </div>
                         <div class="col-12 form-group">
                             <div class="label-group">
-                                <label for="b_street_2" class="form-control-label">Address Line 2</label>
-                                <input type="text" class="form-control string" id="b_street_2" name="b_street_2" value="">
+                                <label for="{{=billing_form.custom.widget.street_2['_id']}}" class="form-control-label">{{=billing_form.custom.label.street_2}}</label>
+                                {{=billing_form.custom.widget.street_2}}
                             </div>
                         </div>
                     </div>
 
                     <div class="row form-group">
-                        <div class="col-4">
+                        <div class="col-5">
                             <div class="label-group">
-                                <label for="b_city" class="form-control-label">City</label>
-                                <input type="text" class="form-control string" id="b_city" name="b_city" value="">
+                                <label for="{{=billing_form.custom.widget.city['_id']}}" class="form-control-label">{{=billing_form.custom.label.city}}</label>
+                                {{=billing_form.custom.widget.city}}
                             </div>
                         </div>
 
                         <div class="col-4 pl-0">
                             <div class="label-group">
-                                <label for="b_state" class="form-control-label w-100">State</label>
-                                <select name="b_state" id="b_state" class="form-control">
-                                    <option value="0">Choose a state...</option>
-                                    {{
-                                        states = db(db.states).select()
-                                        for state in states:                        
-                                    }}
-                                        <option value="{{=state['id']}}">{{=state['state_name']}}</option>
-                                    {{pass}}
-                                </select>
+                                <label for="{{=billing_form.custom.widget.state['_id']}}" class="form-control-label">{{=billing_form.custom.label.state}}</label>
+                                {{=billing_form.custom.widget.state}}
                             </div>
                         </div>
 
-                        <div class="col-4 pl-0">
+                        <div class="col-3 pl-0">
                             <div class="label-group">
-                                <label for="b_zip" class="form-control-label">Zip Code</label>
-                                <input type="text" class="form-control string" id="b_zip" name="b_zip" value="{{=customer_info.zip}}">
+                                <label for="{{=billing_form.custom.widget.zip['_id']}}" class="form-control-label">{{=billing_form.custom.label.zip}}</label>
+                                {{=billing_form.custom.widget.zip}}
                             </div>
                         </div>
-                        
-                    </div>
-                </form>
-
+                    </div>                  
+                {{=billing_form.custom.end}}  
+                
                 <!-- Checkbox for duplicating shipping info -->
-                <div class="col-12 p-0">
-                    <input type="checkbox" id="use-shipping" class="mr-2" checked data-toggle="collapse" data-target="#billing-info" aria-expanded="false" aria-controls="billing-info">
-                    <label for="use-shipping">Same as shipping info</label>
+                <div class="col-12 p-2 btn btn-primary" onclick="this.querySelector('#use-shipping').click()">
+                    <input type="checkbox" id="use-shipping" class="mr-1" style="pointer-events:none" data-toggle="collapse" data-target="#billing-info" aria-expanded="{{if auth.user:}}false{{else:}}true{{pass}}" aria-controls="billing-info" {{if auth.user:}}checked{{pass}}>
+                    <label for="use-shipping" class="m-0 cursor-pointer">Same as shipping address</label>
                 </div>
+            <!-- END BILLING -->
             </div>
-
-            <!-- Credit Card Info -->
-            <div class="row">
-                <h5 class="w-100 pb-3 border-bottom mb-4">Payment Information</h5>
-
-                <form name="credit-info" enctype="multipart/form-data" id="credit-info" class="order-forms w-100 px-3">
-                    <div class="row">
-                        <div class="col-12 form-group">
-                            <div class="label-group">
-                                <label for="credit-card-name" class="form-control-label">Name on Card</label>
-                                <input type="text" id="credit-card-name" class="form-control string" name="credit-card-name" placeholder="Full Name">
-                            </div>
-                        </div>
-
-                        <div class="col-12 form-group">
-                            <div class="label-group">
-                                <label for="credit-card" class="form-control-label">Card Number</label>
-                                <input type="text" id="credit-card" class="form-control string" name="credit-card" placeholder="XXXX XXXX XXXX XXXX">
-                            </div>
-                        </div>
-
-                        <div class="col-4">
-                            <div class="label-group">
-                                <label for="cc-month" class="form-control-label">Expiration Month</label>
-                                <select name="cc-month" id="cc-month" class="form-control">
-                                    <option value="0">Choose month...</option>
-                                    {{
-                                        for i in range(12):
-                                    }}
-                                        <option value="{{=(i+1)}}">{{=(i+1)}}</option>
-                                    {{pass}}
-                                </select>
-                            </div>
-                            
-                        </div>
-                        <div class="col-4">
-                            <label for="cc-year" class="form-control-label">Expiration Year</label>
-                            <select name="cc-year" id="cc-year" class="form-control">
-                                <option value="0">Choose year...</option>
-                                {{
-                                    for year in next_ten_years:
-                                }}
-                                    <option value="{{=year}}">{{=year}}</option>
-                                {{pass}}
-                            </select>
-                        </div>
-                        <div class="col-4">
-                            <label for="cvv" class="form-control-label">CVV</label>
-                            <input type="text" name="cvv" id="cvv" placeholder="XXX" class="form-control string">
-                        </div>
-                    </div>
-                    
-                    
-
-                    
-                    
-                </form>
+            
+            <!-- CREDIT CARD FORM -->
+            <div class="row mb-5">
+                
             </div>
+            
         </div>
-
+        
         <!-- Right Side Bar -->
         <div class="col-5">
-            <div class="bg-light p-3">
+            <div class="bg-light p-3 rounded">
                 <h5>Items</h5>
+                <!-- LIST ITEMS IN CART -->
                 <div>
                     <hr>
                     <table class="checkout-table">
@@ -239,7 +173,10 @@
                         </tbody>
                     </table>
                 </div>
+                
                 <hr>
+                
+                <!-- RECEIPT TOTALS -->
                 <div class="row mx-0">
                     <div class="col">
                         Subtotal:
@@ -264,63 +201,20 @@
                         ${{=f"{total:.2f}"}}
                     </div>
                 </div>
+
                 <hr>
-                <form>
-                    <button id="place-order" class="btn btn-mise-accent">Place Order</button>
-                </form>
+
+                <!-- PLACE ORDER BUTTON -->
+                <button id="place-order" class="btn btn-mise-accent">Place Order</button>
 
             </div>
+        <!-- END SIDE BAR -->
         </div>
+    <!-- END MAIN ROW  -->
     </div>
-</div>
 
-
-
-
-{{=BEAUTIFY(response._vars)}}
 
 {{block page_js}}
-<script>
+<script src={{=URL('static','js/mise_checkout.js')}}></script>
 
-const useShipping = document.querySelector('#use-shipping');
-const shippingForm = document.querySelector('#shipping-info');
-const billingForm = document.querySelector('#billing-info');
-const creditForm = document.querySelector('#credit-info');
-
-function useShippingFunc() {
-    if (useShipping.checked == true) {
-        console.log("hello")
-        const shippingArray = Array.from(shippingForm);
-        const billingArray = Array.from(billingForm);
-        let counter = 0;
-        billingArray.forEach(input => {
-            input.value = shippingArray[counter].value;
-            counter++;
-        })
-    }
-}
-
-document.addEventListener("DOMContentLoaded", function() {
-    useShippingFunc();
-});
-useShipping.addEventListener('change', useShippingFunc);
-
-jQuery('#place-order').click(function() {
-    let valuesToSend = ""
-    jQuery(".order-forms").each(function() {
-        valuesToSend += $(this).serialize() + "&";
-        
-    });
-    jQuery.ajax({
-        url: '{{=URL("checkout")}}',
-        data: valuesToSend
-    });
-    return false;
-});
-
-
-
-
-
-</script>
 {{end page_js}}

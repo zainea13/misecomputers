@@ -50,7 +50,6 @@ db.define_table('products',
                 Field('description', 'text'),
                 Field('brand_id', 'reference brand'),
                 format='%(product_name)s',
-        
                 )
 
 
@@ -80,33 +79,44 @@ db.define_table('product_attribute',
 # ---------- ORDERS TABLES -------------------------
 
 db.define_table('orders',
-                Field('order_number', 'integer', length=10, notnull=True, unique=True, required=True),
-                Field('user_id', 'reference auth_user', default='auth.user_id'),
-                Field('order_date'),
-                Field('ship_date'),
+                Field('order_number', 'integer', notnull=True, unique=True),
+                Field('user_id', 'reference auth_user'),
+                Field('session_id'),
+                Field('total_items', 'integer'),
                 Field('subtotal', 'decimal(7,2)'),
                 Field('tax', 'decimal(7,2)'),
-                Field('shipping_cost', 'decimal(7,2)'),
+                # Field('shipping_cost', 'decimal(7,2)'),
                 Field('total_cost', 'decimal(7,2)'),
-                Field('status'),
-                Field('tracking_number'),
-            
+                Field('order_date', 'datetime', default=request.now),
+                # Field('ship_date'),
+                # Field('status'),
+                # Field('tracking_number'),
                 )
 
 
 db.define_table('order_line_items',
-                Field('order_number', 'reference orders', default='orders.order_number'),
-                Field('product_id', 'reference products', default='products.id'),
-                Field('price', 'reference products', default='products.price'),
+                Field('order_id', 'reference orders'),
+                Field('order_number', 'integer'),
+                Field('product_id'),
+                Field('price'),
                 Field('quantity_of_item', 'integer'),
-      
+                )
+
+
+db.define_table('shipping_address',
+                Field('street_1', notnull=True),
+                Field('street_2'),
+                Field('city'),
+                Field('zip'),
+                Field('state_code', 'reference states', label="State"),
+                Field('email'),
+                Field('order_id', 'reference orders'),
                 )
 
 
 db.define_table('line_item_attributes',
                 Field('line_item_id', 'reference order_line_items', default='order_line_items.id'),
                 Field('attribute_id', 'reference attribute_description', default='attribute.id'),
-     
                 )
 
 # # -------------- PAYMENTS TABLES ------------------------
@@ -121,7 +131,16 @@ db.define_table('payment_info',
                 Field('order_number', 'reference orders', default='orders.order_number'),
                 Field('payment_type_id', 'reference payment_type', default='payment_type.id'),
                 Field('credit_card_last_four', 'integer', length=4),
-             
+                )
+
+
+db.define_table('billing_address',
+                Field('street_1', notnull=True),
+                Field('street_2'),
+                Field('city'),
+                Field('zip'),
+                Field('state_code', 'reference states', label="State"),
+                Field('order_id', 'reference orders'),
                 )
 
 # ----------------- SHOPPING CART TABLES ----------------------------
