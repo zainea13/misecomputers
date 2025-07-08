@@ -365,6 +365,7 @@ def shopping_cart2():
         quantity = request.post_vars['quantityAmt']
         product_id = request.post_vars['product_id']
         product = None
+        
 
         # Check if a user is logged in, use user_id or session_id
         if auth.user:
@@ -401,6 +402,7 @@ def shopping_cart2():
         product = db(db.products.id == product_id).select().first()
         subtotal += (float(product['price']) * int(item['quantity']))
         total_items += int(item['quantity'])
+        
 
     config = db(db.config).select().first()
     tax = float(config['tax'])
