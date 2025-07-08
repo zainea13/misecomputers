@@ -24,7 +24,7 @@
             </fieldset>
             </li>
             <li><input id="apply-btn" class="btn btn-sm btn-secondary w-100px " type="submit" value="Apply"></li>
-            <li><input id="clear-btn" class="bg-transparent text-muted btn-sm td-ul f-8rem ml-1 pt-2" type="submit" value="clear all"></li>
+            <li><input id="clear-btn" class="bg-transparent text-muted btn-sm td-ul f-8rem ml-1 pt-2" type="submit" value="clear all" style="text-decoration: underline; font-style: italic;"></li>
         </ul>
         <ul class=" w-25 d-flex justify-content-end list-unstyled h-100 ml-auto">
             <li class="dropdown w-75 d-flex justify-content-end">
@@ -87,6 +87,7 @@
         img_src = row['image_filename']
         img_alt = row['image_alt']
         cat_name = (db(db.categories.id == cat_id_fix).select().first()).category_name.lower()
+        cat_name = cat_name.replace("&","").replace(" ","_")
         brand = (db(db.brand.id == row['brand_id']).select().first()).brand_name.lower()
     }}
     
