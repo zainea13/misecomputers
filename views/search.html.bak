@@ -1,18 +1,1 @@
-{{extend 'layout.html'}}
-
-<h3>Search Results</h3>
-<!--{{=form}}-->
-
-{{if results:}}
-    <h3>Search Results</h3>
-    <ul>
-    {{for product in results:}}
-        <li><strong>{{=products.product_name}}</strong><br/>
-            {{=products.description}}<br/>
-            <em>Category: {{=products.category_id}}</em>
-        </li>
-    {{pass}}
-    </ul>
-{{elif request.vars.keyword:}}
-    <p>No results found for '{{=request.vars.keyword}}'.</p>
-{{pass}}
+{{extend 'layoutmise.html'}}
