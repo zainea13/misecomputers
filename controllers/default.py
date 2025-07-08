@@ -13,6 +13,7 @@ from gluon.contrib.stripe import Stripe
 
 
 
+
 # Menu Stuff
 response.menu = [
     (T('Home'), False, URL('default', 'index'), [])
@@ -69,13 +70,64 @@ def search():
 
 
 # ---- define pages ----
-def laptop_test():
-    response.view='laptop_test.html'
-    user_info = auth.user
-    first_name = user_info.first_name
-    last_name = auth.user('last_name')
-    sqlstmt = "SELECT products.*, product_images.image_filename, product_images.product_id, product_images.image_alt, product_images.main_image FROM products INNER JOIN product_images ON products.id = product_images.product_id WHERE product_images.main_image = 'T'"
-    rows = db.executesql(sqlstmt, as_dict=True)
+
+def product_entry_form():
+    attributes = db(db.attribute_description).select()
+    categories = db(db.categories).select()
+    brands = db(db.brand).select()
+
+
+    attr = {}
+    img_paths = {}
+    img_alts = {}
+
+    for key, value in request.vars.items():
+        if "attr" in key:
+            attr[key] = value
+        if "img-path" in key:
+            img_paths[key] = value
+        if "img-alt" in key:
+            img_alts[key] = value
+
+    r = request.vars
+    
+
+    print(f"{'new data':=^80}")
+
+    if request.vars:
+        product = db.products.insert(
+            product_name=r.product_name, 
+            stock_qty=r.stock_qty, 
+            price=r.price, 
+            category_id=r.category,
+            description=r.description,
+            brand_id=r.brand
+            )
+        
+        for i in range(len(img_paths)):
+            main = False
+            if i == 0:
+                main = True
+            else:
+                main = False
+
+            db.product_images.insert(
+                product_id=product.id,
+                image_filename=img_paths[f"img-path-{i}"],
+                image_alt=img_alts[f"img-alt-{i}"],
+                main_image=main
+            )
+
+        for attr_name, attr_value in attr.items():
+            print("attr_name: ", attr_name)
+            print("attr_value: ", attr_value)
+            db.product_attribute.insert(
+                attribute_id=attr_name.strip("attr-"),
+                attribute_value=attr_value,
+                product_id=product.id,
+                is_key_feature=True
+            )
+
     return locals()
 
 
@@ -83,6 +135,8 @@ def item_page():
     item = request.args(0).split("--") # value: 2--Test-Laptop-Product-2
     product_id = item[0] # 2 
     product = db.products[product_id] # returns rows for that product id
+    cat = (db(db.categories.id == product.category_id).select().first().category_name).lower()
+    brand = (db(db.brand.id == product.brand_id).select().first()).brand_name.lower()
     images = db(db.product_images.product_id == product_id).select() # grabs images that match product id
 
     # if request.post_vars:
@@ -95,12 +149,24 @@ def item_page():
 def category_page():
     link_arg = request.args(0).split("--")
     cat_id = link_arg[0]
+    cat_id_fix = link_arg[0]
     cat_name_fix = ""
 
+    for row in db(db.categories).select():
+        if row['id'] == int(cat_id):
+            cat_name_fix = row['category_name'].capitalize() 
+        else:
+            pass
+    
     options = get_filter_dict(cat_id) # filter options based on category and products
     filter_dict = get_selected_filters(options) # filters selected by user
     order = request.vars.ORDER or '' # sort value
     products = filtered_products(cat_id, filter_dict, order) # products based on user's criteria
+    is_filter = db((db.category_attribute.category_id == cat_id) & (db.category_attribute.isFilter == True)).select()
+        
+
+
+
     return locals()
 
 # retrieves products from database that are within the specified category, with an optional order by clause

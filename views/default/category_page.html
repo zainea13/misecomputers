@@ -1,4 +1,5 @@
 {{extend 'layout.html'}}
+
 <section id='filter_sort' class='px-4 d-flex flex-wrap'>
     <form id="filter_form" class="d-flex w-100 h-100" method=GET>
         <ul class="d-flex flex-wrap text-primary list-unstyled">
@@ -7,7 +8,7 @@
 }}
             <li class=" dropdown mr-3">
                 <p class="dropdown-toggle btn btn-primary btn-sm {{if len(key)>6:}}w-120px{{else:}}w-100px{{pass}} color-secondary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{=key}}</p>
-                <fieldset id='{{=key}}' class="dropdown-menu border">
+                <fieldset id='{{=key}}' class="dropdown-menu border" style="width:200px;">
                 {{for attr_value in value:}}
                  <input class='ml-3' type="checkbox" name="{{=key}}[]" value="{{=attr_value}}" {{if key in filter_dict and attr_value in filter_dict[key]:}}checked{{pass}}> {{=attr_value}}<br>
                 {{pass}}
@@ -22,12 +23,12 @@
                 <input class='ml-3' type="radio" name="Price[]" value="1000--100000000" {{if request.vars['Price[]'] == '1000--100000000':}}checked{{pass}}> $1000+<br>
             </fieldset>
             </li>
-            <li><input id="apply-btn" class="btn btn-sm w-100px" type="submit" value="Apply"></li>
+            <li><input id="apply-btn" class="btn btn-sm btn-secondary w-100px " type="submit" value="Apply"></li>
             <li><input id="clear-btn" class="bg-transparent text-muted btn-sm td-ul f-8rem ml-1 pt-2" type="submit" value="clear all"></li>
         </ul>
         <ul class=" w-25 d-flex justify-content-end list-unstyled h-100 ml-auto">
             <li class="dropdown w-75 d-flex justify-content-end">
-            <p class="dropdown-toggle btn btn-primary btn-sm w-75 color-secondary" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sort By:</p>
+            <p class="dropdown-toggle btn btn-primary btn-sm w-75 color-secondary" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sort By</p>
             <fieldset class="dropdown-menu dropdown-menu-right w-100">
             <input id="sort-default" class='' type="radio" name="ORDER" value="default" hidden checked>
             <label for="sort-default" class='dropdown-item'>Default</label>
@@ -37,11 +38,11 @@
 
             <input id="price-desc" class='' type="radio" name="ORDER" value="price-desc" hidden {{if request.vars.ORDER == 'price-desc':}}checked{{pass}}>
             <label for="price-desc" class='dropdown-item'>Price High to Low</label>
-            </fieldset>
-            </li>
-        </ul>
-    </form>
-    <!-- <p class='small text-muted td-ul mtneg-1rem'>{#{#=f"{len(products)} {link_arg[1]} found"}}</p> -->
+        </fieldset>
+    </li>
+</ul>
+</form>
+<!-- <p class='small text-muted td-ul mtneg-1rem'>{#{#=f"{len(products)} {link_arg[1]} found"}}</p> -->
 </section>
 
     <script>
@@ -84,27 +85,42 @@
         key_features = row['key_features']
         product_id = row['id']
         img_src = row['image_filename']
-        img_alt = row['image_alt']}}
-
+        img_alt = row['image_alt']
+        cat_name = (db(db.categories.id == cat_id_fix).select().first()).category_name.lower()
+        brand = (db(db.brand.id == row['brand_id']).select().first()).brand_name.lower()
+    }}
     
 	<div class="col product">
-		{{=IMG(_src=URL('static/images/test_products', img_src), _alt=img_alt)}}
+        <a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}"data-product-id={{=product_id}}>
+		    {{=IMG(_src=URL(f'static/images/{cat_name}/{brand}/', img_src), _alt=img_alt)}}
+        </a>
 		<h4 class="mt-3">
 			<a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}"data-product-id={{=product_id}}>{{=name}}</a>
 		</h4>
 	
 		<ul>
 			{{
-			features = key_features[1:-1].split("|")
-			for feature in features:
-			=LI(*feature)
+            features = db((db.product_attribute.product_id == product_id)).select()
+
+            for i in features:
+                for k in is_filter:
+                    if i.attribute_id == k.attribute_id:
+                        desc = db(db.attribute_description.id == i.attribute_id).select().first()
+                
+			            =LI(desc.attribute_name + ": " + i.attribute_value)
+                        pass
+                        pass
 			}}
 			{{pass}}
 		</ul>
 
 		<div class="price-info">
-			<p class="block">${{=f"{price:.2f}"}}</p>
+			<p class="block">${{=f"{price:,.2f}"}}</p>
+            <a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}"data-product-id={{=product_id}}>
+                <button class="btn btn-mise-accent">Learn More</button>
+            </a>
 		</div>
+        
 
 	</div>
     {{pass}}
@@ -119,6 +135,8 @@
         {{pass}}
 
     </div>
+
+
 
 
 {{block page_js}}

@@ -46,7 +46,6 @@ db.define_table('products',
                 Field('stock_qty', 'integer', notnull=True),
                 Field('price', 'decimal(7,2)', notnull=True),
                 Field('category_id', 'reference categories'),
-                Field('key_features', 'list:string'),
                 Field('description', 'text'),
                 Field('brand_id', 'reference brand'),
                 format='%(product_name)s',
@@ -83,6 +82,7 @@ db.define_table('product_attribute',
                 #Field('full_description'),
                 #Field('is_key_feature', type='boolean', default=False)
                 #)
+                
                 
 db.define_table('category_attribute',
                 Field('category_id', 'reference categories'),

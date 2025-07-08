@@ -1,0 +1,227 @@
+{{extend 'layout.html'}}
+{{block head}}
+<style>
+    fieldset {
+        border: 1px solid gray;
+        padding: 1rem;
+    }
+    legend {
+        width: auto;
+        padding:.5rem;
+    }
+</style>
+{{end head}}
+<div class="row">
+    <div class="col-12 mx-auto mb-5">
+        <h2 class="mb-4">Product Entry Form</h2>
+        <div class="border rounded p-4">
+
+            <form method="post">
+                <input type="hidden" name="user_id" value="{{=auth.user.id}}">
+                <div class="row form-group">
+                    <div class="col">
+                        <div class="label-group">
+                            <label for="product_name" class="form-control-label">Product Name</label>
+                            <input type="text" class="form-control string" id="product_name" name="product_name" value="">
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-2">
+                        <div class="label-group">
+                            <label for="price" class="form-control-label">Price</label>
+                            <input type="text" class="form-control string" id="price" name="price" value="">
+                        </div>
+                    </div>
+                    <div class="col-2">
+                        <div class="label-group">
+                            <label for="stock_qty" class="form-control-label">Stock Quantity</label>
+                            <input type="number" class="form-control string" id="stock_qty" name="stock_qty" value="">
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-6">
+                        <div class="label-group">
+                            <label for="category" class="form-control-label">Category</label>
+                            <select class="form-control generic-widget" name="category">
+                                <option value="0">Choose a category...</option>
+                            {{for item in categories:}}
+                                <option value="{{=item.id}}">{{=item.category_name}}</option>
+                            {{pass}}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="label-group">
+                            <label for="category" class="form-control-label">Category</label>
+                            <select class="form-control generic-widget" name="brand">
+                                <option value="0">Choose a brand...</option>
+                            {{for item in brands:}}
+                                <option value="{{=item.id}}">{{=item.brand_name}}</option>
+                            {{pass}}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-group image-path">
+                    <div class="col-8">
+                        <div class="label-group mb-3">
+                            <label for="img-path-0" class="form-control-label">Image Filepath -- The first will be main image!</label>
+                            <input type="text" class="form-control string" id="img-path-0" name="img-path-0" value="">
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="label-group mb-3">
+                            <label for="img-alt-0" class="form-control-label">Image Alt</label>
+                            <input type="text" class="form-control string" id="img-alt-0" name="img-alt-0" value="">
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col-12">
+                        <span class="fa fa-minus btn btn-secondary" aria-hidden="true"></span>
+                        <span class="fa fa-plus btn btn-secondary" aria-hidden="true"></span>
+                        Add/remove image paths
+                    </div>
+                </div>
+                
+                <div class="row form-group">
+                    <div class="col">
+                        <div class="label-group">
+                            <fieldset>
+                                <legend>Attributes</legend>
+                            {{for item in attributes:}}
+                                <div class="row form-group">
+                                    <div class="col-2">
+                                        <input type="checkbox" id="{{=item.attribute_name}}">
+                                        <label for="{{=item.attribute_name}}" class="form-control-label">{{=item.attribute_name}}</label>
+                                    </div>
+                                    <div class="col-7">
+                                        <input type="text" name="attr-{{=item.id}}" id="attr-{{=item.attribute_name}}" class="form-control string entry-spot" disabled>
+                                    </div>
+                                    <div class="col-3">
+                                        <input type="checkbox" name="{{=item.attribute_name}}-use" value="" id="{{=item.attribute_name}}-use" class="use-as-key" disabled>
+                                        <label for="{{=item.attribute_name}}-use">Use as key feature</label>
+                                    </div>
+                                </div>
+                            {{pass}}
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col">
+                        <div class="label-group">
+                            <label for="description" class="form-control-label">Description</label>
+                            <textarea class="form-control text" cols="40" id="description" name="description" rows="10"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div class="row form-group mb-0">
+                    <div class="col-6 mt-5">
+                        <input type="submit" value="Update" class="btn btn-primary">
+                    </div>
+                </div>
+            </form>
+        </div> 
+    </div>
+</div>
+
+{{=BEAUTIFY(response._vars)}}
+
+{{block page_js}}
+<script>
+    const attrCheckboxes = document.querySelectorAll("[type='checkbox']");
+    const addImagePath = document.querySelector('.fa-plus');
+    const minusImagePath = document.querySelector('.fa-minus');
+    const pathContainer = document.querySelector(".image-path");
+    let counter = 0;
+
+    // <div class="row form-group image-path">
+    //     <div class="col-8">
+    //         <div class="label-group mb-3">
+    //             <label for="image-path-0" class="form-control-label">Image Filepath -- The first will be main image!</label>
+    //             <input type="text" class="form-control string" id="image-path-0" name="image-path-0" value="">
+    //         </div>
+    //     </div>
+    //     <div class="col-4">
+    //         <div class="label-group mb-3">
+    //             <label for="image-alt-0" class="form-control-label">Image Alt</label>
+    //             <input type="text" class="form-control string" id="image-alt-0" name="image-alt-0" value="">
+    //         </div>
+    //     </div>
+    // </div>
+
+
+
+    function moreImagePaths() {
+        counter++;
+        const colDiv = document.createElement("div");
+        colDiv.setAttribute("class", "col-8");
+
+        const imgDiv = document.createElement("div");
+        imgDiv.setAttribute("class", "label-group mb-3");
+
+        const imgLabel = document.createElement("label");
+        imgLabel.setAttribute("class","form-control-label");
+        imgLabel.textContent = "Next Filepath";
+        imgLabel.setAttribute("for", `img-path-${counter}`);
+
+        const imgInput = document.createElement("input");
+        imgInput.type = "text";
+        imgInput.name = `img-path-${counter}`;
+        imgInput.id = `img-path-${counter}`;
+        imgInput.setAttribute("class", "form-control string");
+
+        const altColDiv = document.createElement("div");
+        altColDiv.setAttribute("class", "col-4");
+
+        const altImgDiv = document.createElement("div");
+        altImgDiv.setAttribute("class", "label-group mb-3");
+
+        const altImgLabel = document.createElement("label");
+        altImgLabel.setAttribute("class","form-control-label");
+        altImgLabel.textContent = "Image Alt";
+        altImgLabel.setAttribute("for", `img-alt-${counter}`);
+
+        const altImgInput = document.createElement("input");
+        altImgInput.type = "text";
+        altImgInput.name = `img-alt-${counter}`;
+        altImgInput.id = `img-alt-${counter}`;
+        altImgInput.setAttribute("class", "form-control string");
+        
+        imgDiv.appendChild(imgLabel);
+        imgDiv.appendChild(imgInput);
+        colDiv.appendChild(imgDiv);
+        pathContainer.appendChild(colDiv);
+
+        altImgDiv.appendChild(altImgLabel);
+        altImgDiv.appendChild(altImgInput);
+        altColDiv.appendChild(altImgDiv);
+        pathContainer.appendChild(altColDiv);
+    }
+
+    function lessImagePaths() {
+        counter--;
+        pathContainer.removeChild(pathContainer.lastElementChild);
+        pathContainer.removeChild(pathContainer.lastElementChild);
+    }
+    
+    function enableEntry() {
+        if (this.checked) {
+            this.parentElement.parentElement.querySelector('.entry-spot').disabled = false;
+            this.parentElement.parentElement.querySelector('.use-as-key').disabled = false;
+        } else {
+            this.parentElement.parentElement.querySelector('.entry-spot').disabled = true;
+            this.parentElement.parentElement.querySelector('.use-as-key').disabled = true;
+        }
+    }
+
+    attrCheckboxes.forEach(item => item.addEventListener('change', enableEntry));
+    addImagePath.addEventListener('click', moreImagePaths);
+    minusImagePath.addEventListener('click', lessImagePaths);
+</script>
+{{end page_js}}
