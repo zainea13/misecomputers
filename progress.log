@@ -313,3 +313,10 @@
 [2025-07-07 14:15:23] EDIT misecomputers/views/search.html: -10
 [2025-07-07 14:17:55] EDIT misecomputers/controllers/default.py: 2
 [2025-07-07 14:18:40] EDIT misecomputers/controllers/default.py: -2
+[2025-07-07 19:51:06] EDIT misecomputers/models/db.py: 1
+[2025-07-07 19:52:12] EDIT misecomputers/controllers/default.py: -1
+[2025-07-07 19:56:04] EDIT misecomputers/views/default/category_page.html: 6
+[2025-07-07 19:57:58] EDIT misecomputers/controllers/default.py: 34
+[2025-07-07 20:00:02] EDIT misecomputers/models/db_mise.py: 8
+[2025-07-07 20:00:12] EDIT misecomputers/models/db_mise.py: 0
+[2025-07-07 20:00:42] EDIT misecomputers/models/db_mise.py: 0
