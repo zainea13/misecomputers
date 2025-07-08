@@ -23,12 +23,12 @@
                 <input class='ml-3' type="radio" name="Price[]" value="1000--100000000" {{if request.vars['Price[]'] == '1000--100000000':}}checked{{pass}}> $1000+<br>
             </fieldset>
             </li>
-            <li><input id="apply-btn" class="btn btn-sm w-100px" type="submit" value="Apply"></li>
+            <li><input id="apply-btn" class="btn btn-sm btn-secondary w-100px " type="submit" value="Apply"></li>
             <li><input id="clear-btn" class="bg-transparent text-muted btn-sm td-ul f-8rem ml-1 pt-2" type="submit" value="clear all"></li>
         </ul>
         <ul class=" w-25 d-flex justify-content-end list-unstyled h-100 ml-auto">
             <li class="dropdown w-75 d-flex justify-content-end">
-            <p class="dropdown-toggle btn btn-primary btn-sm w-75 color-secondary" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sort By:</p>
+            <p class="dropdown-toggle btn btn-primary btn-sm w-75 color-secondary" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sort By</p>
             <fieldset class="dropdown-menu dropdown-menu-right w-100">
             <input id="sort-default" class='' type="radio" name="ORDER" value="default" hidden checked>
             <label for="sort-default" class='dropdown-item'>Default</label>
@@ -91,7 +91,9 @@
     }}
     
 	<div class="col product">
-		{{=IMG(_src=URL(f'static/images/{cat_name}/{brand}/', img_src), _alt=img_alt)}}
+        <a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}"data-product-id={{=product_id}}>
+		    {{=IMG(_src=URL(f'static/images/{cat_name}/{brand}/', img_src), _alt=img_alt)}}
+        </a>
 		<h4 class="mt-3">
 			<a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}"data-product-id={{=product_id}}>{{=name}}</a>
 		</h4>
