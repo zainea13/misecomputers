@@ -9,7 +9,7 @@
 				img_src = image['image_filename']
 				img_alt = image['image_alt']
 				}}
-				<div class="swiper-item"><img src={{=URL('static/images/test_products', img_src)}} alt={{=img_alt}}>
+				<div class="swiper-item"><img src={{=URL(f'static/images/{cat}/{brand}', img_src)}} alt={{=img_alt}}>
 				</div>
 				{{pass}}
 			</div>
@@ -20,7 +20,7 @@
 			img_src = image['image_filename']
 			img_alt = image['image_alt']
 			}}
-			<div class="thumbnail" data-count={{=count}}><img src={{=URL('static/images/test_products', img_src)}}
+			<div class="thumbnail" data-count={{=count}}><img src={{=URL(f'static/images/{cat}/{brand}', img_src)}}
 					alt={{=img_alt}}></div>
 			{{pass}}
 		</div>
@@ -32,10 +32,16 @@
 		<h5 class="border-bottom p-1">Key Features</h5>
 		<ul class="mb-5">
 			{{
-			key_features = product['key_features']
-			for feature in key_features:
-			=LI(*feature)
+            features = db((db.product_attribute.product_id == product_id)).select()
+
+            for i in features:
+				desc = db(db.attribute_description.id == i.attribute_id).select().first()
 			}}
+		
+				<li><i>{{=desc.longhand}}</i>: {{=i.attribute_value}}</li>
+				{{pass}}
+				{{pass}}
+
 			{{pass}}
 		</ul>
 		<form id="add-to-cart">
