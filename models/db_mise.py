@@ -68,20 +68,16 @@ db.define_table('attribute_description',
 
 
 
+
+
+
 db.define_table('product_attribute',
                 Field('attribute_id', 'reference attribute_description'),
                 Field('attribute_value', notnull=True),
-                Field('product_id', 'reference products')
+                Field('product_id', 'reference products'),
+                Field('full_description'),
+                Field('is_key_feature', type='boolean', default=False)
                 )
-
-
-#db.define_table('product_attribute',
-               # Field('attribute_id', 'reference attribute_description'),
-                #Field('attribute_value', notnull=True),
-                #Field('product_id', 'reference products'),
-                #Field('full_description'),
-                #Field('is_key_feature', type='boolean', default=False)
-                #)
                 
                 
 db.define_table('category_attribute',
@@ -89,7 +85,6 @@ db.define_table('category_attribute',
                 Field('attribute_id', 'reference attribute_description'),
                 Field('isFilter', 'boolean')
                 )
-
 
 
 # ---------- ORDERS TABLES -------------------------
