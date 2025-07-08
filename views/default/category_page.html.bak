@@ -1,63 +1,47 @@
 {{extend 'layout.html'}}
-
 <section id='filter_sort' class='px-4 d-flex flex-wrap'>
-    <div><h2 style="color:orange;">{{=cat_name_fix}}</h2></div>
     <form id="filter_form" class="d-flex w-100 h-100" method=GET>
         <ul class="d-flex flex-wrap text-primary list-unstyled">
+{{
+    for key, value in options.items():
+}}
             <li class=" dropdown mr-3">
-                <p class="dropdown-toggle btn btn-primary btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100px;">RAM</p>
-                <fieldset id='RAM' class="dropdown-menu border">
-                    <input class='ml-3' type="checkbox" name="RAM[]" value="4GB" {{if 'RAM' in filter_dict and '4GB' in filter_dict['RAM']:}}checked{{pass}}> 4GB<br>
-                    <input class='ml-3' type="checkbox" name="RAM[]" value="8GB" {{if 'RAM' in filter_dict and '8GB' in filter_dict['RAM']:}}checked{{pass}}> 8GB<br>
-                    <input class='ml-3' type="checkbox" name="RAM[]" value="16GB" {{if 'RAM' in filter_dict and '16GB' in filter_dict['RAM']:}}checked{{pass}}> 16GB<br>
+                <p class="dropdown-toggle btn btn-primary btn-sm {{if len(key)>6:}}w-120px{{else:}}w-100px{{pass}} color-secondary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{=key}}</p>
+                <fieldset id='{{=key}}' class="dropdown-menu border">
+                {{for attr_value in value:}}
+                 <input class='ml-3' type="checkbox" name="{{=key}}[]" value="{{=attr_value}}" {{if key in filter_dict and attr_value in filter_dict[key]:}}checked{{pass}}> {{=attr_value}}<br>
+                {{pass}}
                 </fieldset>
             </li>
+{{pass}}
             <li class="dropdown mr-3">
-                <p class="dropdown-toggle btn btn-primary btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100px;">CPU</p>
-                <fieldset id='CPU' class="dropdown-menu" >
-                    <input class='ml-3' type="checkbox" name="CPU[]" value="i3" {{if 'CPU' in filter_dict and 'i3' in filter_dict['CPU']:}}checked{{pass}}> Intel i3<br>
-                    <input class='ml-3' type="checkbox" name="CPU[]" value="i5" {{if 'CPU' in filter_dict and 'i5' in filter_dict['CPU']:}}checked{{pass}}> Intel i5<br>
-                    <input class='ml-3' type="checkbox" name="CPU[]" value="i7" {{if 'CPU' in filter_dict and 'i7' in filter_dict['CPU']:}}checked{{pass}}> Intel i7<br>
-                </fieldset>
-            </li>
-            <li class="dropdown mr-3">
-                <p class="dropdown-toggle btn btn-primary btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 120px;">Screen Size</p>
+                <p class="dropdown-toggle btn btn-primary btn-sm w-100px color-secondary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Price</p>
                 <fieldset id='Screen_Size' class="dropdown-menu">
-                    <input class='ml-3' type="checkbox" name="Screen Size[]" value="13" {{if 'Screen Size' in filter_dict and '13' in filter_dict['Screen Size']:}}checked{{pass}}> 13"<br>
-                    <input class='ml-3' type="checkbox" name="Screen Size[]" value="15" {{if 'Screen Size' in filter_dict and '15' in filter_dict['Screen Size']:}}checked{{pass}}> 15"<br>
-                    <input class='ml-3' type="checkbox" name="Screen Size[]" value="17" {{if 'Screen Size' in filter_dict and '17' in filter_dict['Screen Size']:}}checked{{pass}}> 17"<br>
-                </fieldset>
+                <input class='ml-3' type="radio" name="Price[]" value="0--499" {{if request.vars['Price[]'] == '0--499':}}checked{{pass}}> under $500<br>
+                <input class='ml-3' type="radio" name="Price[]" value="500--1000" {{if request.vars['Price[]'] == '500--1000':}}checked{{pass}}> $500 - $1000<br>
+                <input class='ml-3' type="radio" name="Price[]" value="1000--100000000" {{if request.vars['Price[]'] == '1000--100000000':}}checked{{pass}}> $1000+<br>
+            </fieldset>
             </li>
-            <li class="dropdown mr-3">
-                <p class="dropdown-toggle btn btn-primary btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="width: 100px;">Price</p>
-                <fieldset id='Screen_Size' class="dropdown-menu">
-                    <input class='ml-3' type="radio" name="Price[]" value="0--499"> under $500<br>
-                    <input class='ml-3' type="radio" name="Price[]" value="500--1000"> $500 - $1000<br>
-                    <input class='ml-3' type="radio" name="Price[]" value="1000--100000000"> $1000+<br>
-                </fieldset>
-            </li>
-            <li><input id="apply-btn" class="btn btn-sm btn-secondary" type="submit" value="Apply" style="width: 100px;"></li>
-            <li><input id="clear-btn" class="bg-transparent text-muted btn-sm text-decoration-underline ml-1 pt-2 fst-italic" style="font-style:italic; font-size:0.8em; text-decoration:underline;" type="submit" value="clear all"></li>
+            <li><input id="apply-btn" class="btn btn-sm w-100px" type="submit" value="Apply"></li>
+            <li><input id="clear-btn" class="bg-transparent text-muted btn-sm td-ul f-8rem ml-1 pt-2" type="submit" value="clear all"></li>
         </ul>
-            
-            
-        <ul class="list-unstyled ml-auto">
-            <li class="dropdown">
-            <p class="dropdown-toggle btn btn-primary btn-sm px-4 " href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sort By:</p>
+        <ul class=" w-25 d-flex justify-content-end list-unstyled h-100 ml-auto">
+            <li class="dropdown w-75 d-flex justify-content-end">
+            <p class="dropdown-toggle btn btn-primary btn-sm w-75 color-secondary" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sort By:</p>
             <fieldset class="dropdown-menu dropdown-menu-right w-100">
-                
-                <input id="sort-default" class='' type="radio" name="ORDER" value="default" hidden checked>
-                <label for="sort-default" class='dropdown-item'>Default</label>
-                
-                <input id="price-asc" class='' type="radio" name="ORDER" value="price-asc" hidden {{if request.vars.ORDER == 'price-asc':}}checked{{pass}}>
-                <label for="price-asc" class='dropdown-item'>Price Low to High</label>
-                
-                <input id="price-desc" class='' type="radio" name="ORDER" value="price-desc" hidden {{if request.vars.ORDER == 'price-desc':}}checked{{pass}}>
-                <label for="price-desc" class='dropdown-item'>Price High to Low</label>
+            <input id="sort-default" class='' type="radio" name="ORDER" value="default" hidden checked>
+            <label for="sort-default" class='dropdown-item'>Best Selling</label>
+
+            <input id="price-asc" class='' type="radio" name="ORDER" value="price-asc" hidden {{if request.vars.ORDER == 'price-asc':}}checked{{pass}}>
+            <label for="price-asc" class='dropdown-item'>Price Low to High</label>
+
+            <input id="price-desc" class='' type="radio" name="ORDER" value="price-desc" hidden {{if request.vars.ORDER == 'price-desc':}}checked{{pass}}>
+            <label for="price-desc" class='dropdown-item'>Price High to Low</label>
             </fieldset>
             </li>
         </ul>
     </form>
+    <!-- <p class='small text-muted td-ul mtneg-1rem'>{#{#=f"{len(products)} {link_arg[1]} found"}}</p> -->
 </section>
 
 	<hr>
@@ -78,7 +62,7 @@
 
     
 	<div class="col product">
-		{{=IMG(_src=URL('static/images/test_products', img_src), _alt=img_alt)}}
+		{{=IMG(_src=URL('static/images/test_products', img_src), _onerror="this.onerror=null;this.src='%s';" % URL('static', 'images/default-img.png'), _alt=img_alt)}}
 		<h4 class="mt-3">
 			<a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}"data-product-id={{=product_id}}>{{=name}}</a>
 		</h4>
@@ -112,33 +96,28 @@
 
 
 {{block page_js}}
-<script>
+    <script>
     "use strict"
 
-    window.onload = function () {
+    const filter_form = document.getElementById("filter_form");
+    const sortRadios = document.querySelectorAll('input[name="ORDER"]');
+
+    window.onload = function() {
         document.getElementById("apply-btn").onclick = applyFilters;
         document.getElementById("clear-btn").onclick = clearFilters;
 
-        const filter_form = document.getElementById("filter_form");
-        const sortRadios = document.querySelectorAll('input[name="ORDER"]');
-
         sortRadios.forEach(radio => {
-            radio.addEventListener('change', () => {
-                const ORDER = filter_form.querySelector('input[name="ORDER"]:checked');
-                filter_form.submit();
-            });
-        });
-    }
+          radio.addEventListener('change', () => {
+          const ORDER = filter_form.querySelector('input[name="ORDER"]:checked');
+          filter_form.submit();});
+        });}
 
 
     function applyFilters() {
-        filter_form.submit();
-    }
+        filter_form.submit();}
 
     function clearFilters() {
-        filter_form = document.getElementById("filter_form");
-        // clear all checked 
-        filter_form.reset();
-    }
-</script>
+        filter_form.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
+        filter_form.querySelectorAll('input[type="radio"]').forEach(el => {if (el.name !== 'ORDER') {el.checked = false;}});}
+    </script>
 {{end page_js}}

@@ -199,7 +199,7 @@ def get_filter_dict(cat_id):
 # Retrieves order string.
 def get_order_string(order):
         order_dict = {
-        'default': ' ORDER BY p.price ASC',
+        'default': ' ORDER BY RANDOM()',
         'price-asc': ' ORDER BY p.price ASC',
         'price-desc': ' ORDER BY p.price DESC'
         }
@@ -371,8 +371,13 @@ def account():
     # look up customer details based on the auth user id
     customer_info = db(db.customers.user_id == auth.user.id).select().first()
 
-    # get the state for the user
-    state = db(db.states.id == customer_info.state_code).select().first()
+    # get the state for the user : what is this line for?
+    try:
+        state = db(db.states.id == customer_info.state_code).select().first()
+        if not state:
+            state = 1
+    except:
+        state = 1
 
     return locals()
 

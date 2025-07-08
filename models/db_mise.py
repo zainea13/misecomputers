@@ -75,13 +75,12 @@ db.define_table('product_attribute',
                 Field('full_description'),
                 Field('is_key_feature', type='boolean', default=False)
                 )
-                
+
 db.define_table('category_attribute',
                 Field('category_id', 'reference categories'),
                 Field('attribute_id', 'reference attribute_description'),
                 Field('isFilter', 'boolean')
                 )
-
 
 
 # ---------- ORDERS TABLES -------------------------

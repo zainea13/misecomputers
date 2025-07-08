@@ -17,7 +17,7 @@
             <li class="dropdown mr-3">
                 <p class="dropdown-toggle btn btn-primary btn-sm w-100px color-secondary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Price</p>
                 <fieldset id='Screen_Size' class="dropdown-menu">
-                <input class='ml-3' type="radio" name="Price[]" value="0--499" {{if request.vars['Price[]'] == '0---499':}}checked{{pass}}> under $500<br>
+                <input class='ml-3' type="radio" name="Price[]" value="0--499" {{if request.vars['Price[]'] == '0--499':}}checked{{pass}}> under $500<br>
                 <input class='ml-3' type="radio" name="Price[]" value="500--1000" {{if request.vars['Price[]'] == '500--1000':}}checked{{pass}}> $500 - $1000<br>
                 <input class='ml-3' type="radio" name="Price[]" value="1000--100000000" {{if request.vars['Price[]'] == '1000--100000000':}}checked{{pass}}> $1000+<br>
             </fieldset>
@@ -30,7 +30,7 @@
             <p class="dropdown-toggle btn btn-primary btn-sm w-75 color-secondary" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sort By:</p>
             <fieldset class="dropdown-menu dropdown-menu-right w-100">
             <input id="sort-default" class='' type="radio" name="ORDER" value="default" hidden checked>
-            <label for="sort-default" class='dropdown-item'>Default</label>
+            <label for="sort-default" class='dropdown-item'>Best Selling</label>
 
             <input id="price-asc" class='' type="radio" name="ORDER" value="price-asc" hidden {{if request.vars.ORDER == 'price-asc':}}checked{{pass}}>
             <label for="price-asc" class='dropdown-item'>Price Low to High</label>
@@ -43,32 +43,6 @@
     </form>
     <!-- <p class='small text-muted td-ul mtneg-1rem'>{#{#=f"{len(products)} {link_arg[1]} found"}}</p> -->
 </section>
-
-    <script>
-    "use strict"
-
-    const filter_form = document.getElementById("filter_form");
-    const sortRadios = document.querySelectorAll('input[name="ORDER"]');
-
-    window.onload = function() {
-        document.getElementById("apply-btn").onclick = applyFilters;
-        document.getElementById("clear-btn").onclick = clearFilters;
-
-        sortRadios.forEach(radio => {
-          radio.addEventListener('change', () => {
-          const ORDER = filter_form.querySelector('input[name="ORDER"]:checked');
-          filter_form.submit();});
-        });}
-
-
-    function applyFilters() {
-        filter_form.submit();}
-
-    function clearFilters() {
-        filter_form.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
-        filter_form.querySelectorAll('input[type="radio"]').forEach(el => {if (el.name !== 'ORDER') {el.checked = false;}});}
-    </script>
-
 
 	<hr>
 
@@ -88,7 +62,7 @@
 
     
 	<div class="col product">
-		{{=IMG(_src=URL('static/images/test_products', img_src), _alt=img_alt)}}
+		{{=IMG(_src=URL('static/images/test_products', img_src), _onerror="this.onerror=null;this.src='%s';" % URL('static', 'images/default-img.png'), _alt=img_alt)}}
 		<h4 class="mt-3">
 			<a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}"data-product-id={{=product_id}}>{{=name}}</a>
 		</h4>
@@ -122,33 +96,28 @@
 
 
 {{block page_js}}
-<script>
+    <script>
     "use strict"
 
-    window.onload = function () {
+    const filter_form = document.getElementById("filter_form");
+    const sortRadios = document.querySelectorAll('input[name="ORDER"]');
+
+    window.onload = function() {
         document.getElementById("apply-btn").onclick = applyFilters;
         document.getElementById("clear-btn").onclick = clearFilters;
 
-        const filter_form = document.getElementById("filter_form");
-        const sortRadios = document.querySelectorAll('input[name="ORDER"]');
-
         sortRadios.forEach(radio => {
-            radio.addEventListener('change', () => {
-                const ORDER = filter_form.querySelector('input[name="ORDER"]:checked');
-                filter_form.submit();
-            });
-        });
-    }
+          radio.addEventListener('change', () => {
+          const ORDER = filter_form.querySelector('input[name="ORDER"]:checked');
+          filter_form.submit();});
+        });}
 
 
     function applyFilters() {
-        filter_form.submit();
-    }
+        filter_form.submit();}
 
     function clearFilters() {
-        filter_form = document.getElementById("filter_form");
-        // clear all checked 
-        filter_form.reset();
-    }
-</script>
+        filter_form.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
+        filter_form.querySelectorAll('input[type="radio"]').forEach(el => {if (el.name !== 'ORDER') {el.checked = false;}});}
+    </script>
 {{end page_js}}

@@ -92,83 +92,114 @@ def item_page():
     session_id = response.session_id
     return locals()
 
-
 def category_page():
-
     link_arg = request.args(0).split("--")
     cat_id = link_arg[0]
     cat_name_fix = ""
 
-    # this gets the category name
+    options = get_filter_dict(cat_id) # filter options based on category and products
+    filter_dict = get_selected_filters(options) # filters selected by user
+    order = request.vars.ORDER or '' # sort value
+    products = filtered_products(cat_id, filter_dict, order) # products based on user's criteria
+    return locals()
+
+# retrieves products from database that are within the specified category, with an optional order by clause
+def get_products(cat_id, order=''):
+
+    sqlstmt = "SELECT p.*, pi.image_filename, pi.product_id, pi.image_alt, pi.main_image FROM products AS p INNER JOIN product_images AS pi ON p.id = pi.product_id WHERE pi.main_image = 'T' AND p.category_id = " + cat_id + order 
     for row in db(db.categories).select():
         if row['id'] == int(cat_id):
             cat_name_fix = row['category_name'].capitalize() 
         else:
             pass
-
-    filter_dict = get_selected_filters()
-    order = request.vars.ORDER or ''
-    products = filtered_products(cat_id, filter_dict, order)
-    filters = get_filter_options()
-    filter_options = get_filter_options()
-
-    return locals()
-
-
-def get_products(cat_id, order):
-    sqlstmt = "SELECT p.*, pi.image_filename, pi.product_id, pi.image_alt, pi.main_image FROM products AS p INNER JOIN product_images AS pi ON p.id = pi.product_id WHERE pi.main_image = 'T' AND p.category_id = " + cat_id + order 
-    
     products = db.executesql(sqlstmt, as_dict=True)
     return products
 
-
 def filtered_products(cat_id, filter_dict, order):
+    '''
+        Filters products based on user selections
+        Args:   cat_id: category_id
+                filter_dict: dictionary containing user selections
+                order: an optional sort selection
+        Returns: a list of products
+    '''
+    # retrieves all products from the db in that category
     product_list = get_products(cat_id, get_order_string(order))
     results = []
 
     if 'Price' in filter_dict:
         price_range = filter_dict['Price'][0]
         min_price, max_price = map(float, price_range.split("--"))
-        del filter_dict['Price']
+        del filter_dict['Price'] # removes Price from filter_dict so as not to affect later logic
 
-        product_list = [product for product in product_list if min_price <= product['price'] <= max_price]
+        product_list = [product for product in product_list if min_price <= product['price'] <= max_price] # only adds a product_id if it fits within selected range
 
     if not filter_dict:
-        return product_list
+        return product_list # if there aren't any more filters, return the list of products
 
     for attribute, values in filter_dict.items():
+        # queries the product_attribute table for each selected option and adds the list to results
+        if values:
+            attr_row = db(db.attribute_description.attribute_name == attribute).select().first()
+            if not attr_row:
+                continue
+            rows = db((db.product_attribute.attribute_id == attr_row.id) & (db.product_attribute.attribute_value.belongs(values))).select(db.product_attribute.product_id)
+            product_ids = set([row.product_id for row in rows])
+            results.append(product_ids)
 
-        if (attribute != 'Price') and values:
-                attr_row = db(db.attribute_description.attribute_name == attribute).select().first()
-                
-                if not attr_row:
-                    continue
-                rows = db((db.product_attribute.attribute_id == attr_row.id) & (db.product_attribute.attribute_value.belongs(values))).select(db.product_attribute.product_id)
-                product_ids = set([row.product_id for row in rows])
-                results.append(product_ids)
-        
+    # creates a set of product_ids that match one or more selected options in each filter
     if results:
         common_product_ids = set.intersection(*results)
     else:
         common_product_ids = set()
 
+    # filters common_product_ids for ids in the correct category and in the selected price range
     products = [p for p in product_list if p['id'] in common_product_ids]
-        
     return products
 
-# eventually should filter categories and options dynamically by 
-# querying category attributes. Will keep here
-def get_filter_options():
-    filter_options = {
-        'CPU': ['Intel i5', 'Intel i7', 'AMD Ryzen 5', 'AMD Ryzen 7'],
-        'RAM' : ['8 GB', '16 GB', '32 GB'],
-        'Screen Size[]' : ['13"', '15"', '17"']
-    }
-    return filter_options
+# gets the filters for the category from category_attributes
+def get_filter_dict(cat_id):
+    filter_option_dict = {}
 
+    # queries the category_attribute table for filters in the selected category (ex. filters for laptops)
+    query = (db.category_attribute.isFilter == True) & \
+            (db.category_attribute.category_id == int(cat_id))
+    
+    # retrieves and adds all of the attributes to a list
+    rows = db(query).select(db.category_attribute.attribute_id)
+    attribute_ids = [row.attribute_id for row in rows]
+
+    # gets the product_ids for the category
+    product_ids = [p['id'] for p in get_products(cat_id)]
+
+    # retrieves product_attribute rows with only the product_ids with the category's filters
+    query = (
+    (db.product_attribute.product_id.belongs(product_ids)) &
+    (db.product_attribute.attribute_id.belongs(attribute_ids)) &
+    (db.product_attribute.attribute_id == db.attribute_description.id)
+    )
+
+    rows = db(query).select(
+        db.product_attribute.attribute_value,
+        db.attribute_description.attribute_name
+    ) # example RAM , 16GB
+
+    for row in rows:
+        value = row.product_attribute.attribute_value
+        attribute = row.attribute_description.attribute_name
+
+        if attribute not in filter_option_dict:
+            # adds the key if it doesn't exist
+            filter_option_dict[attribute] = set()
+
+        # adds to the key's list of options
+        filter_option_dict[attribute].add(value)
+    return filter_option_dict
+
+# Retrieves order string.
 def get_order_string(order):
         order_dict = {
-        'default': ' ORDER BY p.price ASC',
+        'default': ' ORDER BY RANDOM()',
         'price-asc': ' ORDER BY p.price ASC',
         'price-desc': ' ORDER BY p.price DESC'
         }
@@ -178,18 +209,21 @@ def get_order_string(order):
         else:
             return order_dict[order]
 
+# retrieves and returns the user selected filters
+def get_selected_filters(options): 
 
-def get_selected_filters():
     filter_dict = {}
-    # rename to "attribute" ... to avoid confusion
-    categories = ['RAM', 'CPU', 'Screen Size', 'Price']
+    # the categories are based on the original options
+    categories = list(options.keys())
+    categories.append('Price')
     
+    # iterates through the list and sees if there is a value checked. 
+    # If so, it adds that value to the dictionary under the key
     for category in categories:
         name = category + '[]'
         values = request.vars.getlist(name)
         if values:
             filter_dict[category] = values
-
     return filter_dict
 
 
@@ -337,8 +371,13 @@ def account():
     # look up customer details based on the auth user id
     customer_info = db(db.customers.user_id == auth.user.id).select().first()
 
-    # get the state for the user
+    # get the state for the user : what is this line for?
+    try:
     state = db(db.states.id == customer_info.state_code).select().first()
+    if not state:
+        state = 1
+    except:
+    state = 1
 
     return locals()
 

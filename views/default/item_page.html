@@ -9,7 +9,7 @@
 				img_src = image['image_filename']
 				img_alt = image['image_alt']
 				}}
-				<div class="swiper-item"><img src={{=URL('static/images/test_products', img_src)}} alt={{=img_alt}}>
+				<div class="swiper-item"><img src={{=URL('static/images/test_products', img_src)}} onerror="this.onerror=null;this.src='{{=URL('static', 'images/default-img.png')}}';" alt={{=img_alt}}>
 				</div>
 				{{pass}}
 			</div>
@@ -21,7 +21,7 @@
 			img_alt = image['image_alt']
 			}}
 			<div class="thumbnail" data-count={{=count}}><img src={{=URL('static/images/test_products', img_src)}}
-					alt={{=img_alt}}></div>
+					 onerror="this.onerror=null;this.src='{{=URL('static', 'images/default-img.png')}}';" alt={{=img_alt}}></div>
 			{{pass}}
 		</div>
 	</div>
@@ -52,9 +52,14 @@
 					<input type="number" value="1" name="quantity" id="quantity" size="2" class="">
 				</div>
 				<div class="flex-fill">
-					<button type="submit" class="btn btn-mise-accent w-100">
+						{{if product['stock_qty']>0:}}
+                        <button type="submit" class="btn btn-mise-accent w-100">
 						<i class="fa fa-plus mr-1" aria-hidden="true"></i>
-						Add To Cart 
+                        Add to Cart
+                        {{else:}}
+                        <button type="submit" class="btn btn-mise-accent w-100" disabled>
+                        Out of Stock
+                        {{pass}}
  					</button>
 				</div>
 			</div>
@@ -71,11 +76,20 @@
 
 {{block page_js}}
 <script>
-	jQuery('#add-to-cart').submit(function () {
-		ajax('{{=URL('add_to_cart')}}',
-			['product_id', 'quantity', 'user_id', 'session_id'], 'target');
-		return false;
-	});
+    var stock_qty = {{=product['stock_qty']}};
+
+    if (stock_qty > 0) {
+        jQuery('#add-to-cart').submit(function () {
+            ajax('{{=URL('add_to_cart')}}',
+                ['product_id', 'quantity', 'user_id', 'session_id'], 'target');
+            return false;
+        });
+    } else {
+        // Disable the add to cart button and change its text
+        jQuery('#add-to-cart-button')
+            .prop('disabled', true)
+            .text('Out Of Stock');
+    }
 </script>
 
 <script src={{=URL('static','js/mise_slider.js')}}></script>

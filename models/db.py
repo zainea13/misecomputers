@@ -36,11 +36,12 @@ if "GAE_APPLICATION" not in os.environ:
     # ---------------------------------------------------------------------
     # if NOT running on Google App Engine use SQLite or other DB
     # ---------------------------------------------------------------------
+
     db = DAL(configuration.get("db.uri"),
              pool_size=configuration.get("db.pool_size"),
-             migrate_enabled=configuration.get("db.migrate"),
+             #migrate_enabled=configuration.get("db.migrate"),
              check_reserved=["all"],
-             migrate=False,
+             migrate=True,
              fake_migrate_all=True)
 else:
     # ---------------------------------------------------------------------
