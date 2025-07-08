@@ -17,7 +17,6 @@
         <div class="border rounded p-4">
 
             <form method="post">
-                <input type="hidden" name="user_id" value="{{=auth.user.id}}">
                 <div class="row form-group">
                     <div class="col">
                         <div class="label-group">
@@ -114,7 +113,13 @@
                     <div class="col">
                         <div class="label-group">
                             <label for="description" class="form-control-label">Description</label>
-                            <textarea class="form-control text" cols="40" id="description" name="description" rows="10"></textarea>
+                            <textarea class="form-control text" cols="40" id="description" name="description" rows="10">
+&lt;h5&gt;&lt;/h5&gt;
+&lt;ul&gt;
+&lt;li&gt
+&lt;/ul&gt;
+&lt;p&gt;&lt;/p&gt;
+                            </textarea>
                         </div>
                     </div>
                 </div>
