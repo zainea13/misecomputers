@@ -9,7 +9,6 @@ from gluon import *
 import datetime
 import json
 from gluon.storage import Storage
-import stripe
 from gluon.contrib.stripe import Stripe
 
 

@@ -1,4 +1,4 @@
-{{extend 'layoutmise.html'}}
+{{extend 'layout.html'}}
 
 <!--<style>
     div {

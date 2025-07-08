@@ -7,6 +7,11 @@
 # ---- example index page ----
 from gluon import *
 import datetime
+import json
+from gluon.storage import Storage
+import stripe
+from gluon.contrib.stripe import Stripe
+
 
 
 # Menu Stuff
@@ -25,7 +30,6 @@ for category in db(db.categories).select():
 # Page Views
 
 def index():
-    response.flash = T("Hello World")
     session.forced = True
     categories = db(db.categories).select()
     return dict(message=T('Welcome to web2py!'), categories=categories)
@@ -62,8 +66,6 @@ def search():
             results = db((db.products.product_name.contains(keyword))).select()
 
     return dict(form=form, results=results)
-    response.view="search.html"
-    return locals()
 
 
 
@@ -193,8 +195,13 @@ def get_selected_filters():
 
 
 def add_to_cart():
+    # ----------------------------------
+    # # Add to cart
+    # ----------------------------------
+
+    # Define the form being used
     form = SQLFORM(db.shopping_cart2)
-    print(request.vars)
+
     if form.accepts:
         # get form details
         user_id = request.vars['user_id']
@@ -205,10 +212,10 @@ def add_to_cart():
         product = None
         existing_quantity = 0
 
-        # flag used if the item already exists in the cart
+        # Flag used if the item already exists in the cart
         matched_cart = False
 
-        # if logged in, use the user id, if not, use the session_id
+        # Check if user is logged in or not
         # gets the current cart on click
         cart = None
         if auth.user:
@@ -216,64 +223,70 @@ def add_to_cart():
         else:
             cart = db(db.shopping_cart2.session_id == session_id).select().as_list()
 
-        # check all cart items
+        # Check all cart items
         for item in cart:
-            # if the currently clicked item matches on in the cart already
+            # Check if newly added item exists in the cart
             if int(item['product_id']) == int(product_id):
-                # check if logged in, get the current quantity in the cart
+                # Get the current quantity in the cart
                 if auth.user:
                     product = db.shopping_cart2(user_id=user_id, product_id=product_id)
                 else:
                     product = db.shopping_cart2(session_id=session_id, product_id=product_id)
                 
-                # if matched, set the existing quantity and matched_cart
+                # If matched, set the existing quantity and matched_cart
                 existing_quantity = int(product['quantity'])
                 matched_cart = True
 
-        # if there was a match, then update the quanity, otherwise add to cart
+        # If there was a match update the quanity, otherwise add to cart
         if matched_cart:
             new_quantity = quantity + existing_quantity
             product.update_record(quantity=new_quantity)
         else:
             db.shopping_cart2.insert(user_id=user_id, product_id=product_id, quantity=quantity, session_id=session_id)
 
-        print("product:", product)
-
         response.flash = "Added to cart"
 
 
 
 def shopping_cart2():
-    # get values from form
+    # ----------------------------------
+    # # Quantity update logic
+    # ----------------------------------
+
+    # get values from form after clicking "update quanity" or "remove"
     if request.post_vars:
+        # VARIABLES
         session_id = response.session_id
         user_id = auth.user_id
         quantity = request.post_vars['quantityAmt']
         product_id = request.post_vars['product_id']
         product = None
-        # print(f"product: {product_id}, quantity: {quantity}, user_id: {user_id}, session_id: {session_id}")
 
-        # if logged in, use the user id, if not, use the session_id
+        # Check if a user is logged in, use user_id or session_id
         if auth.user:
             product = db.shopping_cart2(user_id=user_id, product_id=product_id)
         else:
             product = db.shopping_cart2(session_id=session_id, product_id=product_id)
 
-        # if the quanity is 0, then delete it, otherwise, update the quantity
+        # Delete a cart item if quantity is 0, or update record
         if not int(quantity):
             product.delete_record()
         else:
             # print(product)
             product.update_record(quantity=quantity)
-            
-    # here we get the results from the database table, based on if the user is logged in or not
+    
+    # ----------------------------------
+    # # Retrieve all the items in the cart
+    # ----------------------------------
+
+    # Check if the user is logged in
     where_stmt = ""
     if auth.user:
         where_stmt = f"sc.user_id = {str(auth.user.id)}"
     else:
         where_stmt = f"sc.session_id = '{str(response.session_id)}'"
 
-    # here we fetch it, and then start adding up items
+    # Get the items from the database
     query = "SELECT sc.* FROM shopping_cart2 AS sc WHERE " + where_stmt
     cart_items = db.executesql(query, as_dict=True)
     subtotal = 0
@@ -281,10 +294,14 @@ def shopping_cart2():
 
     for item in cart_items:
         product_id= item['product_id']
-        product = db(db.products.id == product_id).select().as_list()[0]
+        product = db(db.products.id == product_id).select().first()
         subtotal += (float(product['price']) * int(item['quantity']))
         total_items += int(item['quantity'])
 
+    config = db(db.config).select().first()
+    tax = float(config['tax'])
+    tax_amt = tax * subtotal
+    total = tax_amt + subtotal
 
     return locals()
 
@@ -309,7 +326,7 @@ def shopping_cart_count():
     for item in cart_items:
         total_items += int(item['quantity'])
     
-    print(total_items)
+    # print(total_items)
 
     return locals()
 
@@ -347,7 +364,7 @@ def account_details():
                                     zip = r.zip,                            
                                     phone = r.phone
                                     )
-            print("requested end")
+            # print("requested end")
         
     except:
         pass
@@ -359,39 +376,143 @@ def account_details():
     return locals()
 
 
-def checkout():
-    # get details from account function
-    account_context = account()
+def build_shipping_form():
 
-    # some help building year dropdown, used on the checkout page
-    current_year = datetime.datetime.now().year
-    next_ten_years = []
-    for i in range(10):
-        next_ten_years.append(current_year + i)
+    user_info = None
+    customer_info = None
+    customer_state = None
 
+    if auth.user:
+        # get user details
+        # select auth user database table based on current id
+        user_info = db(db.auth_user.id == auth.user.id).select().first()
+        # look up customer details based on the auth user id
+        customer_info = db(db.customers.user_id == auth.user.id).select().first()
+        # get the state for the user
+        customer_state = db(db.states.id == customer_info.state_code).select().first().id
+
+    # build the shipping form
+    # Note the "default=" line is checking to see if user_info or customer_info exists and if it does, then it is filling the default value, if not, then it is blank
     shipping_form = SQLFORM.factory(
-                Field('s_first_name', 'string', label="First Name", requires=IS_NOT_EMPTY()),
-                Field('s_last_name', 'string', label="Last Name", requires=IS_NOT_EMPTY()),
-                Field('s_street_1', 'string', label="Address Line 1", requires=IS_NOT_EMPTY()),
-                Field('s_street_2', 'string', label="Address Line 2", requires=IS_NOT_EMPTY()),
-                Field('s_city', 'string', label="City", requires=IS_NOT_EMPTY()),
-                Field('s_state', 'reference states', label="State", requires=IS_IN_DB(db, 'states.id', '%(state_name)s', zero="Choose a state...")),
-                Field('s_zip', 'string', label="Zip Code", requires=IS_NOT_EMPTY()),
+                Field('first_name', 
+                      label="First Name", 
+                      default=(user_info.first_name if user_info else ""), 
+                      requires=IS_NOT_EMPTY()),
+                Field('last_name', 
+                      label="Last Name", 
+                      default=(user_info.last_name if user_info else ""),
+                      requires=IS_NOT_EMPTY()),
+                Field('street_1', 
+                      label="Address Line 1",
+                      default=(customer_info.street_1 if customer_info else ""), 
+                      requires=IS_NOT_EMPTY()),
+                Field('street_2', 
+                      label="Address Line 2",
+                      default=(customer_info.street_2 if customer_info else "")),
+                Field('city', 
+                      label="City",
+                      default=(customer_info.city if customer_info else ""),
+                      requires=IS_NOT_EMPTY()),
+                Field('state', 'reference states', 
+                      label="State", 
+                      default=(customer_state or 0), 
+                      requires=IS_IN_DB(db, 'states.id', '%(state_name)s', zero="Choose a state...", error_message='Pick a state')),
+                Field('zip', 
+                      label="Zip Code",
+                      default=(customer_info.zip if customer_info else ""), 
+                      requires=IS_NOT_EMPTY()),
+                Field('email',
+                      label="Email",
+                      default=(user_info.email if user_info else ""),
+                      requires=IS_EMAIL()),
+                Field('user_id',
+                      default=(auth.user.id if auth.user else response.session_id)),
+                _class='order-forms w-100 px-3',
+                _name='shipping-info',
+                _id='shipping-info',
+                formname="shipping"
             )
-    shipping_form.process(formstyle='bootstrap4_stacked')
+    
+    # set the user_id field to hidden
+    shipping_form.custom.widget.user_id['_type'] = 'hidden'
+
+    # give the shipping form placeholders
+    shipping_form.custom.widget.first_name['_placeholder'] = "John"
+    shipping_form.custom.widget.last_name['_placeholder'] = "Doe"
+    shipping_form.custom.widget.street_1['_placeholder'] = "123 Main St."
+    shipping_form.custom.widget.street_2['_placeholder'] = "Apt. 1"
+    shipping_form.custom.widget.city['_placeholder'] = "Anywhere"
+    shipping_form.custom.widget.zip['_placeholder'] = "12345"
+
+    # needed to generate _formkey
+    shipping_form.process()
+    
+    return shipping_form
+
+
+def build_billing_form():
+
+    # Check if logged in to set collapse
+    collapse = "collapse show"
+    if auth.user:
+        collapse = "collapse"
+
+    # build the billing form
+    billing_form = SQLFORM.factory(
+                Field('first_name', 
+                      label="First Name", 
+                      requires=IS_NOT_EMPTY()),
+                Field('last_name', 
+                      label="Last Name",
+                      requires=IS_NOT_EMPTY()),
+                Field('street_1', 
+                      label="Address Line 1", 
+                      requires=IS_NOT_EMPTY()),
+                Field('street_2', 
+                      label="Address Line 2"),
+                Field('city', 
+                      label="City",
+                      requires=IS_NOT_EMPTY()),
+                Field('state', 'reference states', 
+                      label="State", 
+                      requires=IS_IN_DB(db, 'states.id', '%(state_name)s', zero="Choose a state...", error_message='Pick a state')),
+                Field('zip', 
+                      label="Zip Code", 
+                      requires=IS_NOT_EMPTY()),
+                _class=f'order-forms w-100 px-3 {collapse}',
+                _name='billing-info',
+                _id='billing-info',
+                formname="billing"
+            )
+    
+    # give the  form placeholders
+    billing_form.custom.widget.first_name['_placeholder'] = "John"
+    billing_form.custom.widget.last_name['_placeholder'] = "Doe"
+    billing_form.custom.widget.street_1['_placeholder'] = "123 Main St."
+    billing_form.custom.widget.street_2['_placeholder'] = "Apt. 1"
+    billing_form.custom.widget.city['_placeholder'] = "Anywhere"
+    billing_form.custom.widget.zip['_placeholder'] = "12345"
+
+    # needed to generate formkey
+    billing_form.process()
+
+    return billing_form
 
 
 
-    print("checkout:", request.vars)
-
+def checkout():
+    # VARIABLES
     session_id = response.session_id
     user_id = auth.user_id
-    config = db(db.config).select().as_list()[0]
-    order_num = int(config['order_number'])
+    config = db(db.config).select().first()
+    order_number = config.order_number
     subtotal = 0
     total_items = 0
-    
-    
+
+    # ----------------------------------
+    # # Build the cart items list/receipt
+    # ----------------------------------
+
     # determine if a user is logged in
     where_stmt = ""
     if auth.user:
@@ -399,20 +520,183 @@ def checkout():
     else:
         where_stmt = f"sc.session_id = '{str(response.session_id)}'"
 
-    # here we fetch the cart, and then start adding up items
+    # GET THE CART, and then start adding up items
     cart_query = "SELECT sc.* FROM shopping_cart2 AS sc WHERE " + where_stmt
     cart_items = db.executesql(cart_query, as_dict=True)
     
     for item in cart_items:
         product_id = item['product_id']
-        product = db(db.products.id == product_id).select().as_list()[0]
+        product = db(db.products.id == product_id).select().first()
         subtotal += (float(product['price']) * int(item['quantity']))
         total_items += int(item['quantity'])
 
     tax = float(config['tax'])
     tax_amt = tax * subtotal
     total = tax_amt + subtotal
-    return dict(locals(), **account_context)
+
+
+    # ----------------------------------
+    # # Stripe form
+    # ----------------------------------
+
+  
+
+    # ----------------------------------
+    # # Form processing and Validation
+    # ----------------------------------
+
+    # create forms
+    shipping_form = build_shipping_form()
+    billing_form = build_billing_form()
+    
+    # set data to a value so it doesn't error
+    shipping_data = {}
+    billing_data = {}
+
+    # get json data from ajax call (when place-order button is clicked)
+    if request.env.request_method == 'POST' and request.body:
+
+        try:
+            json_body = request.body.read()
+            request.body.seek(0)
+            all_forms_data = json.loads(json_body)
+            
+        except Exception as e:
+            # If JSON parsing fails, return an error message
+            session.flash = 'Invalid JSON data received.'
+            return json.dumps(dict(status='error', message=f'Invalid JSON data received: {e}'))
+        
+        # separate out the data based on which form it's from
+        shipping_data = Storage(all_forms_data.get('shipping-info', {}))
+        billing_data = Storage(all_forms_data.get('billing-info', {}))
+
+        # validate the data
+        s_accepted = shipping_form.accepts(shipping_data, session)
+        b_accepted = billing_form.accepts(billing_data, session)       
+
+        # Either redirects, or returns errors
+        if s_accepted and b_accepted:
+            response.flash = 'Form accepted.'
+
+            # ----------------------------------
+            # # Database Entry
+            # ----------------------------------
+
+            # Add order to orders table
+            order_id = db.orders.insert(
+                order_number=order_number,
+                user_id=auth.user.id if auth.user else None,
+                session_id=session_id,
+                total_items=total_items,
+                subtotal=subtotal,
+                tax=tax_amt,
+                total_cost=total
+                )
+
+            
+            if order_id:
+                # Add each order_line_item
+                for item in cart_items:
+                    product = db(db.products.id == item['product_id']).select().first()
+                    db.order_line_items.insert(
+                        order_id=order_id,
+                        order_number=order_number,
+                        product_id=product.id,
+                        price=product.price,
+                        quantity_of_item=item['quantity']
+                    )
+
+                # Add a record to Shipping Address table
+                db.shipping_address.insert(
+                    street_1=shipping_data.street_1,
+                    street_2=shipping_data.street_2,
+                    city=shipping_data.city,
+                    zip=shipping_data.zip,
+                    state_code=shipping_data.state,
+                    email=shipping_data.email,
+                    order_id=order_id
+                )
+
+                # Add a record to Billing Address table
+                db.billing_address.insert(
+                    street_1=billing_data.street_1,
+                    street_2=billing_data.street_2,
+                    city=billing_data.city,
+                    zip=billing_data.zip,
+                    state_code=billing_data.state,
+                    order_id=order_id
+                )
+
+                db.commit()
+            else:
+                response.flash = "Failed to create order."
+
+            # After all the entries have been made: update the config order number
+            update_order_num = db(db.config.id == 1).select().first()
+            order_number+=1
+            update_order_num.update_record(order_number=order_number)
+
+            return json.dumps(dict(status='success', redirect_url=URL('default', 'thankyou')))  
+        
+        elif shipping_form.errors or billing_form.errors: 
+            response.flash = 'The form has errors.'
+
+            # Generate a dictionary of errors to send back
+            errors_dict = {}
+            if shipping_form.errors:
+                errors_dict.update({shipping_form.attributes['_name']: shipping_form.errors})
+            if billing_form.errors:
+                errors_dict.update({billing_form.attributes['_name']: billing_form.errors})
+
+            # Generate new keys to send too
+            new_keys = {
+                'shipping-info': shipping_form.formkey,
+                'billing-info': billing_form.formkey
+            }
+ 
+            return json.dumps(dict(status='error', errors=errors_dict, new_keys=new_keys)) 
+          
+        else:
+            response.flash = 'Please fill out the form.'
+
+    
+
+
+
+
+    return dict(locals(), shipping_form=shipping_form, billing_form=billing_form)
+
+
+def thankyou():
+    return locals()
+
+def checkout_test():
+    form = build_shipping_form()
+    if form.accepts(request, session):
+        response.flash = 'form accepted'
+    elif form.errors:
+        response.flash = 'form has errors'
+    else:
+        response.flash = 'please fill the form'
+    return locals()
+
+
+def extra_checkout_code():
+
+    # some help building year dropdown, used on the checkout page
+    current_year = datetime.datetime.now().year
+    next_ten_years = []
+    for i in range(10):
+        next_ten_years.append(current_year + i)
+
+
+
+    
+    
+    
+    
+
+    
 
 
 

@@ -40,8 +40,8 @@ if "GAE_APPLICATION" not in os.environ:
              pool_size=configuration.get("db.pool_size"),
              migrate_enabled=configuration.get("db.migrate"),
              check_reserved=["all"],
-                
-             )
+             migrate=False,
+             fake_migrate_all=True)  
 else:
     # ---------------------------------------------------------------------
     # connect to Google Firestore

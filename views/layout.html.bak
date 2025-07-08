@@ -54,7 +54,7 @@
 
 			<!-- MISE Computers logo and logo hyperlinked to Home /index page-->
 			<a class="navbar-brand m-0" href="{{=URL('default','indexmise')}}">
-				<img width="150" src="/misecomputers/static/images/miseR1copy.png" alt="Company Logo"/>
+				<img width="100" src="/misecomputers/static/images/miseR1copy.png" alt="Company Logo"/>
 			</a>
 
 			
