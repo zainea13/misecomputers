@@ -93,7 +93,6 @@ input[type="checkbox"]{
     margin-bottom:250px;
 }
 
-
 /* CUSTOM UTILITY CLASSES ------------------------- */
 
 .font-small  {
@@ -123,6 +122,10 @@ input[type="checkbox"]{
 
 .flex-gap-4 {
     gap: 2rem;
+}
+
+.input-num-w-3 {
+    width:3em;
 }
 
 /*------------------------------------------------------------*/

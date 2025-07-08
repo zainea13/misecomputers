@@ -5,3 +5,4 @@ sessions/*
 progress.log
 errors/*
 databases/*
+databases/storage.sqlite
