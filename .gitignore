@@ -1,8 +1,10 @@
 *.table
 *.log
 *.sqlite
+*.pyc
 sessions/*
 progress.log
 errors/*
 databases/*
 databases/storage.sqlite
+private/private.py

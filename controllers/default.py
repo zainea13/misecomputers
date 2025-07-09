@@ -12,10 +12,10 @@ from gluon.storage import Storage
 from gluon.contrib.stripe import Stripe
 import stripe
 
-stripe.api_key = "sk_test_51Rh10IH0alBtp0wTEWsNTXDX4fiwVXIkf5ut6EvVo3rAHsuybekKd0nYO0TWqp2YKotUdADjpKlOgZq7Jnydddv000lVYuviwB" # Your secret key
-STRIPE_PUBLISHABLE_KEY = "pk_test_51Rh10IH0alBtp0wTyuOyuvMEZ2GNtrSJqFNsaM8BWKNIcHs7n4Bfil4U7G8YIhet0QkUuGnzdTYUFYkrdi5s9nVB00fVfyLW9e" # Your publishable key
+from private.private import *
 
-
+stripe.api_key = stripe_api_keys['sk']
+STRIPE_PUBLISHABLE_KEY = stripe_api_keys['pk']
 
 
 # Menu Stuff
@@ -34,6 +34,7 @@ for category in db(db.categories).select():
 # Page Views
 
 def index():
+
     session.forced = True
     categories = db(db.categories).select()
     return dict(message=T('Welcome to web2py!'), categories=categories)
@@ -158,9 +159,6 @@ def category_page():
     order = request.vars.ORDER or '' # sort value
     products = filtered_products(cat_id, filter_dict, order) # products based on user's criteria
     is_filter = db((db.category_attribute.category_id == cat_id) & (db.category_attribute.isFilter == True)).select()
-        
-
-
 
     return locals()
 
@@ -405,7 +403,7 @@ def shopping_cart2():
     return locals()
 
 
-# NOT FINISHED, this function is a work in progress
+# TODO NOT FINISHED, this function is a work in progress
 def shopping_cart_count():
     session_id = response.session_id
     user_id = auth.user_id
@@ -448,7 +446,7 @@ def account_details():
     user_info = db(db.auth_user.id == auth.user.id).select().first()
 
     # look up user details based on the auth user id
-    customer_info = db(db.customers.user_id == auth.user.id).select().first()
+    customer_info = db((db.customers.user_id == auth.user.id)).select().first()
 
     try:
         if request.vars:
@@ -473,9 +471,6 @@ def account_details():
         redirect(URL('account'))
 
     return locals()
-
-
-
 
 
 def build_shipping_form():
@@ -660,7 +655,6 @@ def create_payment_intent():
         return response.json({'error': str(e)})
 
 
-
 def checkout():
     print(f"{'NEW RUN':=^120}")
     # VARIABLES
@@ -716,11 +710,11 @@ def checkout():
             request.body.seek(0)
             all_forms_data = json.loads(json_body)
             # DEBUG
-            print("Received data:", all_forms_data)
+            # print("Received data:", all_forms_data)
             
         except Exception as e:
             # DEBUG
-            print("JSON parsing error:", e)
+            # print("JSON parsing error:", e)
             # If JSON parsing fails, return an error message
             session.flash = 'Invalid JSON data received.'
             return json.dumps(dict(status='error', message=f'Invalid JSON data received: {e}'))
@@ -734,20 +728,20 @@ def checkout():
         
 
         # DEBUG: Log the separated data
-        print("Shipping data:", shipping_data)
-        print("Shipping data form key:", shipping_data._formkey)
-        print("Billing data:", billing_data)
-        print("Payment Intent ID:", payment_intent_id)
-        print("Validate only:", validate_only)
-        print("Payment success:", payment_success)
+        # print("Shipping data:", shipping_data)
+        # print("Shipping data form key:", shipping_data._formkey)
+        # print("Billing data:", billing_data)
+        # print("Payment Intent ID:", payment_intent_id)
+        # print("Validate only:", validate_only)
+        # print("Payment success:", payment_success)
 
         # validate the data
         s_accepted = shipping_form.accepts(shipping_data, session)
         b_accepted = billing_form.accepts(billing_data, session)    
 
         # DEBUG: Log validation results
-        print("Shipping form accepted:", s_accepted)
-        print("Billing form accepted:", b_accepted)
+        # print("Shipping form accepted:", s_accepted)
+        # print("Billing form accepted:", b_accepted)
            
 
         # VALIDATION STEP - Just validate forms, don't process payment
@@ -755,7 +749,7 @@ def checkout():
             
             if s_accepted and b_accepted:
                 # DEBUG
-                print("Validation passed - forms are valid")
+                # print("Validation passed - forms are valid")
                 if not payment_success:
                     # Generate new keys to send too
                     new_keys = {
@@ -767,8 +761,8 @@ def checkout():
                 return json.dumps(dict(status='validation_success'))
             else:
                 # DEBUG: Log errors
-                print("Validation failed - form errors found")
-                print("Shipping errors:", shipping_form.errors)
+                # print("Validation failed - form errors found")
+                # print("Shipping errors:", shipping_form.errors)
                 # Generate a dictionary of errors to send back
                 errors_dict = {}
                 if shipping_form.errors:
@@ -786,25 +780,33 @@ def checkout():
 
         # FINAL PROCESSING STEP - Forms are valid, payment is confirmed, complete the order
         elif payment_intent_id:
+            last4 = None
+            card_brand = None
             
             # ----------------------------------
             # # Stripe Payment verification
             # ----------------------------------
             # debug 
-            print("z30=inside final processing")
+            # print("z30=inside final processing")
             try:
                 # Retrieve the payment intent to confirm it was successful
-                intent = stripe.PaymentIntent.retrieve(payment_intent_id)
+                intent = stripe.PaymentIntent.retrieve(
+                    payment_intent_id,
+                    expand=['payment_method']
+                    )
+                
+                last4 = intent.payment_method.card.last4
+                card_brand = intent.payment_method.card.display_brand
                 
                 # DEBUG: Log payment intent details
-                print("Payment Intent Status:", intent.status)
-                print("Payment Intent ID:", intent.id)
-                print("Payment Intent Amount:", intent.amount)
+                # print("Payment Intent Status:", intent.status)
+                # print("Payment Intent ID:", intent.id)
+                # print("Payment Intent Amount:", intent.amount)
 
                 # Check if payment was successful
                 if intent.status != 'succeeded':
                     # DEBUG
-                    print("Payment not successful, status:", intent.status)
+                    # print("Payment not successful, status:", intent.status)
                     return json.dumps(dict(
                         status='error',
                         stripe_error='Payment was not successful. Please try again.'
@@ -815,14 +817,14 @@ def checkout():
 
             except stripe.error.StripeError as e:
                 # DEBUG
-                print("Stripe error:", e)
+                # print("Stripe error:", e)
                 return json.dumps(dict(
                     status='error',
                     stripe_error=str(e.user_message) if hasattr(e, 'user_message') else str(e)
                 ))
             except Exception as e:
                 # DEBUG
-                print("Unexpected error:", e)
+                # print("Unexpected error:", e)
                 return json.dumps(dict(
                     status='error',
                     stripe_error='An unexpected error occurred. Please try again.'
@@ -880,11 +882,19 @@ def checkout():
                     order_id=order_id
                 )
 
+                # Add payment info
+                db.payment_info.insert(
+                    order_id=order_id,
+                    card_brand=card_brand,
+                    cc_last_four=last4
+                )
+
                 # todo Clear shopping cart after success uncomment this later
                 # if auth.user:
                 #     db(db.shopping_cart2.user_id == auth.user.id).delete()
                 # else:
                 #     db(db.shopping_cart2.session_id == session_id).delete()
+
 
             else:
                 response.flash = "Failed to create order."
@@ -893,12 +903,23 @@ def checkout():
                     stripe_error='Order creation failed. Please contact support.'
                 ))
 
+            # Set up email info
+            thank_you_details = {
+                'order_id':order_id,
+                'order_number':order_number,
+                'total':total,
+                'email': shipping_data.email,
+                'last4': last4
+            }
+
+            session.ty = thank_you_details
+
             # After all the entries have been made: update the config order number
             update_order_num = db(db.config.id == 1).select().first()
             order_number+=1
             update_order_num.update_record(order_number=order_number)
 
-            return json.dumps(dict(status='success', redirect_url=URL('default', 'thankyou')))  
+            return json.dumps(dict(status='success', redirect_url=URL('default', 'thankyou'), thank_you_details=thank_you_details))  
         
         else:
             # This shouldn't happen with the new flow, but keeping as fallback
@@ -917,16 +938,30 @@ def checkout():
 
 
 def thankyou():
+    print(session.ty)
     return locals()
 
 
-def extra_checkout_code():
+def order_confirmation_email():
+    
+    # ----------------------------------
+    # # Send confirmation email
+    # ----------------------------------
 
-    # some help building year dropdown, used on the checkout page
-    current_year = datetime.datetime.now().year
-    next_ten_years = []
-    for i in range(10):
-        next_ten_years.append(current_year + i)
+    # Get order list items
+    list_items = db(db.order_line_items.order_id == session.ty['order_id']).select()
+    for item in list_items:
+        image = db((db.product_images.product_id == item.product_id) & (db.product_images.main_image == True)).select()
+        qty = item.quantity_of_item
+        print("list items:",item.product_id)
+
+    # mail.send(
+    #     to=session.ty['email'],
+    #     subject=f'Confirmation of order #{session.ty['order_number']} from MISE Computers',
+    #     message='it worked'
+    # )
+    return locals()
+
 
 
 

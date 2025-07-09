@@ -350,6 +350,7 @@ async function submitData(e) {
                     }
 
                     if (response.status === 'success') {
+                        localStorage.setItem('order_success', true);
                         window.location.href = response.redirect_url;
                     } else {
                         // Handle any final errors

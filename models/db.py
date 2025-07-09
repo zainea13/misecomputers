@@ -8,6 +8,11 @@ from gluon.contrib.appconfig import AppConfig
 from gluon.tools import Auth
 import os
 import re
+import sys
+
+private_path = os.path.dirname(os.path.dirname('applications/misecomputers/models/db.py'))
+if private_path not in sys.path:
+    sys.path.append(private_path)
 
 REQUIRED_WEB2PY_VERSION = "3.0.10"
 
