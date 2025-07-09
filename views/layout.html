@@ -29,9 +29,15 @@
 	<!-- Our custom css for mise computers -->
 	<link rel="stylesheet" href="{{=URL('static','css/mise.css')}}"/>
 	
-	<!-- Favicons --> 
-	<link rel="shortcut icon" href="{{=URL('static','images/favicon.ico')}}" type="image/x-icon">
-	<link rel="apple-touch-icon" href="{{=URL('static','images/favicon.png')}}">
+	<!-- Favicons (MISE) --> 
+	<link rel="apple-touch-icon" sizes="180x180" href="{{=URL('static','images/Fav_Icon/apple-touch-icon.png')}}">
+	<link rel="icon" type="image/png" sizes="32x32" href="{{=URL('static','images/Fav_Icon/favicon-32x32.png')}}">
+	<link rel="icon" type="image/png" sizes="16x16" href="{{=URL('static','images/Fav_Icon/favicon-16x16.png')}}">
+	<link rel="manifest" href="{{=URL('static','images/Fav_Icon/site.webmanifest')}}">
+	
+	<!-- Favicons (Web2py default --> 
+	<!--<link rel="shortcut icon" href="{{=URL('static','images/favicon.ico')}}" type="image/x-icon">
+	<link rel="apple-touch-icon" href="{{=URL('static','images/favicon.png')}}">-->
 	
 	<!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
 	<script src="{{=URL('static','js/modernizr-2.8.3.min.js')}}"></script>
@@ -81,9 +87,9 @@
 				</ul>
 
 				<!-- SEARCH BAR -->
-				<form class="form-inline flex-fill">
+				<form class="form-inline flex-fill" action="{{=URL('default', 'search')}}" method="post">
 					<div class="input-group w-100">
-						<input class="form-control border-0 pill-left" type="search" placeholder="What would you like to search for today?" aria-label="Search">
+						<input class="form-control border-0" type="text" placeholder="What would you like to search for today?">
 						<div class="input-group-append">
 							<button class="fa fa-search text-primary btn btn-medium" aria-hidden="true" type="submit"></button>
 						</div>
