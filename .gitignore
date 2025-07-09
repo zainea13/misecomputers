@@ -6,3 +6,4 @@ progress.log
 errors/*
 databases/*
 databases/storage.sqlite
+modules/*

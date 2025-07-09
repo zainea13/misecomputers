@@ -54,7 +54,7 @@ db.define_table('products',
 
 db.define_table('product_images',
                 Field('product_id', 'reference products'),
-                Field('image_filename'),
+                Field('image_filename', default=''),
                 Field('image_alt'),
                 Field('main_image', 'boolean'),
        

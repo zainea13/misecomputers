@@ -178,7 +178,7 @@ input[type="checkbox"]{
 
 .price-info > p {
     margin:0;
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     font-weight: bold;
 }
 
@@ -308,4 +308,36 @@ input[type="checkbox"]{
 
 .mtneg-2rem {
     margin-top: -1.7rem;
+}
+
+.btn-out-of-stock {
+    background-color: lightgray;
+    border-color: lightgray;
+    color: #FFF;
+    &:hover {
+        cursor: not-allowed;
+        background-color: lightgray;
+        color: #FFF !important;
+    }
+}
+
+/* KEYFRAMES */
+
+.fade-in-5 {
+  animation: fadeIn 0.5s ease-in-out forwards;
+}
+
+.fade-in-10 {
+  animation: fadeIn 1s ease-in-out forwards;
+}
+
+.fade-in-12 {
+    animation: fadeIn 1.2s ease-in-out forwards;
+}
+
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  30% { opacity: 0; }
+  100% { opacity: 1; }
 }
