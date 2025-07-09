@@ -1,5 +1,6 @@
 {{extend 'layout.html'}}
 
+<!--FILTER CODE BEGINS-->
 <section id='filter_sort' class='px-4 d-flex flex-wrap'>
     <form id="filter_form" class="d-flex w-100 h-100" method=GET>
         <ul class="d-flex flex-wrap text-primary list-unstyled">
@@ -26,6 +27,9 @@
             <li><input id="apply-btn" class="btn btn-sm btn-secondary w-100px " type="submit" value="Apply"></li>
             <li><input id="clear-btn" class="bg-transparent text-muted btn-sm td-ul f-8rem ml-1 pt-2" type="submit" value="clear all" style="text-decoration: underline; font-style: italic;"></li>
         </ul>
+<!--FILTER CODE ENDS-->
+
+<!--SORT CODE BEGINS-->
         <ul class=" w-25 d-flex justify-content-end list-unstyled h-100 ml-auto">
             <li class="dropdown w-75 d-flex justify-content-end">
             <p class="dropdown-toggle btn btn-primary btn-sm w-75 color-secondary" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sort By</p>
@@ -44,8 +48,9 @@
 </form>
 <!-- <p class='small text-muted td-ul mtneg-1rem'>{#{#=f"{len(products)} {link_arg[1]} found"}}</p> -->
 </section>
-
+<!--SORT CODE ENDS-->
 	<hr>
+
 
 <div class="row">
 	<h2 class="mb-4 text-accent">{{=cat_name_fix}}</h2>

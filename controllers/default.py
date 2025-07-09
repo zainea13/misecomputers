@@ -67,7 +67,16 @@ def search():
      
     return dict(form=form, results=results)
 
-
+def searchtop():
+    response.view="search.html"
+    results = []
+    #if form.process().accepted:
+    keyword = request.vars.keyword
+    print(keyword)
+    if keyword:
+        results = db((db.products.product_name.contains(keyword))).select()
+        
+    return dict(results=results)
 
 # ---- define pages ----
 
