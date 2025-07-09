@@ -63,7 +63,7 @@ def search():
     if form.process().accepted:
         keyword = form.vars.keyword
         if keyword:
-            results = db((db.products.product_name.contains(keyword)))).select()
+            results = db((db.products.product_name.contains(keyword))).select()
 
     return dict(form=form, results=results)
 
@@ -94,8 +94,8 @@ def product_entry_form():
 
     print(f"{'new data':=^80}")
 
-    if request.vars:
-        product = db.products.insert(
+    if request.env.request_method == 'POST':
+        product_id = db.products.insert(
             product_name=r.product_name, 
             stock_qty=r.stock_qty, 
             price=r.price, 
@@ -112,7 +112,7 @@ def product_entry_form():
                 main = False
 
             db.product_images.insert(
-                product_id=product.id,
+                product_id=product_id,
                 image_filename=img_paths[f"img-path-{i}"],
                 image_alt=img_alts[f"img-alt-{i}"],
                 main_image=main
@@ -124,9 +124,13 @@ def product_entry_form():
             db.product_attribute.insert(
                 attribute_id=attr_name.strip("attr-"),
                 attribute_value=attr_value,
-                product_id=product.id,
+                product_id=product_id,
                 is_key_feature=True
             )
+
+        product = db.products(product_id)
+    else:
+        product = None
 
     return locals()
 
@@ -136,6 +140,7 @@ def item_page():
     product_id = item[0] # 2 
     product = db.products[product_id] # returns rows for that product id
     cat = (db(db.categories.id == product.category_id).select().first().category_name).lower()
+    cat = cat.replace("&","").replace(" ","_")
     brand = (db(db.brand.id == product.brand_id).select().first()).brand_name.lower()
     images = db(db.product_images.product_id == product_id).select() # grabs images that match product id
 
@@ -154,7 +159,7 @@ def category_page():
 
     for row in db(db.categories).select():
         if row['id'] == int(cat_id):
-            cat_name_fix = row['category_name'].capitalize() 
+            cat_name_fix = row['category_name'].title() 
         else:
             pass
     
@@ -439,11 +444,11 @@ def account():
 
     # get the state for the user : what is this line for?
     try:
-    state = db(db.states.id == customer_info.state_code).select().first()
-    if not state:
-        state = 1
+        state = db(db.states.id == customer_info.state_code).select().first()
+        if not state:
+            state = 1
     except:
-    state = 1
+        state = 1
 
     return locals()
 

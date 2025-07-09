@@ -437,13 +437,12 @@ def account():
     # look up customer details based on the auth user id
     customer_info = db(db.customers.user_id == auth.user.id).select().first()
 
-    # get the state for the user : what is this line for?
-    try:
+    # get the state for the user :
+    if customer_info and customer_info.state_code and customer_info.street_1 != '':
         state = db(db.states.id == customer_info.state_code).select().first()
-        if not state:
-            state = 1
-    except:
-        state = 1
+    else:
+        # Redirect if no state_code
+        redirect(URL('account_details'))
 
     return locals()
 
@@ -455,11 +454,16 @@ def account_details():
     # look up user details based on the auth user id
     customer_info = db(db.customers.user_id == auth.user.id).select().first()
 
+    if not customer_info:
+        db.customers.insert(user_id=auth.user.id, street_1='')
+        customer_info = db(db.customers.user_id == auth.user.id).select().first()
+
     try:
         if request.vars:
             
             r = request.vars
-            user_info.update_record(first_name=r.first_name, last_name=r.last_name)
+            user_info.update_record(first_name=r.first_name, last_name=r.last_name, email=r.email)
+                
             customer_info.update_record(
                                     street_1 = r.street_1, 
                                     street_2 = r.street_2, 

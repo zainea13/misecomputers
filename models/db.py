@@ -104,8 +104,10 @@ auth.settings.extra_fields["auth_user"] = []
 auth.define_tables(username=False, signature=False)
 
 # -------------------------------------------------------------------------
-# configure email
+# redirect users to account details page upon registration
 # -------------------------------------------------------------------------
+auth.settings.register_next = URL('default', 'account_details')
+
 mail = auth.settings.mailer
 mail.settings.server = "logging" if request.is_local else configuration.get("smtp.server")
 mail.settings.sender = configuration.get("smtp.sender")

@@ -1,10 +1,12 @@
 {{extend 'layout.html'}}
 
 <div class="row">
-    <div class="col-6 mx-auto mb-5">
+    <div class="col-6 mx-auto mb-5 fade-in-5">
         <h2 class="mb-4">Account Details</h2>
-        <div class="border rounded p-4">
-
+        {{if not customer_info or not customer_info.state_code or not customer_info.zip or not customer_info.city or customer_info.street_1 == '':}}
+        <p class='text-danger small mtneg-1rem fade-in-12'><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please Update Account to Complete Registration</p>
+        {{pass}}
+        <div class="border rounded p-4 fade-in-5">
             <form method="post">
                 <input type="hidden" name="user_id" value="{{=auth.user.id}}">
                 <div class="row form-group">
@@ -26,22 +28,22 @@
                     <div class="col-12 form-group">
                         <div class="label-group">
                             <label for="street_1" class="form-control-label">Address Line 1</label>
-                            <input type="text" class="form-control string" id="street_1" name="street_1" value="{{=customer_info.street_1}}">
+                            <input type="text" class="form-control string" id="street_1" name="street_1" {{if customer_info.street_1 != '':}}value="{{=customer_info.street_1}}"{{else:}} placeholder='123 Main St.'{{pass}}>
                         </div>
                     </div>
                     <div class="col-12 form-group">
                         <div class="label-group">
                             <label for="street_2" class="form-control-label">Address Line 2</label>
-                            <input type="text" class="form-control string" id="street_2" name="street_2" value="{{=customer_info.street_2}}">
+                            <input type="text" class="form-control string" id="street_2" name="street_2" value="{{=customer_info.street_2 if customer_info and customer_info.street_2 else ''}}">
                         </div>
                     </div>
                 </div>
 
                 <div class="row form-group">
-                    <div class="col-4">
+                    <div class="col-5">
                         <div class="label-group">
                             <label for="city" class="form-control-label">City</label>
-                            <input type="text" class="form-control string" id="city" name="city" value="{{=customer_info.city}}">
+                            <input type="text" class="form-control string" id="city" name="city" {{if customer_info.city:}}value="{{=customer_info.city}}"{{else:}} placeholder='City' {{pass}}>
                         </div>
                     </div>
 
@@ -60,20 +62,30 @@
                         </div>
                     </div>
 
-                    <div class="col-4 pl-0">
+                    <div class="col-3 pl-0">
                         <div class="label-group">
                             <label for="zip" class="form-control-label">Zip Code</label>
-                            <input type="text" class="form-control string" id="zip" name="zip" value="{{=customer_info.zip}}">
+                            <input type="text" class="form-control string" id="zip" name="zip" {{if customer_info.zip:}}value="{{=customer_info.zip}}"{{else:}} placeholder='12345' {{pass}}>
                         </div>
                     </div>
                     
                 </div>
 
                 <div class="row form-group">
-                    <div class="col-4">
+                    
+                    <div class="col-12">
+                        <div class="label-group">
+                            <label for="pemail" class="form-control-label">Email</label>
+                            <input type="text" class="form-control string" id="email" name="email" value="{{=user_info.email}}">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row form-group">
+                    <div class="col-5">
                         <div class="label-group">
                             <label for="phone" class="form-control-label">Phone</label>
-                            <input type="text" class="form-control string" id="phone" name="phone" value="{{=customer_info.phone}}">
+                            <input type="text" class="form-control string" id="phone" name="phone" {{if customer_info.phone:}}value="{{=customer_info.phone}}"{{else:}} placeholder='+1 (234-5678)' {{pass}}>
                         </div>
                     </div>
                 </div>
@@ -84,8 +96,6 @@
                     </div>
                 </div>
             </form>
-
-
 
         </div>
     </div>
