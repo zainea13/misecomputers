@@ -1,16 +1,30 @@
+/*-------------------------------------------------------------------------------------------------------------------*/
 /* Color Variables */
 :root {
-
-    --primary: hsl(200, 60%, 50%); 
+    --primary: hsl(200, 60%, 50%);
     --secondary: hsl(203, 81%, 83%);
     --accent: hsl(39, 100%, 50%);
-
     --medium-gray: hsl(208, 7%, 92%);
-
-    --highlight:hsl(202, 65%, 58%);
+    --highlight: hsl(202, 65%, 58%);
     --peach: hsl(25, 100%, 80%);
+    --colorDanger: hsl(348, 78%, 49%); 
+
 }
 
+/*-------------------------------------------------------------------------------------------------------------------*/
+/* GENERAL HTML ADJUSTMENTS */
+input::placeholder {
+    color: #dddddd !important;
+}
+
+
+/*-------------------------------------------------------------------------------------------------------------------*/
+/* WEB 2 PY TWEAKS */
+div.w2p_flash.alert {
+    z-index: 2000;
+}
+
+/*-------------------------------------------------------------------------------------------------------------------*/
 /* override some bootstrap colors and classes */
 a {
     color: var(--primary);
@@ -42,8 +56,8 @@ a {
 }
 
 .btn-primary:hover {
-        background-color: var(--highlight) !important;
-        border-color: var(--highlight) !important;
+    background-color: var(--highlight) !important;
+    border-color: var(--highlight) !important;
 }
 
 
@@ -62,7 +76,8 @@ a {
     border-color: var(--accent);
 }
 
-.text-primary, a.text-primary:visited {
+.text-primary,
+a.text-primary:visited {
     color: var(--primary) !important;
 }
 
@@ -70,7 +85,12 @@ a {
     color: var(--accent);
 }
 
-a.text-primary:hover, a.text-primary:focus {
+.text-danger {
+    color: var(--colorDanger) !important;
+}
+
+a.text-primary:hover,
+a.text-primary:focus {
     color: var(--highlight) !important;
 }
 
@@ -78,23 +98,22 @@ a.text-primary:active {
     color: var(--primary) !important;
 }
 
-
-
 p {
     word-wrap: break-word;
 }
 
-input[type="checkbox"]{
+input[type="checkbox"] {
     margin-inline-end: .25rem;
 }
 
 .container {
-    margin-bottom:250px;
+    margin-bottom: 250px;
 }
 
+/*-------------------------------------------------------------------------------------------------------------------*/
 /* CUSTOM UTILITY CLASSES ------------------------- */
 
-.font-small  {
+.font-small {
     font-size: .75rem;
     line-height: 1rem;
 }
@@ -124,33 +143,33 @@ input[type="checkbox"]{
 }
 
 .input-num-w-3 {
-    width:3em;
+    width: 3em;
 }
 
-/*------------------------------------------------------------*/
+/*-------------------------------------------------------------------------------------------------------------------*/
 /* Nav Bar classes */
 
 
-/*------------------------------------------------------------*/
+/*-------------------------------------------------------------------------------------------------------------------*/
 /* Home Page */
 
 .top-brands {
-    border:2px solid black; 
-    border-radius:20px; 
-    background-color:#FFCFA3
+    border: 2px solid black;
+    border-radius: 20px;
+    background-color: #FFCFA3
 }
 
-
+/*-------------------------------------------------------------------------------------------------------------------*/
 /* Adjusting product items */
 
 .product {
-    display:flex;
+    display: flex;
     flex-direction: column;
     /* background-color: var(--product-color); */
     border-radius: 0.5rem;
     overflow: hidden;
     flex: 1 1 330px;
-    padding:1rem;
+    padding: 1rem;
     border: 1px solid var(--peach);
 }
 
@@ -167,20 +186,20 @@ input[type="checkbox"]{
     /* object-position: 0 20%; */
 }
 
-.product > :not(img) {
-    margin-inline:0rem;
+.product> :not(img) {
+    margin-inline: 0rem;
 }
 
 .price-info {
     margin-block-start: auto;
     margin-block-end: 1rem;
-    display:flex;
+    display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-.price-info > p {
-    margin:0;
+.price-info>p {
+    margin: 0;
     font-size: 1.5rem;
     font-weight: bold;
 }
@@ -192,15 +211,16 @@ input[type="checkbox"]{
     background-color: var(--accent);
     color: white;
     font-weight: bold;
-    font-size:1rem;
+    font-size: 1rem;
     padding: .75rem 1.25rem;
+
     &:hover {
         background-color: transparent;
         color: var(--accent) !important;
     }
 }
 
-
+/*-------------------------------------------------------------------------------------------------------------------*/
 /* Item Page Stuff */
 
 .swiper-window {
@@ -209,7 +229,7 @@ input[type="checkbox"]{
 
 .swiper-wrapper {
     display: flex;
-    gap:1rem;
+    gap: 1rem;
     translate: 0px;
     transition: translate 500ms;
 }
@@ -220,10 +240,10 @@ input[type="checkbox"]{
     aspect-ratio: 4 / 3;
     align-items: center;
     justify-content: center;
-    width:100%;
+    width: 100%;
 }
 
-.swiper-item > img {
+.swiper-item>img {
     max-width: 100%;
     max-height: 100%;
     object-fit: contain;
@@ -231,7 +251,7 @@ input[type="checkbox"]{
 
 .product-view-bar {
     display: flex;
-    gap:1rem;
+    gap: 1rem;
     justify-content: center;
     align-items: center;
     margin-block-start: 1rem;
@@ -240,10 +260,10 @@ input[type="checkbox"]{
 .thumbnail {
     width: 66px;
     height: 66px;
-    padding:6px;
+    padding: 6px;
     border: 1px solid slategray;
     border-radius: 8px;
-    display:flex;
+    display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
@@ -251,7 +271,7 @@ input[type="checkbox"]{
 
 .thumbnail.active {
     border: 3px solid var(--highlight);
-    padding:4px;
+    padding: 4px;
 }
 
 .thumbnail img {
@@ -260,18 +280,80 @@ input[type="checkbox"]{
     object-fit: contain;
 }
 
+/*-------------------------------------------------------------------------------------------------------------------*/
+/* --------- CHECKOUT STUFF ------------ */
 
 .checkout-table {
-    width:100%;
+    width: 100%;
 }
 
 .checkout-table th {
     font-weight: normal;
 }
 
-.checkout-table th, .checkout-table td {
+.checkout-table th,
+.checkout-table td {
     padding-block-end: .5rem;
-    padding-inline: .5rem;;
+    padding-inline: .5rem;
+    ;
+}
+
+.form-control {
+    height: calc(2.25em + .75rem + 2px);
+    padding: .75rem;
+    box-shadow: 0 1px 3px 0 #e6ebf1;
+}
+
+.sticky-top {
+    position: sticky;
+    top: 20px;
+}
+
+.receipt {
+    display: flex;
+    flex-direction: column;
+    height: 50%;
+}
+
+.form-group .col-6 {
+    position:relative;
+}
+
+.input-error {
+    border-color: var(--colorDanger);
+    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.03),
+        0px 3px 6px rgba(0, 0, 0, 0.02),
+        0 0 0 1px var(--colorDanger);
+    background-color: transparent;
+}
+.col-6:has(.input-error)::after {
+    content: "\f06a";  /* this is your text. You can also use UTF-8 character codes as I do here */
+    font-family: FontAwesome;
+    font-size: 1.5rem;
+    color: var(--colorDanger);
+    position:absolute;
+    right: 28px;
+    top: 38px;
+}
+
+.loading-screen {
+    display:block;
+    position: fixed;
+    z-index:5000;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    color:white;
+    font-size: 1.5rem;
+    font-weight: 100;
+}
+
+.loading-screen > div {
+    border: 1px solid hsl(0, 0%, 40%);
+    background-color: var(--primary);
+    border-radius: 1rem;
 }
 
 .w-100px {
