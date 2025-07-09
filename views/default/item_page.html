@@ -99,7 +99,7 @@
 	<!-- Right column with info -->
 	<div class="col-6">
 		<h2 class="font-weight-bold mb-4">{{=product['product_name']}}</h2>
-		<h3 class="mb-5">${{=product['price']}}</h3>
+		<h3 class="mb-5">${{=f"{product['price']:,.2f}"}}</h3>
 		<h5 class="border-bottom p-1 text-uppercase">Key Features</h5>
 		<ul class="mb-5">
 			{{
@@ -132,7 +132,7 @@
 						<i class="fa fa-plus mr-1" aria-hidden="true"></i>
                         Add to Cart
                         {{else:}}
-                        <button type="submit" class="btn btn-mise-accent w-100" disabled>
+                        <button type="submit" class="btn btn-mise-accent w-100 btn-out-of-stock" disabled>
                         Out of Stock
                         {{pass}}
  					</button>

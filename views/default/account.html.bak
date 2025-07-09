@@ -17,7 +17,7 @@
             </p>
 
             <span class="font-weight-bold text-uppercase font-small">Contact Info:</span>
-            <p><i class="text-uppercase font-small">Phone:</i> {{=customer_info.phone}} 
+            <p><i class="text-uppercase font-small">Phone:</i> {{=customer_info.phone}}
                 <br>
             {{else:}}{{pass}}
                 <i class="text-uppercase font-small">Email:</i> {{=user_info.email}}

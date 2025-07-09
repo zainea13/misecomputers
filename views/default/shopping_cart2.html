@@ -13,18 +13,22 @@
 			{{
 			else:
 			for item in cart_items:
-			product_id= item['product_id']
-			product = db(db.products.id == product_id).select().as_list()[0]
-			image = db((db.product_images.product_id == product_id) & (db.product_images.main_image ==
-			True)).select().as_list()[0]
-			cat = (db(db.categories.id == product['category_id']).select().first().category_name).lower()
-        	cat = cat.replace("&","").replace(" ","_")
-        	brand = (db(db.brand.id == product['brand_id']).select().first()).brand_name.lower()
+				product_id= item['product_id']
+				product = db(db.products.id == product_id).select().as_list()[0]
+				name = product['product_name']
+        		name_link = name.replace(' ','-')
+				image = db((db.product_images.product_id == product_id) & (db.product_images.main_image ==
+				True)).select().as_list()[0]
+				cat = (db(db.categories.id == product['category_id']).select().first().category_name).lower()
+				cat = cat.replace("&","").replace(" ","_")
+				brand = (db(db.brand.id == product['brand_id']).select().first()).brand_name.lower()
 			}}
 			<div class="col product">
-				{{=IMG(_src=URL(f'static/images/{cat}/{brand}/', image['image_filename']))}}
-				<h4>{{=product['product_name']}}</h4>
-				<h5>${{=f"{product['price']:.2f}"}}</h5>
+				<a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}" >
+					{{=IMG(_src=URL(f'static/images/{cat}/{brand}/', image['image_filename']))}}
+				</a>
+				<h4><a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}" class="text-body">{{=product['product_name']}}</a></h4>
+				<h5 class="text-dark">${{=f"{product['price']:.2f}"}}</h5>
 				<form method="post" action="#" class="mt-auto">
 					<input type="hidden" name="product_id" value="{{=product_id}}">
 					<div class="d-flex align-items-center justify-content-between w-100 flex-gap-1">
