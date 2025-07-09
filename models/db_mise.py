@@ -67,21 +67,13 @@ db.define_table('attribute_description',
                 )
 
 
-
 db.define_table('product_attribute',
-                Field('attribute_id', 'reference attribute_description'),
+               Field('attribute_id', 'reference attribute_description'),
                 Field('attribute_value', notnull=True),
-                Field('product_id', 'reference products')
+                Field('product_id', 'reference products'),
+                Field('full_description'),
+                Field('is_key_feature', type='boolean', default=False)
                 )
-
-
-#db.define_table('product_attribute',
-               # Field('attribute_id', 'reference attribute_description'),
-                #Field('attribute_value', notnull=True),
-                #Field('product_id', 'reference products'),
-                #Field('full_description'),
-                #Field('is_key_feature', type='boolean', default=False)
-                #)
                 
                 
 db.define_table('category_attribute',
@@ -107,6 +99,8 @@ db.define_table('orders',
                 # Field('ship_date'),
                 # Field('status'),
                 # Field('tracking_number'),
+                Field('stripe_charge_id'),
+                migrate=True
                 )
 
 
@@ -116,6 +110,7 @@ db.define_table('order_line_items',
                 Field('product_id'),
                 Field('price'),
                 Field('quantity_of_item', 'integer'),
+                migrate=True
                 )
 
 
@@ -127,6 +122,7 @@ db.define_table('shipping_address',
                 Field('state_code', 'reference states', label="State"),
                 Field('email'),
                 Field('order_id', 'reference orders'),
+                migrate=True
                 )
 
 
@@ -157,6 +153,7 @@ db.define_table('billing_address',
                 Field('zip'),
                 Field('state_code', 'reference states', label="State"),
                 Field('order_id', 'reference orders'),
+                migrate=True
                 )
 
 # ----------------- SHOPPING CART TABLES ----------------------------

@@ -1,5 +1,22 @@
 {{extend 'layout.html'}}
 
+
+
+{{if not cart_items:}}
+    <h2 class="text-accent mb-2" style="margin-left: -15px;">Check Out</h2>
+    <div class="row">
+        <div class="col-12">
+            <p>You're cart is empty, you can't checkout!</p>
+        </div>
+    </div>
+{{else:}}
+	<div class="loading-screen align-items-center" style="display: flex;">
+	<div class="d-flex align-items-center m-auto flex-gap-2 p-4">
+		<strong>Loading...</strong>
+		<div class="spinner-grow ml-auto" role="status" aria-hidden="true"></div>
+	</div>
+</div>
+
     <h2 class="text-accent mb-2" style="margin-left: -15px;">Check Out</h2>
     <div class="row">
         <div class="col-7 pt-3">
@@ -130,7 +147,7 @@
                 {{=billing_form.custom.end}}  
                 
                 <!-- Checkbox for duplicating shipping info -->
-                <div class="col-12 p-2 btn btn-primary" onclick="this.querySelector('#use-shipping').click()">
+                <div class="col-12 p-2 btn btn-light" onclick="this.querySelector('#use-shipping').click()">
                     <input type="checkbox" id="use-shipping" class="mr-1" style="pointer-events:none" data-toggle="collapse" data-target="#billing-info" aria-expanded="{{if auth.user:}}false{{else:}}true{{pass}}" aria-controls="billing-info" {{if auth.user:}}checked{{pass}}>
                     <label for="use-shipping" class="m-0 cursor-pointer">Same as shipping address</label>
                 </div>
@@ -139,18 +156,25 @@
             
             <!-- CREDIT CARD FORM -->
             <div class="row mb-5">
-                
+                <h5 class="w-100 pb-3 border-bottom mb-4">Payment Information</h5>
+                <div class="payment-form w-100 payment-container px-3">                
+                        <div class="form-group">
+                        <div id="payment-element">
+                            <!-- Payment Element will be mounted here -->
+                        </div>
+                    </div>
+                </div>
             </div>
             
         </div>
         
         <!-- Right Side Bar RECEIPT -->
-        <div class="col-5">
-            <div class="bg-light p-3 rounded">
+        <div class="col-5" >
+            <div class="bg-light p-3 rounded receipt sticky-top">
                 <h5>Items</h5>
                 <!-- LIST ITEMS IN CART -->
                 <div>
-                    <hr>
+                    <hr class="mt-2">
                     <table class="checkout-table">
                         <thead>
                             <tr class="text-uppercase text-secondary">
@@ -174,7 +198,7 @@
                     </table>
                 </div>
                 
-                <hr>
+                <hr class="w-100">
                 
                 <!-- RECEIPT TOTALS -->
                 <div class="row mx-0">
@@ -202,10 +226,10 @@
                     </div>
                 </div>
 
-                <hr>
+                <hr class="w-100">
 
                 <!-- PLACE ORDER BUTTON -->
-                <div class="d-flex justify-content-end">
+                <div class="d-flex justify-content-end mt-auto">
                     <button id="place-order" class="btn btn-mise-accent w-100">Place Order</button>
                 </div>
                 
@@ -215,9 +239,10 @@
         </div>
     <!-- END MAIN ROW  -->
     </div>
+{{pass}}
 
 
 {{block page_js}}
+<script src="https://js.stripe.com/v3/"></script>
 <script src={{=URL('static','js/mise_checkout.js')}}></script>
-
 {{end page_js}}
