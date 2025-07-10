@@ -11,3 +11,9 @@ private/private.py
 *.sqlite
 databases/storage.sqlite
 /databases
+# Python compiled files
+__pycache__/
+*.pyc
+
+# Web2py database
+databases/*.sqlite
