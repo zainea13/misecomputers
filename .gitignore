@@ -8,3 +8,6 @@ errors/*
 databases/*
 databases/storage.sqlite
 private/private.py
+*.sqlite
+databases/storage.sqlite
+/databases

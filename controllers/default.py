@@ -7,10 +7,12 @@
 # ---- example index page ----
 from gluon import *
 import datetime
+from datetime import date, datetime, timedelta
 import json
 from gluon.storage import Storage
 from gluon.contrib.stripe import Stripe
 import stripe
+import random
 
 from private.private import *
 
@@ -80,9 +82,7 @@ def product_entry_form():
             img_alts[key] = value
 
     r = request.vars
-    
 
-    print(f"{'new data':=^80}")
 
     if request.env.request_method == 'POST':
         product_id = db.products.insert(
@@ -889,6 +889,18 @@ def checkout():
                     cc_last_four=last4
                 )
 
+                # figure out date, if sunday, go to next day
+                future_date = datetime.now() + timedelta(days=5)
+                if (future_date.weekday()) == 6:
+                    future_date += timedelta(days=1)
+
+                # Add shipping info
+                db.shipping_info.insert(
+                    order_id=order_id,
+                    tracking_number=random.randint(10000000000000000,100000000000000000),
+                    arrival_date=future_date
+                )
+
                 # todo Clear shopping cart after success uncomment this later
                 # if auth.user:
                 #     db(db.shopping_cart2.user_id == auth.user.id).delete()
@@ -938,7 +950,7 @@ def checkout():
 
 
 def thankyou():
-    print(session.ty)
+    print("session.ty: ", session.ty)
     return locals()
 
 
@@ -947,18 +959,74 @@ def order_confirmation_email():
     # ----------------------------------
     # # Send confirmation email
     # ----------------------------------
+    mise_host_url = "http://127.0.0.1:8000/misecomputers/default/"
+    img_host_url = "https://www.ianzainea.com/mise/images/"
+    email_message = '<html lang="en"> \
+                        <head> \
+                        </head> \
+                        <body style="box-sizing: border-box;"> \
+                            <!-- HTML here --> \
+                            <div style="width:800px; margin:0 auto; border-radius: 6px; overflow: clip;"> \
+                                <div style="padding:16px; background-color: hsl(203, 81%, 83%); text-align: center;"> \
+                                    <a href="http://127.0.0.1:8000/misecomputers/default/index" target="_blank"> \
+                                        <img src="https://www.ianzainea.com/mise/images/miselogolong2.png" alt="MISE logo" style="width:250px;"> \
+                                    </a> \
+                                </div> \
+                                <div style="background-color: hsl(0, 0%, 98%); padding:16px;"> \
+                                    <h1>Thank you for your order with MISE Computers</h1>'
+                                    
+
+    # Put in order number
+    email_message += f'<p>Your order number is <strong><a href="">#{session.ty["order_id"]}</a></strong></p>'
 
     # Get order list items
     list_items = db(db.order_line_items.order_id == session.ty['order_id']).select()
     for item in list_items:
+        product = db(db.products.id == item.product_id).select().first()
         image = db((db.product_images.product_id == item.product_id) & (db.product_images.main_image == True)).select()
+        cat = (db(db.categories.id == product.category_id).select().first().category_name).lower()
+        cat = cat.replace("&","").replace(" ","_")
+        brand = (db(db.brand.id == product.brand_id).select().first()).brand_name.lower()
         qty = item.quantity_of_item
-        print("list items:",item.product_id)
+        print("product:", product)
+
+    # Get shipping info
+    shipping_info = db(db.shipping_info.order_id == session.ty['order_id']).select().first()
+    date_string = shipping_info.arrival_date
+                                                        # 2025-07-19 20:35:12.750990
+    date_object = datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S.%f")
+    arrives = date_object.strftime("%A, %B %d, %Y")
+
+
+    email_message += '<p>A payment of <strong>${{=f"{session.ty[\'total\']:,.2f}"}}</strong> was charged to the card ending in <strong>{{=session.ty["last4"]}}</strong>.</p> \
+                        <h2 style="margin-top:36px;">Your Items:</h2>\
+                        <div style="display: flex; width:100%; border:1px solid hsl(39, 100%, 50%); border-radius: 4px; overflow: clip; background-clip:border-box; "> \
+                            <div style="width:30%;"> \
+                                <img src="https://www.ianzainea.com/mise/images/laptops/dell/686761_763532_01_front_zoom.jpg" alt="product name" style="width:100%; display: block; border-radius: 0 4px 4px; outline:1px solid hsl(39, 100%, 50%);"> \
+                            </div> \
+                            <div style="padding: 0 16px; display:flex; flex-direction: column; flex-grow: 1;"> \
+                                <div> \
+                                    <h3>Product Name</h3> \
+                                </div> \
+                                <div style="display: flex; justify-content: space-between;"> \
+                                    <p>$1000</p> \
+                                    <p>Qty: <strong>5</strong></p> \
+                                </div> \
+                            </div> \
+                        </div> \
+                        <h2 style="margin-top:36px;">Shipping Details:</h2> \
+                        <p>Your items are expected to arrive on <strong>July 13, 2025</strong>.</p> \
+                        <p>Tracking number: <strong>9812734091827341235</strong></p> \
+                        <p>Thanks again for shopping with us! See you again soon!</p> \
+                    </div> \
+                </div> \
+            </body> \
+        </html>'
 
     # mail.send(
     #     to=session.ty['email'],
     #     subject=f'Confirmation of order #{session.ty['order_number']} from MISE Computers',
-    #     message='it worked'
+    #     message=email_message
     # )
     return locals()
 
