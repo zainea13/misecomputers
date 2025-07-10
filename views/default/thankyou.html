@@ -3,14 +3,41 @@
 <div class="row">
     <div class="col-12">
         {{if session.ty:}}
-        <h2>Thank you!</h2>
-        <p>Your order number is <strong><a href="">#{{=session.ty['order_number']}}</a></strong></p>
-        <p>A payment of <strong>${{=f"{session.ty['total']:,.2f}"}}</strong> was charged to the card ending in <strong>{{=session.ty['last4']}}</strong>.</p>
-        <p>A confirmation email was sent to <em>{{=session.ty['email']}}</em></p>
+        <h2 class="mb-4">Thank you!</h2>
+
+        <hr>
+
+        <!-- ORDER NUMBER SECTION -->
+        <p>Your order number is <strong>#{{=session.ty['order_number']}}</strong></p>
+
+        <!-- PAYMENT TOTAL -->
+        <p>A payment of <strong>${{=f"{session.ty['total']:,.2f}"}}</strong> was processed
+        {{if session.ty.get('last4'):}}
+            and charged to the card ending in <strong>{{=session.ty['last4']}}</strong>
+        {{elif session.ty.get('payment_method'):}}
+            with <strong>{{=session.ty['payment_method']}}</strong>
         {{else:}}
-        <h2>Oh no!</h2>
-        <p>There was some system error! Please check for a confirmation email. If none appears, contact support.</p>
+            successfully
         {{pass}}
+        .</p>
+        
+        <!-- SHIPPING -->
+        <h4 class="mt-5 mb-3">Shipping Details:</h4>
+        <p>Your items are expected to arrive on <strong>{{=arrives}}</strong>.</p>
+        <p>Tracking number: <strong>{{=shipping_info.tracking_number}}</strong></p>
+
+        <hr class="my-5">
+
+        <!-- CONFIRMATION EMAIL NOTICE -->
+        <p class="">A confirmation email was sent to <em>{{=session.ty['email']}}</em></p>
+
+        <!-- IF THERE WAS SOME KINDA ERROR OR THEY HIT "BACK" -->
+        {{else:}}
+            <h2>Oh no!</h2>
+            <p>There was some system error! Please check for a confirmation email. If none appears, contact support.</p>
+        {{pass}}
+
+
     </div>
 </div>
 
@@ -20,14 +47,10 @@
 <script>
     "use strict"
     if (localStorage.getItem('order_success') !== null) {
-        console.log('email would be sent')
         ajax(`{{=URL('default', 'order_confirmation_email')}}`, [], '');
-        // localStorage.removeItem('order_success');
+        localStorage.removeItem('order_success');
     }
     
 </script>
-{{#if session.ty:}}
-    {{#del session.ty}}
-    {{#pass}}
 {{end page_js}}
 

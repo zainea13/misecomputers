@@ -145,12 +145,12 @@ db.define_table('line_item_attributes',
 
 # # -------------- PAYMENTS TABLES ------------------------
 
-# db.payment_info.drop()
+
 db.define_table('payment_info',
                 Field('order_id', 'reference orders', default='orders.id'),
                 Field('card_brand'),
                 Field('cc_last_four', 'integer', length=4),
-                migrate=True
+                # migrate=True
                 )
 
 
@@ -188,5 +188,3 @@ db.define_table('shipping_info',
                 Field('arrival_date'),
                 migrate=True
                 )
-
-# db.shipping_info.drop()

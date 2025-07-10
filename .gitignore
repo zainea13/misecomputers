@@ -17,3 +17,6 @@ __pycache__/
 
 # Web2py database
 databases/*.sqlite
+
+# Web2py backup files
+*.bak

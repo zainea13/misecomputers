@@ -33,23 +33,34 @@ for category in db(db.categories).select():
         (T(cat_name), False,URL('default/category_page', (str(cat_id) + '--' + cat_link)), [])
     )
 
-# Page Views
+
+def clear_ram_cache():
+    cache.ram.clear() # Clears all items from the RAM cache
+    response.flash = "RAM cache cleared!"
+    redirect(URL('index')) # Redirect to a main page
+
+
+# ---- define pages ----
 
 def index():
-
+    response.title='MISE Computer Store'
     session.forced = True
     categories = db(db.categories).select()
     return dict(message=T('Welcome to web2py!'), categories=categories)
 
 def privacy():
+    response.title='MISE - Privacy Policy'
     response.view="privacy.html"
     return locals()
 
 def terms():
+    response.title='MISE - Terms'
     response.view="terms.html"
     return locals()
 
 def search():
+    
+
     form = FORM(INPUT(_name='keyword', _type='text', _placeholder='Search...'),
                 INPUT(_type='submit', _value='Search'))
 
@@ -58,7 +69,9 @@ def search():
         keyword = form.vars.keyword
         if keyword:
             results = db((db.products.product_name.contains(keyword))).select()
-     
+        
+    
+    
     return dict(form=form, results=results)
 
 def searchtop():
@@ -69,17 +82,15 @@ def searchtop():
     print(keyword)
     if keyword:
         results = db((db.products.product_name.contains(keyword))).select()
-        
+    
+    response.title=f'MISE - Search results for "{keyword}"'
     return dict(results=results)
 
-# ---- define pages ----
-
 def product_entry_form():
+    response.title=f'MISE - Product Entry Form'
     attributes = db(db.attribute_description).select()
     categories = db(db.categories).select()
     brands = db(db.brand).select()
-
-
     attr = {}
     img_paths = {}
     img_alts = {}
@@ -120,8 +131,6 @@ def product_entry_form():
             )
 
         for attr_name, attr_value in attr.items():
-            print("attr_name: ", attr_name)
-            print("attr_value: ", attr_value)
             db.product_attribute.insert(
                 attribute_id=attr_name.strip("attr-"),
                 attribute_value=attr_value,
@@ -150,6 +159,7 @@ def item_page():
     
     # test = session.my_test
     session_id = response.session_id
+    response.title=f'MISE - {product['product_name']}'
     return locals()
 
 
@@ -171,6 +181,7 @@ def category_page():
     products = filtered_products(cat_id, filter_dict, order) # products based on user's criteria
     is_filter = db((db.category_attribute.category_id == cat_id) & (db.category_attribute.isFilter == True)).select()
 
+    response.title=f'MISE - All {cat_name_fix}'
     return locals()
 
 # retrieves products from database that are within the specified category, with an optional order by clause
@@ -355,6 +366,7 @@ def add_to_cart():
 
 
 def shopping_cart2():
+    response.title=f'MISE - Shopping Cart'
     # ----------------------------------
     # # Quantity update logic
     # ----------------------------------
@@ -440,6 +452,8 @@ def shopping_cart_count():
 
 
 def account():
+    response.title=f'MISE - Your Account'
+
     # select auth user database table based on current id
     user_info = db(db.auth_user.id == auth.user.id).select().first()
 
@@ -457,6 +471,7 @@ def account():
 
 # account details page, to update account details
 def account_details():
+    
     # select auth user database table based on current id
     user_info = db(db.auth_user.id == auth.user.id).select().first()
 
@@ -472,6 +487,9 @@ def account_details():
             
             r = request.vars
             user_info.update_record(first_name=r.first_name, last_name=r.last_name, email=r.email)
+
+            # Update auth.user to match
+            auth.user.update(first_name=r.first_name, last_name=r.last_name, email=r.email)
                 
             customer_info.update_record(
                                     street_1 = r.street_1, 
@@ -490,8 +508,36 @@ def account_details():
     if request.vars:
         redirect(URL('account'))
 
+    response.title=f'MISE - Account Details for {user_info.first_name}'
     return locals()
 
+# ---- Order History -----
+@auth.requires_login()
+def order_history():
+    response.title=f'MISE - Your Order History'
+
+    user_id = auth.user.id
+
+    # Fetch orders for the current user
+    orders = db(db.orders.user_id == user_id).select(orderby=~db.orders.order_date)
+
+    # If no orders found, just return
+    if not orders:
+        return dict(orders=[], order_lines={})
+
+    # Collect order IDs
+    order_ids = [order.id for order in orders]
+
+    # Fetch line items
+    line_items = db(db.order_line_items.order_id.belongs(order_ids)).select()
+
+    # Group items by order_id
+    from collections import defaultdict
+    order_lines = defaultdict(list)
+    for item in line_items:
+        order_lines[item.order_id].append(item)
+
+    return dict(orders=orders, order_lines=order_lines)
 
 def build_shipping_form():
 
@@ -676,6 +722,8 @@ def create_payment_intent():
 
 
 def checkout():
+    response.title=f'MISE - Checkout'
+
     print(f"{'NEW RUN':=^120}")
     # VARIABLES
     session_id = response.session_id
@@ -730,11 +778,12 @@ def checkout():
             request.body.seek(0)
             all_forms_data = json.loads(json_body)
             # DEBUG
-            # print("Received data:", all_forms_data)
+            print("Received data:", all_forms_data)
             
         except Exception as e:
             # DEBUG
-            # print("JSON parsing error:", e)
+            print("JSON parsing error:", e)
+
             # If JSON parsing fails, return an error message
             session.flash = 'Invalid JSON data received.'
             return json.dumps(dict(status='error', message=f'Invalid JSON data received: {e}'))
@@ -744,24 +793,24 @@ def checkout():
         billing_data = Storage(all_forms_data.get('billing-info', {}))
         payment_intent_id = all_forms_data.get('payment_intent_id')
         validate_only = all_forms_data.get('validate_only', False)
-        payment_success = all_forms_data.get('payment_success')
+        payment_validation_success = all_forms_data.get('payment_validation_success')
         
 
         # DEBUG: Log the separated data
-        # print("Shipping data:", shipping_data)
-        # print("Shipping data form key:", shipping_data._formkey)
-        # print("Billing data:", billing_data)
-        # print("Payment Intent ID:", payment_intent_id)
-        # print("Validate only:", validate_only)
-        # print("Payment success:", payment_success)
+        print("Shipping data:", shipping_data)
+        print("Shipping data form key:", shipping_data._formkey)
+        print("Billing data:", billing_data)
+        print("Payment Intent ID:", payment_intent_id)
+        print("Validate only:", validate_only)
+        print("Payment validation success:", payment_validation_success)
 
         # validate the data
         s_accepted = shipping_form.accepts(shipping_data, session)
         b_accepted = billing_form.accepts(billing_data, session)    
 
         # DEBUG: Log validation results
-        # print("Shipping form accepted:", s_accepted)
-        # print("Billing form accepted:", b_accepted)
+        print("Shipping form accepted:", s_accepted)
+        print("Billing form accepted:", b_accepted)
            
 
         # VALIDATION STEP - Just validate forms, don't process payment
@@ -769,20 +818,31 @@ def checkout():
             
             if s_accepted and b_accepted:
                 # DEBUG
-                # print("Validation passed - forms are valid")
-                if not payment_success:
+                print("Validation passed - forms are valid")
+
+                if not payment_validation_success:
                     # Generate new keys to send too
                     new_keys = {
                         'shipping-info': shipping_form.formkey,
                         'billing-info': billing_form.formkey
                     }
+                    # DEBUG LOG NEW KEYS
+                    print('new keys were created and sent')
                     return json.dumps(dict(new_keys=new_keys))
+                
+                # Creating new keys just incase payment processing fails
+                new_keys = {
+                        'shipping-info': shipping_form.formkey,
+                        'billing-info': billing_form.formkey
+                    }
+
                 validation_success = True
-                return json.dumps(dict(status='validation_success'))
+                return json.dumps(dict(status='validation_success', new_keys=new_keys))
             else:
                 # DEBUG: Log errors
-                # print("Validation failed - form errors found")
-                # print("Shipping errors:", shipping_form.errors)
+                print("Validation failed - form errors found")
+                print("Shipping errors:", shipping_form.errors)
+
                 # Generate a dictionary of errors to send back
                 errors_dict = {}
                 if shipping_form.errors:
@@ -807,7 +867,7 @@ def checkout():
             # # Stripe Payment verification
             # ----------------------------------
             # debug 
-            # print("z30=inside final processing")
+            print("z30=inside final processing")
             try:
                 # Retrieve the payment intent to confirm it was successful
                 intent = stripe.PaymentIntent.retrieve(
@@ -815,18 +875,41 @@ def checkout():
                     expand=['payment_method']
                     )
                 
-                last4 = intent.payment_method.card.last4
-                card_brand = intent.payment_method.card.display_brand
+                # Get payment method type
+                payment_method_type = intent.payment_method.type
+                print(f"Payment method type: {payment_method_type}")
+                
+                # Handle different payment method types
+                if payment_method_type == 'card':
+                    last4 = intent.payment_method.card.last4
+                    card_brand = intent.payment_method.card.display_brand
+                elif payment_method_type == 'klarna':
+                    # For Klarna, we don't have card details
+                    last4 = None
+                    card_brand = 'Klarna'
+                elif payment_method_type == 'afterpay_clearpay':
+                    last4 = None
+                    card_brand = 'Afterpay'
+                elif payment_method_type == 'affirm':
+                    last4 = None
+                    card_brand = 'Affirm'
+                else:
+                    # For other payment methods, use the type as the brand
+                    last4 = None
+                    card_brand = payment_method_type.replace('_', ' ').title()
                 
                 # DEBUG: Log payment intent details
-                # print("Payment Intent Status:", intent.status)
-                # print("Payment Intent ID:", intent.id)
-                # print("Payment Intent Amount:", intent.amount)
+                print("Payment Intent Status:", intent.status)
+                print("Payment Intent ID:", intent.id)
+                print("Payment Intent Amount:", intent.amount)
+                print("Payment Method Type:", payment_method_type)
+                print("Card Brand:", card_brand)
+                print("Last 4:", last4)
 
                 # Check if payment was successful
                 if intent.status != 'succeeded':
                     # DEBUG
-                    # print("Payment not successful, status:", intent.status)
+                    print("Payment not successful, status:", intent.status)
                     return json.dumps(dict(
                         status='error',
                         stripe_error='Payment was not successful. Please try again.'
@@ -837,14 +920,14 @@ def checkout():
 
             except stripe.error.StripeError as e:
                 # DEBUG
-                # print("Stripe error:", e)
+                print("Stripe error:", e)
                 return json.dumps(dict(
                     status='error',
                     stripe_error=str(e.user_message) if hasattr(e, 'user_message') else str(e)
                 ))
             except Exception as e:
                 # DEBUG
-                # print("Unexpected error:", e)
+                print("Unexpected error:", e)
                 return json.dumps(dict(
                     status='error',
                     stripe_error='An unexpected error occurred. Please try again.'
@@ -868,7 +951,7 @@ def checkout():
                 stripe_charge_id=charge_id
                 )
 
-            
+            # Insert into relevant databases
             if order_id:
                 # Add each order_line_item
                 for item in cart_items:
@@ -906,7 +989,7 @@ def checkout():
                 db.payment_info.insert(
                     order_id=order_id,
                     card_brand=card_brand,
-                    cc_last_four=last4
+                    cc_last_four=last4  # Will be None for non-card payments
                 )
 
                 # figure out date, if sunday, go to next day
@@ -921,12 +1004,11 @@ def checkout():
                     arrival_date=future_date
                 )
 
-                # todo Clear shopping cart after success uncomment this later
-                # if auth.user:
-                #     db(db.shopping_cart2.user_id == auth.user.id).delete()
-                # else:
-                #     db(db.shopping_cart2.session_id == session_id).delete()
-
+                # Clear shopping cart after success
+                if auth.user:
+                    db(db.shopping_cart2.user_id == auth.user.id).delete()
+                else:
+                    db(db.shopping_cart2.session_id == session_id).delete()
 
             else:
                 response.flash = "Failed to create order."
@@ -937,11 +1019,12 @@ def checkout():
 
             # Set up email info
             thank_you_details = {
-                'order_id':order_id,
-                'order_number':order_number,
-                'total':total,
+                'order_id': order_id,
+                'order_number': order_number,
+                'total': total,
                 'email': shipping_data.email,
-                'last4': last4
+                'last4': last4,
+                'payment_method': card_brand
             }
 
             session.ty = thank_you_details
@@ -954,10 +1037,10 @@ def checkout():
             return json.dumps(dict(status='success', redirect_url=URL('default', 'thankyou'), thank_you_details=thank_you_details))  
         
         else:
-            # This shouldn't happen with the new flow, but keeping as fallback
+            # Fallback
             response.flash = 'Please fill out the form correctly.'
             return json.dumps(dict(status='error', stripe_error='Please fill out the form correctly.'))
-
+    
     return dict(
         locals(), 
         shipping_form=shipping_form, 
@@ -968,9 +1051,17 @@ def checkout():
         )
 
 
-
 def thankyou():
-    print("session.ty: ", session.ty)
+    response.title=f'MISE - Thank you!'
+
+    # Get shipping info
+    if session.ty:
+        shipping_info = db(db.shipping_info.order_id == session.ty['order_id']).select().first()
+        date_string = shipping_info.arrival_date
+        date_object = datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S.%f")
+        arrives = date_object.strftime("%A, %B %d, %Y")
+
+
     return locals()
 
 
@@ -979,99 +1070,64 @@ def order_confirmation_email():
     # ----------------------------------
     # # Send confirmation email
     # ----------------------------------
+
     mise_host_url = "http://127.0.0.1:8000/misecomputers/default/"
     img_host_url = "https://www.ianzainea.com/mise/images/"
-    email_message = '<html lang="en"> \
-                        <head> \
-                        </head> \
-                        <body style="box-sizing: border-box;"> \
-                            <!-- HTML here --> \
-                            <div style="width:800px; margin:0 auto; border-radius: 6px; overflow: clip;"> \
-                                <div style="padding:16px; background-color: hsl(203, 81%, 83%); text-align: center;"> \
-                                    <a href="http://127.0.0.1:8000/misecomputers/default/index" target="_blank"> \
-                                        <img src="https://www.ianzainea.com/mise/images/miselogolong2.png" alt="MISE logo" style="width:250px;"> \
-                                    </a> \
-                                </div> \
-                                <div style="background-color: hsl(0, 0%, 98%); padding:16px;"> \
-                                    <h1>Thank you for your order with MISE Computers</h1>'
-                                    
 
+    # Begin building the email message
+    email_message = f'<html lang="en"><head></head><body style="box-sizing: border-box;"><div style="width:800px; margin:0 auto; border-radius: 6px; overflow: clip;"><div style="padding:16px; background-color: hsl(203, 81%, 83%); text-align: center;"><a href="http://127.0.0.1:8000/misecomputers/default/index" target="_blank"><img src="https://www.ianzainea.com/mise/images/miselogolong2.png" alt="MISE logo" style="width:250px;"></a></div><div style="background-color: hsl(0, 0%, 98%); padding:16px;"><h1>Thank you for your order with MISE Computers</h1>'
+                                    
     # Put in order number
     email_message += f'<p>Your order number is <strong>#{session.ty["order_number"]}</strong></p>'
 
     # Get order
     order = db(db.orders.id == session.ty['order_id']).select().first()
-    print(order)
-
-    # Get order list items
-    list_items = db(db.order_line_items.order_id == session.ty['order_id']).select()
-
-    for item in list_items:
-        product = db(db.products.id == item.product_id).select().first()
-        image = db((db.product_images.product_id == item.product_id) & (db.product_images.main_image == True)).select()
-        cat = (db(db.categories.id == product.category_id).select().first().category_name).lower()
-        cat = cat.replace("&","").replace(" ","_")
-        brand = (db(db.brand.id == product.brand_id).select().first()).brand_name.lower()
-        qty = item.quantity_of_item
-        
+    if session.ty['last4']:
+        email_message += f'<p>A payment of <strong>${order.total_cost}</strong> was charged to the card ending in <strong>{session.ty["last4"]}</strong>.</p>'
+    else:
+        email_message += f'<p>A payment of <strong>${order.total_cost}</strong> was processed with <strong>{session.ty["payment_method"]}</strong>.</p>'
 
     # Get shipping info
     shipping_info = db(db.shipping_info.order_id == session.ty['order_id']).select().first()
     date_string = shipping_info.arrival_date
-                                                        # 2025-07-19 20:35:12.750990
     date_object = datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S.%f")
     arrives = date_object.strftime("%A, %B %d, %Y")
 
+    email_message += f'<h2 style="margin-top:36px;">Shipping Details:</h2><p>Your items are expected to arrive on <strong>{arrives}</strong>.</p><p>USPS Tracking number: <strong>{shipping_info.tracking_number}</strong></p>'
 
-    email_message += '<p>A payment of <strong>${{=f"{session.ty[\'total\']:,.2f}"}}</strong> was charged to the card ending in <strong>{{=session.ty["last4"]}}</strong>.</p> \
-                        <h2 style="margin-top:36px;">Your Items:</h2>\
-                        <div style="display: flex; width:100%; border:1px solid hsl(39, 100%, 50%); border-radius: 4px; overflow: clip; background-clip:border-box; "> \
-                            <div style="width:30%;"> \
-                                <img src="https://www.ianzainea.com/mise/images/laptops/dell/686761_763532_01_front_zoom.jpg" alt="product name" style="width:100%; display: block; border-radius: 0 4px 4px; outline:1px solid hsl(39, 100%, 50%);"> \
-                            </div> \
-                            <div style="padding: 0 16px; display:flex; flex-direction: column; flex-grow: 1;"> \
-                                <div> \
-                                    <h3>Product Name</h3> \
-                                </div> \
-                                <div style="display: flex; justify-content: space-between;"> \
-                                    <p>$1000</p> \
-                                    <p>Qty: <strong>5</strong></p> \
-                                </div> \
-                            </div> \
-                        </div> \
-                        <h2 style="margin-top:36px;">Shipping Details:</h2> \
-                        <p>Your items are expected to arrive on <strong>July 13, 2025</strong>.</p> \
-                        <p>Tracking number: <strong>9812734091827341235</strong></p> \
-                        <p>Thanks again for shopping with us! See you again soon!</p> \
-                    </div> \
-                </div> \
-            </body> \
-        </html>'
+    # Get order list items
+    list_items = db(db.order_line_items.order_id == session.ty['order_id']).select()
 
-    # mail.send(
-    #     to=session.ty['email'],
-    #     subject=f'Confirmation of order #{session.ty['order_number']} from MISE Computers',
-    #     message=email_message
-    # )
+    email_message += '<h2 style="margin-top:36px;">Your Items:</h2>'
+
+    for item in list_items:
+        product = db(db.products.id == item.product_id).select().first()
+        image = db((db.product_images.product_id == item.product_id) & (db.product_images.main_image == True)).select().first().image_filename
+        cat = (db(db.categories.id == product.category_id).select().first().category_name).lower()
+        cat = cat.replace("&","").replace(" ","_")
+        brand = (db(db.brand.id == product.brand_id).select().first()).brand_name.lower()
+        qty = item.quantity_of_item
+
+        email_message += f'<table style="background-color: hsl(0, 0%, 100%); width:100%; border:1px solid hsl(39, 100%, 50%); border-radius: 4px; overflow: clip; background-clip:border-box; margin:25px 0px;"><tr><td rowspan="3" style="width:30%;"><img src="https://www.ianzainea.com/mise/images/{cat}/{brand}/{image}" alt="image of {product.product_name}" style="width:100%; display: block; border-radius: 0 4px 4px;"></td><td colspan="2" style="padding:16px; vertical-align: bottom;"><h3 style="margin:0;padding:0;">{product.product_name}</h3></td></tr><tr><td style="padding:0 16px; vertical-align: top;"> Price: {product.price} </td><td style="padding: 0 16px; vertical-align: top;"> Qty: <strong>{qty}</strong></td></tr><tr><td colspan="2"><p>&nbsp;</p></td></tr></table>'
+
+    # Add end of html
+    email_message += f'<p style="margin-top:30px;text-align:center; width:100%;">Thanks again for shopping with us! See you again soon!</p></div><p style="margin-top:30px;text-align:center;">MISE Computers &copy;{datetime.now().year}</p></div></body></html>'
+        
+    # Send email!
+    mail.send(
+        to=session.ty['email'],
+        subject=f'Confirmation of order #{session.ty['order_number']} from MISE Computers',
+        message=email_message
+    )
+
+    if session.ty:
+        del session.ty
+
     return locals()
 
 
 
 
-    
-    
-    
-    
-    
-    
-
-    
-
-
-
-def display_form():
-    form = FORM('Your name:', INPUT(_name='name'), INPUT(_type='submit'))
-    return dict(form=form) 
 
 
 
@@ -1079,109 +1135,17 @@ def display_form():
 
 
 
-# mise grid pages
-@auth.requires_login()
-def customers():
-    grid = SQLFORM.grid(db.customers)
-    return dict(grid=grid)
 
 
 
-@auth.requires_login()
-def states():
-    grid = SQLFORM.grid(db.states)
-    return dict(grid=grid)
 
 
-@auth.requires_login()
-def orders():
-    grid = SQLFORM.grid(db.orders)
-    return dict(grid=grid)
 
 
-@auth.requires_login()
-def order_line_items():
-    grid = SQLFORM.grid(db.order_line_items)
-    return dict(grid=grid)
 
 
-@auth.requires_login()
-def line_item_attributes():
-    grid = SQLFORM.grid(db.line_item_attributes)
-    return dict(grid=grid)
-
-@auth.requires_login()
-def payment_info():
-    grid = SQLFORM.grid(db.payment_info)
-    return dict(grid=grid)
-
-@auth.requires_login()
-def payment_type():
-    grid = SQLFORM.grid(db.payment_type)
-    return dict(grid=grid)
-
-@auth.requires_login()
-def shopping_cart():
-    grid = SQLFORM.grid(db.shopping_cart)
-    return dict(grid=grid)
-
-@auth.requires_login()
-def shopping_cart_attribute():
-    grid = SQLFORM.grid(db.shopping_cart_attribute)
-    return dict(grid=grid)
-
-@auth.requires_login()
-def products():
-    grid = SQLFORM.grid(db.products)
-    return dict(grid=grid)
 
 
-# ---- Order History -----
-@auth.requires_login()
-def order_history():
-    user_id = auth.user.id
-
-    # Fetch orders for the current user
-    orders = db(db.orders.user_id == user_id).select(orderby=~db.orders.order_date)
-
-    # If no orders found, just return
-    if not orders:
-        return dict(orders=[], order_lines={})
-
-    # Collect order IDs
-    order_ids = [order.id for order in orders]
-
-    # Fetch line items
-    line_items = db(db.order_line_items.order_id.belongs(order_ids)).select()
-
-    # Group items by order_id
-    from collections import defaultdict
-    order_lines = defaultdict(list)
-    for item in line_items:
-        order_lines[item.order_id].append(item)
-
-    return dict(orders=orders, order_lines=order_lines)
-
-
-# ---- API (example) -----
-@auth.requires_login()
-def api_get_user_email():
-    if not request.env.request_method == 'GET': raise HTTP(403)
-    return response.json({'status':'success', 'email':auth.user.email})
-
-# ---- Smart Grid (example) -----
-@auth.requires_membership('admin') # can only be accessed by members of admin groupd
-def grid():
-    response.view = 'generic.html' # use a generic view
-    tablename = request.args(0)
-    if not tablename in db.tables: raise HTTP(403)
-    grid = SQLFORM.smartgrid(db[tablename], args=[tablename], deletable=False, editable=False)
-    return dict(grid=grid)
-
-# ---- Embedded wiki (example) ----
-def wiki():
-    auth.wikimenu() # add the wiki to the menu
-    return auth.wiki() 
 
 # ---- Action for login/register/etc (required for auth) -----
 def user():

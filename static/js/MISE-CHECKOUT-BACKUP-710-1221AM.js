@@ -15,27 +15,6 @@ if (loadingScreen.style.display == 'block') {
     document.body.style.overflow = 'hidden';
 }
 
-// Duplicates the shipping info to the billing info
-function copyShippingInput() {
-    if (useShipping.checked == true) {
-        let counter = 0;
-        billingArray.forEach(input => {
-            if (input.type == "text" || input.type == "select-one") {
-                input.value = shippingArray[counter].value;
-                counter++;
-            }
-        });
-    } else {
-        billingArray.forEach(input => {
-            if (input.type == "text" || input.type == "select-one") {
-                input.value = "";
-            }
-        })
-    }
-}
-
-
-
 // Stripe varibles for global scope
 let stripe;
 let elements;
@@ -138,94 +117,24 @@ function displayStripeErrors(message) {
     }
 }
 
-// Add this function to handle redirect returns
-async function handleStripeRedirectReturn() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const paymentIntentClientSecret = urlParams.get('payment_intent_client_secret');
-    const paymentIntentId = urlParams.get('payment_intent');
-    
-    if (paymentIntentClientSecret) {
-        console.log('Handling Stripe redirect return...');
-        
-        try {
-            // Retrieve the payment intent to check its status
-            const { paymentIntent, error } = await stripe.retrievePaymentIntent(paymentIntentClientSecret);
-            
-            if (error) {
-                console.error('Error retrieving payment intent:', error);
-                displayStripeErrors(error.message);
-                return;
+// Duplicates the shipping info to the billing info
+function copyShippingInput() {
+    if (useShipping.checked == true) {
+        let counter = 0;
+        billingArray.forEach(input => {
+            if (input.type == "text" || input.type == "select-one") {
+                input.value = shippingArray[counter].value;
+                counter++;
             }
-            
-            console.log('Payment Intent Status:', paymentIntent.status);
-            
-            if (paymentIntent.status === 'succeeded') {
-                // Payment was successful, now complete the order
-                await completeOrderAfterPayment(paymentIntent.id);
-            } else if (paymentIntent.status === 'requires_action') {
-                // Payment requires additional action
-                displayStripeErrors('Payment requires additional action. Please try again.');
-            } else {
-                // Payment failed or was cancelled
-                displayStripeErrors('Payment was not successful. Please try again.');
+        });
+    } else {
+        billingArray.forEach(input => {
+            if (input.type == "text" || input.type == "select-one") {
+                input.value = "";
             }
-            
-        } catch (error) {
-            console.error('Error handling redirect return:', error);
-            displayStripeErrors('An error occurred processing your payment. Please try again.');
-        }
+        })
     }
 }
-
-// New function to complete the order after successful payment
-async function completeOrderAfterPayment(paymentIntentId) {
-    try {
-        // Get the form data that was stored or reconstruct it
-        // You'll need to either store this data or reconstruct it
-        const allForms = document.querySelectorAll('.order-forms');
-        let allFormsData = {};
-        
-        allForms.forEach(form => {
-            let formId = form.id;
-            const eachFormData = new FormData(form);
-            let objectData = {};
-            eachFormData.forEach((value, key) => {
-                objectData[key] = value;
-            });
-            allFormsData[formId] = objectData;
-        });
-        
-        // Add payment information
-        allFormsData['payment_intent_id'] = paymentIntentId;
-        allFormsData['validate_only'] = false;
-        
-        console.log('Completing order with payment intent:', paymentIntentId);
-        
-        // Submit the final order
-        const response = await fetch('checkout', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify(allFormsData)
-        });
-        
-        const data = await response.json();
-        
-        if (data.status === 'success') {
-            localStorage.setItem('order_success', true);
-            window.location.href = data.redirect_url;
-        } else {
-            displayStripeErrors(data.stripe_error || 'An error occurred completing your order.');
-        }
-        
-    } catch (error) {
-        console.error('Error completing order:', error);
-        displayStripeErrors('An error occurred completing your order. Please try again.');
-    }
-}
-
 
 // Submits data to web2py for validation
 async function submitData(e) {
@@ -295,17 +204,32 @@ async function submitData(e) {
         console.log('z6=Validating forms...');
 
         // Send validation request
-        const validationResponse = await fetch('checkout', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify(allFormsData)
+        const validationResponse = await new Promise((resolve, reject) => {
+            jQuery.ajax({
+                url: 'checkout',
+                type: 'POST',
+                data: JSON.stringify(allFormsData),
+                contentType: 'application/json',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                success: resolve,
+                error: reject
+            });
         });
+        // DEBUG
+        console.log('z7=Validation response: ', validationResponse);
 
-        const validationData = await validationResponse.json();
-        parsedValidationResponse = validationData;
+        try {
+            parsedValidationResponse = JSON.parse(validationResponse);
+        } catch (parseError) {
+            // DEBUG
+            console.error('z8=Error parsing validation response:', parseError);
+            displayStripeErrors('Invalid response from server');
+            return;
+        }
+
+        // DEBUG
+        console.log('z9=Parsed validation response: ', parsedValidationResponse);
+
 
         // 3. Check if we have form errors
         let hasFormErrors = false;
@@ -336,22 +260,27 @@ async function submitData(e) {
             }
         } 
         
-        // Update form keys if provided
-        if (parsedValidationResponse.new_keys) {
-            
-            for (const formName in parsedValidationResponse.new_keys) {
-                const currentForm = document.querySelector(`#${formName}`);
-                if (currentForm) {
-                    const formKeyInput = currentForm.querySelector('[name="_formkey"]');
-                    if (formKeyInput) {
-                        // DEBUG
-                        console.log(`z14=new form key for form: ${formName}, Key: ${parsedValidationResponse.new_keys[formName]}`);
-                        formKeyInput.value = parsedValidationResponse.new_keys[formName];
+        if (parsedValidationResponse.status === 'error' || paymentError) {
+            // DEBUG
+            console.log("z12=in the IF WITH THE OR ");
+            console.log("z13=parsedValidationResponse.new_keys:", parsedValidationResponse.new_keys);
+
+            // Update form keys
+            if (parsedValidationResponse.new_keys) {
+                
+                for (const formName in parsedValidationResponse.new_keys) {
+                    const currentForm = document.querySelector(`#${formName}`);
+                    if (currentForm) {
+                        const formKeyInput = currentForm.querySelector('[name="_formkey"]');
+                        if (formKeyInput) {
+                            // DEBUG
+                            console.log(`z14=new form key for form: ${formName}, Key: ${parsedValidationResponse.new_keys[formName]}`);
+                            formKeyInput.value = parsedValidationResponse.new_keys[formName];
+                        }
                     }
                 }
             }
         }
-        
 
         // 4. If we have EITHER payment errors OR form errors, stop here
         if (paymentError || hasFormErrors) {
@@ -363,18 +292,20 @@ async function submitData(e) {
 
         // 5. ONLY IF BOTH VALIDATIONS PASSED - Process payment
         if (parsedValidationResponse.status === 'validation_success') {
-            console.log('Both form and payment validation passed, processing payment...');
-
-            // Store form data in sessionStorage for redirect-based payments
-            sessionStorage.setItem('checkout_form_data', JSON.stringify(allFormsData));
+            // DEBUG
+            console.log('z16=Both form and payment validation passed, processing payment...');
+            console.log('z17=Parsed validation response: ', parsedValidationResponse);
 
             const { error, paymentIntent } = await stripe.confirmPayment({
                 elements,
                 confirmParams: {
-                    return_url: window.location.href // Return to the same page
-                }
-                // Remove redirect: 'if_required' to always allow redirects
+                    return_url: window.location.origin + '/thankyou'
+                },
+                redirect: 'if_required'
             });
+
+            // DEBUG
+            console.error('z17.5=Payment Intent:', paymentIntent);
 
             if (error) {
                 // DEBUG
@@ -401,11 +332,62 @@ async function submitData(e) {
                 return;
             }
 
-            // If we get here without a redirect, the payment was processed without redirect
-            if (paymentIntent && paymentIntent.status === 'succeeded') {
-                console.log('Payment confirmed successfully without redirect:', paymentIntent);
-                await completeOrderAfterPayment(paymentIntent.id);
+            if (paymentIntent.status !== 'succeeded') {
+                displayStripeErrors('Payment was not successful. Please try again.');
+                return;
             }
+
+            // DEBUG
+            console.log('z19=Payment confirmed successfully:', paymentIntent);
+
+            // 6. FINAL STEP - Submit everything to complete the order
+            allFormsData['payment_intent_id'] = paymentIntent.id;
+            allFormsData['validate_only'] = false; // Now we want to complete the order
+
+            // DEBUG
+            console.log('z20=Finalizing order...');
+
+            jQuery.ajax({
+                url: 'checkout',
+                type: 'POST',
+                data: JSON.stringify(allFormsData),
+                contentType: 'application/json',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' },
+                success: function (response) {
+                    // DEBUG
+                    console.log('z21=Final response:', response);
+                    ajaxCompleted = true; // Mark AJAX as complete
+
+                    // DEBUG
+                    try {
+                        response = JSON.parse(response);
+                        // DEBUG
+                        console.log('z22=Parsed response:', response);
+                    } catch (parseError) {
+                        // DEBUG
+                        console.error('z23=Error parsing final response:', parseError);
+                        displayStripeErrors('Invalid response from server');
+                        return;
+                    }
+
+                    if (response.status === 'success') {
+                        localStorage.setItem('order_success', true);
+                        window.location.href = response.redirect_url;
+                    } else {
+                        // Handle any final errors
+                        if (response.stripe_error) {
+                            displayStripeErrors(response.stripe_error);
+                        } else {
+                            displayStripeErrors('An error occurred completing your order.');
+                        }
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error("z24=AJAX Error:", textStatus, errorThrown);
+                    displayStripeErrors("An error occurred completing your order. Please try again.");
+                    ajaxCompleted = true; // Mark AJAX as complete
+                }
+            });
         }
 
     } catch (error) {
@@ -421,73 +403,6 @@ async function submitData(e) {
     return false;
 }
 
-// Update the DOMContentLoaded event listener
-document.addEventListener('DOMContentLoaded', function () {
-    stripe = Stripe('pk_test_51Rh10IH0alBtp0wTyuOyuvMEZ2GNtrSJqFNsaM8BWKNIcHs7n4Bfil4U7G8YIhet0QkUuGnzdTYUFYkrdi5s9nVB00fVfyLW9e');
-    
-    // Check if we're returning from a payment redirect
-    handleStripeRedirectReturn();
-    
-    // Initialize payment element
-    inititializePaymentElement();
-});
-
-// Update the completeOrderAfterPayment function to use stored data if available
-async function completeOrderAfterPayment(paymentIntentId) {
-    try {
-        let allFormsData;
-        
-        // Try to get stored form data first
-        const storedData = sessionStorage.getItem('checkout_form_data');
-        if (storedData) {
-            allFormsData = JSON.parse(storedData);
-            sessionStorage.removeItem('checkout_form_data'); // Clean up
-        } else {
-            // Fallback: reconstruct from current form state
-            const allForms = document.querySelectorAll('.order-forms');
-            allFormsData = {};
-            
-            allForms.forEach(form => {
-                let formId = form.id;
-                const eachFormData = new FormData(form);
-                let objectData = {};
-                eachFormData.forEach((value, key) => {
-                    objectData[key] = value;
-                });
-                allFormsData[formId] = objectData;
-            });
-        }
-        
-        // Add payment information
-        allFormsData['payment_intent_id'] = paymentIntentId;
-        allFormsData['validate_only'] = false;
-        
-        console.log('Completing order with payment intent:', paymentIntentId);
-        
-        // Submit the final order
-        const response = await fetch('checkout', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify(allFormsData)
-        });
-        
-        const data = await response.json();
-        
-        if (data.status === 'success') {
-            localStorage.setItem('order_success', true);
-            window.location.href = data.redirect_url;
-        } else {
-            displayStripeErrors(data.stripe_error || 'An error occurred completing your order.');
-        }
-        
-    } catch (error) {
-        console.error('Error completing order:', error);
-        displayStripeErrors('An error occurred completing your order. Please try again.');
-    }
-}
 
 // debug function for seeing form keys
 // const formKeyShow = document.querySelector('[name="_formkey"]');

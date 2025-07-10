@@ -15,12 +15,18 @@
 		initial-scale = 1.0 retains dimensions instead of zooming out if page height > device height
 		user-scalable = yes allows the user to zoom in -->
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>{{=response.title or request.application}}</title>
+	<title>{{=response.title}}</title>
 	<!-- http://dev.w3.org/html5/markup/meta.name.html -->
 	<meta name="application-name" content="{{=request.application}}">
 	<!-- Speaking of Google, don't forget to set your site up:
 		http://google.com/webmasters -->
 	<meta name="google-site-verification" content="">
+
+	<!-- USE A GOOGLE FONT -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
 	<!-- include stylesheets -->
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
@@ -34,10 +40,6 @@
 	<link rel="icon" type="image/png" sizes="32x32" href="{{=URL('static','images/Fav_Icon/favicon-32x32.png')}}">
 	<link rel="icon" type="image/png" sizes="16x16" href="{{=URL('static','images/Fav_Icon/favicon-16x16.png')}}">
 	<link rel="manifest" href="{{=URL('static','images/Fav_Icon/site.webmanifest')}}">
-	
-	<!-- Favicons (Web2py default --> 
-	<!--<link rel="shortcut icon" href="{{=URL('static','images/favicon.ico')}}" type="image/x-icon">
-	<link rel="apple-touch-icon" href="{{=URL('static','images/favicon.png')}}">-->
 	
 	<!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
 	<script src="{{=URL('static','js/modernizr-2.8.3.min.js')}}"></script>
@@ -104,7 +106,7 @@
 						<a class="nav-link dropdown font-weight-bold text-primary" href="#" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 							<div class="d-flex align-items-center no-arrow-menu" style="gap:0.5rem;">
 								<div class="fa fa-user-circle-o fa-lg" aria-hidden="true"></div>
-									<div>
+									<div class="text-wrap" style="max-width: 150px; width:min-content;">
 										<!-- Checks to see if there is a user logged in, if so, display their name, if not display "login-->
 										{{if auth.user:}}
 											{{=auth.user.first_name}}
@@ -143,11 +145,19 @@
 						</div>
 					</li>
 				{{pass}}
-				<!-- END LOGIN MENU -->	
-					<li class="nav-item">
+				<!-- END LOGIN MENU -->
+
+				<!-- SHOPPING CART ICON -->
+					<li class="nav-item d-flex" style="flex-direction: column;">
 						<a class="nav-link text-primary p-0" href="{{=URL('default','shopping_cart2')}}" title="Tooltip on bottom">
-							<div class="fa fa-cart-plus fa-3x" aria-hidden="true"></div>
+							<div>
+								<div class="fa fa-cart-plus" style="font-size:2.5rem" aria-hidden="true"></div>
+							</div>
+							<div style="margin-top: -6px;">
+								<span class=" font-weight-bold" style="font-size:0.875rem; padding-inline-start: 2px;">CART</span>
+							</div>
 						</a>
+						
 					</li>
 				</ul>
 					

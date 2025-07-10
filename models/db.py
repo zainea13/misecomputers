@@ -44,9 +44,9 @@ if "GAE_APPLICATION" not in os.environ:
 
     db = DAL(configuration.get("db.uri"),
              pool_size=configuration.get("db.pool_size"),
-             #migrate_enabled=configuration.get("db.migrate"),
+             migrate_enabled=configuration.get("db.migrate"),
              check_reserved=["all"],
-             migrate_enabled = True
+            #  fake_migrate_all=True
              )
 else:
     # ---------------------------------------------------------------------
