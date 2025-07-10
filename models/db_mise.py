@@ -1,4 +1,12 @@
 # -*- coding: utf-8 -*-
+from gluon.tools import Mail
+from private.private import *
+mail = auth.settings.mailer
+mail.settings.server = 'smtp.gmail.com:465'
+mail.settings.tls = True
+mail.settings.sender = smtp_settings['sender']
+mail.settings.login = smtp_settings['login']
+
 
 db.define_table('config',
                 Field('order_number', 'integer', length=10),
@@ -136,16 +144,10 @@ db.define_table('line_item_attributes',
 
 # # -------------- PAYMENTS TABLES ------------------------
 
-
-db.define_table('payment_type',
-                Field('pay_type'),
-         
-                )
-
 db.define_table('payment_info',
-                Field('order_number', 'reference orders', default='orders.order_number'),
-                Field('payment_type_id', 'reference payment_type', default='payment_type.id'),
-                Field('credit_card_last_four', 'integer', length=4),
+                Field('order_id', 'reference orders', default='orders.id'),
+                Field('card_brand'),
+                Field('cc_last_four', 'integer', length=4),
                 )
 
 

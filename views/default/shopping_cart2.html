@@ -34,7 +34,7 @@
 					<div class="d-flex align-items-center justify-content-between w-100 flex-gap-1">
 						<div class="d-flex align-items">
 							<label for="quantity" class="mr-2 mb-0"><span class="align-middle">QTY.</span></label>
-							<input id="quantity" class="quantityAmt" name="quantityAmt" type="number" value="{{=item['quantity']}}" min="0" data-start-value="{{=item['quantity']}}" data-product-id="{{=product_id}}" size="1">
+							<input id="quantity" class="quantityAmt input-num-w-3" name="quantityAmt" type="number" value="{{=item['quantity']}}" min="0" data-start-value="{{=item['quantity']}}" data-product-id="{{=product_id}}" size="1">
 						</div>
 						<button type="submit" class="quantityBtn d-none btn-primary"	data-product-id="{{=product_id}}">Update Qty.</button>
 						<button type="submit" class="remove-item btn-primary" data-product-id="{{=product_id}}">
