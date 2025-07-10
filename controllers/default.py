@@ -67,6 +67,11 @@ def terms():
     response.view="terms.html"
     return locals()
 
+def aboutus():
+    response.title='MISE - About Us'
+    response.view="aboutus.html"
+    return locals()
+
 def search():
     
 
