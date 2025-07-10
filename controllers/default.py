@@ -13,6 +13,7 @@ from gluon.storage import Storage
 from gluon.contrib.stripe import Stripe
 import stripe
 import random
+import math
 
 from private.private import *
 
@@ -40,12 +41,20 @@ def clear_ram_cache():
     redirect(URL('index')) # Redirect to a main page
 
 
+def calculate_shipping(items):
+    # Get standard shipping rate
+    rate = int(db(db.config).select().first().shipping_rate)
+    # caclulate shipping
+    return rate + rate * 1.4 * math.log(items)
+    
+
 # ---- define pages ----
 
 def index():
     response.title='MISE Computer Store'
     session.forced = True
     categories = db(db.categories).select()
+
     return dict(message=T('Welcome to web2py!'), categories=categories)
 
 def privacy():
@@ -154,8 +163,7 @@ def item_page():
     brand = (db(db.brand.id == product.brand_id).select().first()).brand_name.lower()
     images = db(db.product_images.product_id == product_id).select() # grabs images that match product id
 
-    # if request.post_vars:
-    #     print(request.post_vars)
+    stock_qty = product.stock_qty
     
     # test = session.my_test
     session_id = response.session_id
@@ -539,6 +547,7 @@ def order_history():
 
     return dict(orders=orders, order_lines=order_lines)
 
+
 def build_shipping_form():
 
     user_info = None
@@ -754,8 +763,14 @@ def checkout():
         subtotal += (float(product['price']) * int(item['quantity']))
         total_items += int(item['quantity'])
 
+    # Calculate shipping cost
+    if total_items:
+        shipping = calculate_shipping(total_items)
+    else:
+        shipping = 1
+
     tax = float(config['tax'])
-    tax_amt = tax * subtotal
+    tax_amt = tax * (subtotal + shipping)
     total = tax_amt + subtotal
 
     # ----------------------------------

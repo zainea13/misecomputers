@@ -75,6 +75,7 @@
 	<!-- Left column with images -->
 	<div class="col-6">
 		<div class="swiper-window">
+			<div class="out-of-stock over-image">OUT OF STOCK</div>
 			<div class="swiper-wrapper" style="translate: 0px;">
 				{{for image in images:
 				img_src = image['image_filename']
@@ -127,15 +128,15 @@
 					<input type="number" value="1" name="quantity" id="quantity" class="input-num-w-3" min="1">
 				</div>
 				<div class="flex-fill">
-						{{if product['stock_qty']>0:}}
-                        <button type="submit" class="btn btn-mise-accent w-100">
-						<i class="fa fa-plus mr-1" aria-hidden="true"></i>
-                        Add to Cart
-                        {{else:}}
-                        <button type="submit" class="btn btn-mise-accent w-100 btn-out-of-stock" disabled>
-                        Out of Stock
-                        {{pass}}
- 					</button>
+					{{if stock_qty:}}
+					<button type="submit" class="btn btn-mise-accent w-100">
+					<i class="fa fa-plus mr-1" aria-hidden="true"></i>
+					Add to Cart
+					{{else:}}
+					<button type="submit" class="btn btn-mise-accent w-100 btn-out-of-stock" disabled>
+					Out of Stock
+					{{pass}}
+					</button>
 				</div>
 			</div>
 		</form>
@@ -151,20 +152,27 @@
 
 {{block page_js}}
 <script>
-    var stock_qty = {{=product['stock_qty']}};
 
-    if (stock_qty > 0) {
+	const stock_qty = {{=stock_qty}};
+
+	// only add to cart if there is stock
+    if (stock_qty) {
         jQuery('#add-to-cart').submit(function () {
             ajax('{{=URL('add_to_cart')}}',
                 ['product_id', 'quantity', 'user_id', 'session_id'], 'target');
             return false;
         });
-    } else {
-        // Disable the add to cart button and change its text
-        jQuery('#add-to-cart-button')
-            .prop('disabled', true)
-            .text('Out Of Stock');
-    }
+    } 
+	// TODO not sure this is needed
+	// else {
+    //     // Disable the add to cart button and change its text
+    //     jQuery('button#add-to-cart')
+    //         .prop('disabled', true)
+    //         .text('Out Of Stock');
+    // }
+
+
+
 </script>
 
 <script src={{=URL('static','js/mise_slider.js')}}></script>

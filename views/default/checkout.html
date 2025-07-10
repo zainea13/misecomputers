@@ -147,8 +147,8 @@
                 {{=billing_form.custom.end}}  
                 
                 <!-- Checkbox for duplicating shipping info -->
-                <div class="col-12 p-2 btn btn-light" onclick="this.querySelector('#use-shipping').click()">
-                    <input type="checkbox" id="use-shipping" class="mr-1" style="pointer-events:none" data-toggle="collapse" data-target="#billing-info" aria-expanded="{{if auth.user:}}false{{else:}}true{{pass}}" aria-controls="billing-info" {{if auth.user:}}checked{{pass}}>
+                <div class="col-12 p-2 btn btn-light trigger" onclick="handleToggle(event)">
+                    <input type="checkbox" id="use-shipping" class="mr-1" data-toggle="collapse" data-target="#billing-info" aria-expanded="{{if auth.user:}}false{{else:}}true{{pass}}" aria-controls="billing-info" {{if auth.user:}}checked{{pass}}>
                     <label for="use-shipping" class="m-0 cursor-pointer">Same as shipping address</label>
                 </div>
             <!-- END BILLING -->
@@ -207,6 +207,14 @@
                     </div>
                     <div class="col-auto text-right">
                         ${{=f"{subtotal:,.2f}"}}
+                    </div>
+                </div>
+                <div class="row mx-0">
+                    <div class="col">
+                        5-Day Shipping:
+                    </div>
+                    <div class="col-auto text-right">
+                        ${{=f"{shipping:,.2f}"}}
                     </div>
                 </div>
                 <div class="row mx-0">

@@ -12,6 +12,7 @@ mail.settings.login = smtp_settings['login']
 db.define_table('config',
                 Field('order_number', 'integer', length=10),
                 Field('tax', 'decimal(7,2)'),
+                Field('shipping_rate')
                 )
 
 

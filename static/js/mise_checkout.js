@@ -6,13 +6,34 @@ const billingForm = document.querySelector('#billing-info');
 
 const placeOrderBtn = document.querySelector('#place-order');
 
-const shippingArray = Array.from(shippingForm.elements); // #added .elements, may screw things up
+const shippingArray = Array.from(shippingForm.elements);
 const billingArray = Array.from(billingForm.elements);
 
 // disable scrolling if overlay exists
 const loadingScreen = document.querySelector('.loading-screen');
 if (loadingScreen.style.display == 'block') {
     document.body.style.overflow = 'hidden';
+}
+
+
+// use shipping checkbox stuff
+document.querySelector('#use-shipping').addEventListener('change', function() {
+    const target = document.querySelector('#billing-info');
+    const collapse = new bootstrap.Collapse(target, { toggle: false });
+    
+    if (this.checked) {
+        collapse.hide();
+    } else {
+        collapse.show();
+    }
+});
+
+function handleToggle(event) {
+    if (event.target === event.currentTarget) {
+        const checkbox = document.querySelector('#use-shipping');
+        checkbox.checked = !checkbox.checked;
+        checkbox.dispatchEvent(new Event('change'));
+    }
 }
 
 // Duplicates the shipping info to the billing info
