@@ -145,15 +145,15 @@ db.define_table('line_item_attributes',
 
 # # -------------- PAYMENTS TABLES ------------------------
 
-
+# db.payment_info.drop()
 db.define_table('payment_info',
                 Field('order_id', 'reference orders', default='orders.id'),
                 Field('card_brand'),
                 Field('cc_last_four', 'integer', length=4),
-                
+                migrate=True
                 )
 
-# db.payment_info.drop()
+
 
 
 db.define_table('billing_address',
@@ -185,5 +185,8 @@ db.define_table('shopping_cart_attribute',
 db.define_table('shipping_info',
                 Field('order_id', 'reference orders', default='orders.id'),
                 Field('tracking_number'),
-                Field('arrival_date')
+                Field('arrival_date'),
+                migrate=True
                 )
+
+# db.shipping_info.drop()

@@ -997,10 +997,15 @@ def order_confirmation_email():
                                     
 
     # Put in order number
-    email_message += f'<p>Your order number is <strong><a href="">#{session.ty["order_id"]}</a></strong></p>'
+    email_message += f'<p>Your order number is <strong>#{session.ty["order_number"]}</strong></p>'
+
+    # Get order
+    order = db(db.orders.id == session.ty['order_id']).select().first()
+    print(order)
 
     # Get order list items
     list_items = db(db.order_line_items.order_id == session.ty['order_id']).select()
+
     for item in list_items:
         product = db(db.products.id == item.product_id).select().first()
         image = db((db.product_images.product_id == item.product_id) & (db.product_images.main_image == True)).select()
@@ -1008,7 +1013,7 @@ def order_confirmation_email():
         cat = cat.replace("&","").replace(" ","_")
         brand = (db(db.brand.id == product.brand_id).select().first()).brand_name.lower()
         qty = item.quantity_of_item
-        print("product:", product)
+        
 
     # Get shipping info
     shipping_info = db(db.shipping_info.order_id == session.ty['order_id']).select().first()

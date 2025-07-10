@@ -149,10 +149,11 @@ async function submitData(e) {
     const inputErrors = document.querySelectorAll('.input-error')
     allErrors.forEach(span => span.remove());
     inputErrors.forEach(err => err.classList.remove('input-error'));
-
+    
     displayStripeErrors("");
-
+    
     let ajaxCompleted;
+    let parsedValidationResponse;
 
     try {
         // First make sure that if use shipping is checked, we are getting that data!
@@ -217,7 +218,6 @@ async function submitData(e) {
         // DEBUG
         // console.log('z7=Validation response: ', validationResponse);
 
-        let parsedValidationResponse;
         try {
             parsedValidationResponse = JSON.parse(validationResponse);
         } catch (parseError) {
