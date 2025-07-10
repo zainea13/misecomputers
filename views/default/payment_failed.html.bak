@@ -1,0 +1,5 @@
+{{extend 'layout.html'}}
+<h2>Payment Failed</h2>
+<p>{{=message}}</p>
+<p>There was an issue processing your payment. Please review your details or try a different payment method.</p>
+<p><a href="{{=URL('default', 'payment')}}">Try again</a></p>

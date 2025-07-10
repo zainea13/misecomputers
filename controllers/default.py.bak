@@ -10,6 +10,10 @@ import datetime
 import json
 from gluon.storage import Storage
 from gluon.contrib.stripe import Stripe
+import stripe
+
+stripe.api_key = "sk_test_51Rh10IH0alBtp0wTEWsNTXDX4fiwVXIkf5ut6EvVo3rAHsuybekKd0nYO0TWqp2YKotUdADjpKlOgZq7Jnydddv000lVYuviwB" # Your secret key
+STRIPE_PUBLISHABLE_KEY = "pk_test_51Rh10IH0alBtp0wTyuOyuvMEZ2GNtrSJqFNsaM8BWKNIcHs7n4Bfil4U7G8YIhet0QkUuGnzdTYUFYkrdi5s9nVB00fVfyLW9e" # Your publishable key
 
 
 
@@ -34,19 +38,6 @@ def index():
     categories = db(db.categories).select()
     return dict(message=T('Welcome to web2py!'), categories=categories)
 
-def testmdb():
-    response.view="testmdb.html"
-    return locals()
-
-def indexmise():
-    response.view="indexmise.html"
-    return locals()
-
-
-def layoutmise():
-    response.view="layoutmise.html"
-    return locals()
-
 def privacy():
     response.view="privacy.html"
     return locals()
@@ -64,10 +55,19 @@ def search():
         keyword = form.vars.keyword
         if keyword:
             results = db((db.products.product_name.contains(keyword))).select()
-
+     
     return dict(form=form, results=results)
 
-
+def searchtop():
+    response.view="search.html"
+    results = []
+    #if form.process().accepted:
+    keyword = request.vars.keyword
+    print(keyword)
+    if keyword:
+        results = db((db.products.product_name.contains(keyword))).select()
+        
+    return dict(results=results)
 
 # ---- define pages ----
 
@@ -151,6 +151,7 @@ def item_page():
     session_id = response.session_id
     return locals()
 
+
 def category_page():
     link_arg = request.args(0).split("--")
     cat_id = link_arg[0]
@@ -185,6 +186,7 @@ def get_products(cat_id, order=''):
             pass
     products = db.executesql(sqlstmt, as_dict=True)
     return products
+
 
 def filtered_products(cat_id, filter_dict, order):
     '''
@@ -228,6 +230,7 @@ def filtered_products(cat_id, filter_dict, order):
     products = [p for p in product_list if p['id'] in common_product_ids]
     return products
 
+
 # gets the filters for the category from category_attributes
 def get_filter_dict(cat_id):
     filter_option_dict = {}
@@ -267,6 +270,7 @@ def get_filter_dict(cat_id):
         filter_option_dict[attribute].add(value)
     return filter_option_dict
 
+
 # Retrieves order string.
 def get_order_string(order):
         order_dict = {
@@ -279,6 +283,7 @@ def get_order_string(order):
             return ''
         else:
             return order_dict[order]
+
 
 # retrieves and returns the user selected filters
 def get_selected_filters(options): 
@@ -351,7 +356,6 @@ def add_to_cart():
         response.flash = "Added to cart"
 
 
-
 def shopping_cart2():
     # ----------------------------------
     # # Quantity update logic
@@ -365,6 +369,7 @@ def shopping_cart2():
         quantity = request.post_vars['quantityAmt']
         product_id = request.post_vars['product_id']
         product = None
+        
 
         # Check if a user is logged in, use user_id or session_id
         if auth.user:
@@ -401,6 +406,7 @@ def shopping_cart2():
         product = db(db.products.id == product_id).select().first()
         subtotal += (float(product['price']) * int(item['quantity']))
         total_items += int(item['quantity'])
+        
 
     config = db(db.config).select().first()
     tax = float(config['tax'])
@@ -442,13 +448,12 @@ def account():
     # look up customer details based on the auth user id
     customer_info = db(db.customers.user_id == auth.user.id).select().first()
 
-    # get the state for the user : what is this line for?
-    try:
+    # get the state for the user :
+    if customer_info and customer_info.state_code and customer_info.street_1 != '':
         state = db(db.states.id == customer_info.state_code).select().first()
-        if not state:
-            state = 1
-    except:
-        state = 1
+    else:
+        # Redirect if no state_code
+        redirect(URL('account_details'))
 
     return locals()
 
@@ -460,11 +465,16 @@ def account_details():
     # look up user details based on the auth user id
     customer_info = db(db.customers.user_id == auth.user.id).select().first()
 
+    if not customer_info:
+        db.customers.insert(user_id=auth.user.id, street_1='')
+        customer_info = db(db.customers.user_id == auth.user.id).select().first()
+
     try:
         if request.vars:
             
             r = request.vars
-            user_info.update_record(first_name=r.first_name, last_name=r.last_name)
+            user_info.update_record(first_name=r.first_name, last_name=r.last_name, email=r.email)
+                
             customer_info.update_record(
                                     street_1 = r.street_1, 
                                     street_2 = r.street_2, 
@@ -483,6 +493,9 @@ def account_details():
         redirect(URL('account'))
 
     return locals()
+
+
+
 
 
 def build_shipping_form():
@@ -544,6 +557,7 @@ def build_shipping_form():
     
     # set the user_id field to hidden
     shipping_form.custom.widget.user_id['_type'] = 'hidden'
+    # shipping_form.custom.widget.first_name['_class'] = 'form-control string input-error'
 
     # give the shipping form placeholders
     shipping_form.custom.widget.first_name['_placeholder'] = "John"
@@ -552,6 +566,7 @@ def build_shipping_form():
     shipping_form.custom.widget.street_2['_placeholder'] = "Apt. 1"
     shipping_form.custom.widget.city['_placeholder'] = "Anywhere"
     shipping_form.custom.widget.zip['_placeholder'] = "12345"
+    shipping_form.custom.widget.email['_placeholder'] = "email@web.com"
 
     # needed to generate _formkey
     shipping_form.process()
@@ -608,8 +623,66 @@ def build_billing_form():
     return billing_form
 
 
+def create_payment_intent():
+    """Create a payment intent for the Payment Element"""
+    try:
+        # Get the total amount from the session or calculate it
+        session_id = response.session_id
+        
+        # Calculate total (same logic as in checkout)
+        subtotal = 0
+        total_items = 0
+        
+        # Determine if a user is logged in
+        where_stmt = ""
+        if auth.user:
+            where_stmt = f"sc.user_id = {str(auth.user.id)}"
+        else:
+            where_stmt = f"sc.session_id = '{str(response.session_id)}'"
+
+        # GET THE CART
+        cart_query = "SELECT sc.* FROM shopping_cart2 AS sc WHERE " + where_stmt
+        cart_items = db.executesql(cart_query, as_dict=True)
+        
+        for item in cart_items:
+            product_id = item['product_id']
+            product = db(db.products.id == product_id).select().first()
+            subtotal += (float(product['price']) * int(item['quantity']))
+            total_items += int(item['quantity'])
+
+        config = db(db.config).select().first()
+        tax = float(config['tax'])
+        tax_amt = tax * subtotal
+        total = tax_amt + subtotal
+        
+        # Convert to cents
+        amount_in_cents = int(total * 100)
+        
+        # Create payment intent
+        intent = stripe.PaymentIntent.create(
+            amount=amount_in_cents,
+            currency='usd',
+            metadata={
+                'user_id': auth.user.id if auth.user else 'guest',
+                'session_id': session_id,
+                'order_number': config.order_number
+            },
+            automatic_payment_methods={'enabled': True}
+        )
+        
+        return response.json({
+            'client_secret': intent.client_secret,
+            'amount': amount_in_cents,
+            'currency': 'usd'
+        })
+        
+    except Exception as e:
+        return response.json({'error': str(e)})
+
+
 
 def checkout():
+    print(f"{'NEW RUN':=^120}")
     # VARIABLES
     session_id = response.session_id
     user_id = auth.user_id
@@ -643,13 +716,6 @@ def checkout():
     tax_amt = tax * subtotal
     total = tax_amt + subtotal
 
-
-    # ----------------------------------
-    # # Stripe form
-    # ----------------------------------
-
-  
-
     # ----------------------------------
     # # Form processing and Validation
     # ----------------------------------
@@ -669,8 +735,12 @@ def checkout():
             json_body = request.body.read()
             request.body.seek(0)
             all_forms_data = json.loads(json_body)
+            # DEBUG
+            print("Received data:", all_forms_data)
             
         except Exception as e:
+            # DEBUG
+            print("JSON parsing error:", e)
             # If JSON parsing fails, return an error message
             session.flash = 'Invalid JSON data received.'
             return json.dumps(dict(status='error', message=f'Invalid JSON data received: {e}'))
@@ -678,18 +748,111 @@ def checkout():
         # separate out the data based on which form it's from
         shipping_data = Storage(all_forms_data.get('shipping-info', {}))
         billing_data = Storage(all_forms_data.get('billing-info', {}))
+        payment_intent_id = all_forms_data.get('payment_intent_id')
+        validate_only = all_forms_data.get('validate_only', False)
+        payment_success = all_forms_data.get('payment_success')
+        
+
+        # DEBUG: Log the separated data
+        print("Shipping data:", shipping_data)
+        print("Shipping data form key:", shipping_data._formkey)
+        print("Billing data:", billing_data)
+        print("Payment Intent ID:", payment_intent_id)
+        print("Validate only:", validate_only)
+        print("Payment success:", payment_success)
 
         # validate the data
         s_accepted = shipping_form.accepts(shipping_data, session)
-        b_accepted = billing_form.accepts(billing_data, session)       
+        b_accepted = billing_form.accepts(billing_data, session)    
 
-        # Either redirects, or returns errors
-        if s_accepted and b_accepted:
-            response.flash = 'Form accepted.'
+        # DEBUG: Log validation results
+        print("Shipping form accepted:", s_accepted)
+        print("Billing form accepted:", b_accepted)
+           
+
+        # VALIDATION STEP - Just validate forms, don't process payment
+        if validate_only:
+            
+            if s_accepted and b_accepted:
+                # DEBUG
+                print("Validation passed - forms are valid")
+                if not payment_success:
+                    # Generate new keys to send too
+                    new_keys = {
+                        'shipping-info': shipping_form.formkey,
+                        'billing-info': billing_form.formkey
+                    }
+                    return json.dumps(dict(new_keys=new_keys))
+                validation_success = True
+                return json.dumps(dict(status='validation_success'))
+            else:
+                # DEBUG: Log errors
+                print("Validation failed - form errors found")
+                print("Shipping errors:", shipping_form.errors)
+                # Generate a dictionary of errors to send back
+                errors_dict = {}
+                if shipping_form.errors:
+                    errors_dict.update({shipping_form.attributes['_name']: shipping_form.errors})
+                if billing_form.errors:
+                    errors_dict.update({billing_form.attributes['_name']: billing_form.errors})
+
+                # Generate new keys to send too
+                new_keys = {
+                    'shipping-info': shipping_form.formkey,
+                    'billing-info': billing_form.formkey
+                }
+
+                return json.dumps(dict(status='error', errors=errors_dict, new_keys=new_keys))
+
+        # FINAL PROCESSING STEP - Forms are valid, payment is confirmed, complete the order
+        elif payment_intent_id:
+            
+            # ----------------------------------
+            # # Stripe Payment verification
+            # ----------------------------------
+            # debug 
+            print("z30=inside final processing")
+            try:
+                # Retrieve the payment intent to confirm it was successful
+                intent = stripe.PaymentIntent.retrieve(payment_intent_id)
+                
+                # DEBUG: Log payment intent details
+                print("Payment Intent Status:", intent.status)
+                print("Payment Intent ID:", intent.id)
+                print("Payment Intent Amount:", intent.amount)
+
+                # Check if payment was successful
+                if intent.status != 'succeeded':
+                    # DEBUG
+                    print("Payment not successful, status:", intent.status)
+                    return json.dumps(dict(
+                        status='error',
+                        stripe_error='Payment was not successful. Please try again.'
+                    ))
+                
+                # Store payment intent ID for reference
+                charge_id = intent.id
+
+            except stripe.error.StripeError as e:
+                # DEBUG
+                print("Stripe error:", e)
+                return json.dumps(dict(
+                    status='error',
+                    stripe_error=str(e.user_message) if hasattr(e, 'user_message') else str(e)
+                ))
+            except Exception as e:
+                # DEBUG
+                print("Unexpected error:", e)
+                return json.dumps(dict(
+                    status='error',
+                    stripe_error='An unexpected error occurred. Please try again.'
+                ))
 
             # ----------------------------------
-            # # Database Entry
+            # # Database Entry (only if payment is successful)
             # ----------------------------------
+
+            response.flash = 'Order accepted.'
 
             # Add order to orders table
             order_id = db.orders.insert(
@@ -699,7 +862,8 @@ def checkout():
                 total_items=total_items,
                 subtotal=subtotal,
                 tax=tax_amt,
-                total_cost=total
+                total_cost=total,
+                stripe_charge_id=charge_id
                 )
 
             
@@ -736,9 +900,18 @@ def checkout():
                     order_id=order_id
                 )
 
-                db.commit()
+                # todo Clear shopping cart after success uncomment this later
+                # if auth.user:
+                #     db(db.shopping_cart2.user_id == auth.user.id).delete()
+                # else:
+                #     db(db.shopping_cart2.session_id == session_id).delete()
+
             else:
                 response.flash = "Failed to create order."
+                return json.dumps(dict(
+                    status='error', 
+                    stripe_error='Order creation failed. Please contact support.'
+                ))
 
             # After all the entries have been made: update the config order number
             update_order_num = db(db.config.id == 1).select().first()
@@ -747,46 +920,23 @@ def checkout():
 
             return json.dumps(dict(status='success', redirect_url=URL('default', 'thankyou')))  
         
-        elif shipping_form.errors or billing_form.errors: 
-            response.flash = 'The form has errors.'
-
-            # Generate a dictionary of errors to send back
-            errors_dict = {}
-            if shipping_form.errors:
-                errors_dict.update({shipping_form.attributes['_name']: shipping_form.errors})
-            if billing_form.errors:
-                errors_dict.update({billing_form.attributes['_name']: billing_form.errors})
-
-            # Generate new keys to send too
-            new_keys = {
-                'shipping-info': shipping_form.formkey,
-                'billing-info': billing_form.formkey
-            }
- 
-            return json.dumps(dict(status='error', errors=errors_dict, new_keys=new_keys)) 
-          
         else:
-            response.flash = 'Please fill out the form.'
+            # This shouldn't happen with the new flow, but keeping as fallback
+            response.flash = 'Please fill out the form correctly.'
+            return json.dumps(dict(status='error', stripe_error='Please fill out the form correctly.'))
 
-    
+    return dict(
+        locals(), 
+        shipping_form=shipping_form, 
+        billing_form=billing_form,
+        stripe_publishable_key=STRIPE_PUBLISHABLE_KEY,
+        amount=int(total * 100) if 'total' in locals() else 1000,
+        currency='usd'
+        )
 
-
-
-
-    return dict(locals(), shipping_form=shipping_form, billing_form=billing_form)
 
 
 def thankyou():
-    return locals()
-
-def checkout_test():
-    form = build_shipping_form()
-    if form.accepts(request, session):
-        response.flash = 'form accepted'
-    elif form.errors:
-        response.flash = 'form has errors'
-    else:
-        response.flash = 'please fill the form'
     return locals()
 
 

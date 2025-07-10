@@ -103,7 +103,7 @@ db.define_table('orders',
                 # Field('status'),
                 # Field('tracking_number'),
                 Field('stripe_charge_id'),
-                migrate=True
+                migrate=False
                 )
 
 

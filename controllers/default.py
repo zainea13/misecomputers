@@ -954,6 +954,8 @@ def extra_checkout_code():
     
     
     
+    
+    
 
     
 
@@ -1026,6 +1028,31 @@ def products():
     return dict(grid=grid)
 
 
+# ---- Order History -----
+@auth.requires_login()
+def order_history():
+    user_id = auth.user.id
+
+    # Fetch orders for the current user
+    orders = db(db.orders.user_id == user_id).select(orderby=~db.orders.order_date)
+
+    # If no orders found, just return
+    if not orders:
+        return dict(orders=[], order_lines={})
+
+    # Collect order IDs
+    order_ids = [order.id for order in orders]
+
+    # Fetch line items
+    line_items = db(db.order_line_items.order_id.belongs(order_ids)).select()
+
+    # Group items by order_id
+    from collections import defaultdict
+    order_lines = defaultdict(list)
+    for item in line_items:
+        order_lines[item.order_id].append(item)
+
+    return dict(orders=orders, order_lines=order_lines)
 
 
 # ---- API (example) -----
