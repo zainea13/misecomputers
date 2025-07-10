@@ -152,6 +152,8 @@ async function submitData(e) {
 
     displayStripeErrors("");
 
+    let ajaxCompleted;
+
     try {
         // First make sure that if use shipping is checked, we are getting that data!
         copyShippingInput();
@@ -165,6 +167,7 @@ async function submitData(e) {
         const { error: paymentError } = await elements.submit();
 
         // Don't return here - we want to collect ALL errors first
+        
         if (paymentError) {
             // DEBUG
             // console.log('z2=Payment element has errors:', paymentError);

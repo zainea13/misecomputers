@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import random
 from gluon.tools import Mail
 from private.private import *
 mail = auth.settings.mailer
@@ -144,11 +145,15 @@ db.define_table('line_item_attributes',
 
 # # -------------- PAYMENTS TABLES ------------------------
 
+
 db.define_table('payment_info',
                 Field('order_id', 'reference orders', default='orders.id'),
                 Field('card_brand'),
                 Field('cc_last_four', 'integer', length=4),
+                
                 )
+
+# db.payment_info.drop()
 
 
 db.define_table('billing_address',
@@ -174,4 +179,11 @@ db.define_table('shopping_cart2',
 db.define_table('shopping_cart_attribute',
                 Field('attribute_id', 'reference attribute_description', default='attribute.id'),
             
+                )
+
+# ----------------- Shipping TABLES ----------------------------
+db.define_table('shipping_info',
+                Field('order_id', 'reference orders', default='orders.id'),
+                Field('tracking_number'),
+                Field('arrival_date')
                 )
