@@ -69,10 +69,16 @@
         cat_name = (db(db.categories.id == cat_id_fix).select().first()).category_name.lower()
         cat_name = cat_name.replace("&","").replace(" ","_")
         brand = (db(db.brand.id == row['brand_id']).select().first()).brand_name.lower()
+        stock_qty = row['stock_qty']
     }}
     
 	<div class="col product">
-		<a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}"data-product-id={{=product_id}}>{{=IMG(_src=URL(f'static/images/{cat_name}/{brand}/', img_src), _onerror="this.onerror=null;this.src='%s';" % URL('static', 'images/default-img.png'), _alt=img_alt)}}</a>
+		<a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}" data-product-id={{=product_id}} class="position-relative">
+            {{if not stock_qty:}}
+                <div class="out-of-stock over-image">OUT OF STOCK</div>
+            {{pass}}
+            {{=IMG(_src=URL(f'static/images/{cat_name}/{brand}/', img_src), _onerror="this.onerror=null;this.src='%s';" % URL('static', 'images/default-img.png'), _alt=img_alt)}}
+        </a>
 		<h4 class="mt-3">
 			<a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}"data-product-id={{=product_id}}>{{=name}}</a>
 		</h4>
@@ -94,7 +100,11 @@
 		</ul>
 
 		<div class="price-info">
-			<p class="block">${{=f"{price:,.2f}"}}</p>
+            {{if not stock_qty:}}
+                <p class="block"><s>${{=f"{price:,.2f}"}}</s></p>
+            {{else:}}
+			    <p class="block">${{=f"{price:,.2f}"}}</p>
+            {{pass}}
             <a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}"data-product-id={{=product_id}}>
                 <button class="btn btn-mise-accent">Learn More</button>
             </a>

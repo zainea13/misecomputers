@@ -40,7 +40,7 @@
 					<div class="d-flex align-items-center justify-content-between w-100 flex-gap-1">
 						<div class="d-flex align-items">
 							<label for="quantity" class="mr-2 mb-0"><span class="align-middle">QTY.</span></label>
-							<input id="quantity" class="quantityAmt input-num-w-3" name="quantityAmt" type="number" value="{{=item['quantity']}}" min="0" data-start-value="{{=item['quantity']}}" data-product-id="{{=product_id}}" size="1">
+							<input id="quantity" class="quantityAmt input-num-w-3" name="quantityAmt" type="number" value="{{=item['quantity']}}" min="0" max="{{=product['stock_qty']}}" data-start-value="{{=item['quantity']}}" data-product-id="{{=product_id}}">
 						</div>
 						<button type="submit" class="quantityBtn d-none btn-primary"	data-product-id="{{=product_id}}">Update Qty.</button>
 						<button type="submit" class="remove-item btn-primary" data-product-id="{{=product_id}}">
@@ -77,7 +77,8 @@
 				${{=f"{subtotal:,.2f}"}}
 			</div>
 		</div>
-		<div class="row mx-0">
+		<!-- REMOVED BECAUSE I THINK IT CAN BE CONFUSING SINCE THIS DOESN'T INCLUD SHIPPING YET -->
+		<!-- <div class="row mx-0">
 			<div class="col">
 				Tax:
 			</div>
@@ -92,7 +93,7 @@
 			<div id='cart-total' class="col-auto text-right">
 				${{=f"{total:,.2f}"}}
 			</div>
-		</div>
+		</div> -->
 
 		<hr>
 		{{if cart_items:}}

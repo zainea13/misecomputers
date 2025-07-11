@@ -53,8 +53,9 @@
 </head>
 
 <body>
-	<div class="w2p_flash alert alert-dismissable">{{=response.flash or ''}}</div>
 	
+<div class="w2p_flash alert alert-dismissable">{{=response.flash or ''}}</div>
+
 	<!-- Navbar ======================================= -->
 	<nav class="navbar navbar-light bg-secondary navbar-expand-lg mb-5">
 		<div class="container mb-0 flex-gap-2">
@@ -200,8 +201,9 @@
 				<!-- SHOPPING CART ICON -->
 					<li class="nav-item d-flex" style="flex-direction: column;">
 						<a class="nav-link text-primary p-0" href="{{=URL('default','shopping_cart2')}}" title="Tooltip on bottom">
-							<div>
-								<div class="fa fa-cart-plus" style="font-size:2.5rem" aria-hidden="true"></div>
+							<div class="position-relative">
+								<div class="fa fa-shopping-cart" style="font-size:2.5rem;" aria-hidden="true"></div>
+								<div id="cart-counter"><div>{{=session.cart_counter}}</div></div>
 							</div>
 							<div class="d-lg-block d-none" style="margin-top: -6px;">
 								<span class="font-weight-bold " style="font-size:0.875rem; padding-inline-start: 2px;">CART</span>

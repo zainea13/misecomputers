@@ -71,10 +71,16 @@
 <div class="row mb-5">
 	<!-- Left column with images -->
 	<div class="col-md-6">
+		<!-- MOBILE TITLE -->
 		<h2 class="font-weight-bold mb-4 d-md-none">{{=product['product_name']}}</h2>
 		<h3 class="mb-5 d-md-none">${{=f"{product['price']:,.2f}"}}</h3>
+		<!-- END MOBILE TITLE -->
+
+		<!-- BEGIN IMAGE SLIDER THING -->
 		<div class="swiper-window border border-peach rounded-2">
-			<div class="out-of-stock over-image">OUT OF STOCK</div>
+			{{if not stock_qty:}}
+				<div class="out-of-stock over-image">OUT OF STOCK</div>
+			{{pass}}
 			<div class="swiper-wrapper" style="translate: 0px;">
 				{{for image in images:
 				img_src = image['image_filename']
@@ -96,10 +102,15 @@
 			{{pass}}
 		</div>
 	</div>
+
 	<!-- Right column with info -->
 	<div class="col-md-6">
 		<h2 class="font-weight-bold mb-4 d-none d-md-block">{{=product['product_name']}}</h2>
-		<h3 class="mb-5 d-none d-md-block">${{=f"{product['price']:,.2f}"}}</h3>
+		{{if not stock_qty:}}
+			<h3 class="d-none d-md-block"><s>${{=f"{product['price']:,.2f}"}}</s></h3>
+		{{else:}}
+			<h3 class="mb-5 d-none d-md-block">${{=f"{product['price']:,.2f}"}}</h3>
+		{{pass}}
 		<h5 class="border-bottom p-1 text-uppercase">Key Features</h5>
 		<ul class="mb-5">
 			{{
@@ -122,10 +133,12 @@
 			{{pass}}
 			<input type="hidden" value="{{=response.session_id}}" name="session_id" id="session_id">
 			<div class="d-flex align-items-center justify-content-between w-100 flex-gap-4">
+				{{if stock_qty:}}
 				<div class="d-flex align-items">
 					<label for="quantity" class="mr-2 mb-0"><span class="align-middle">QTY.</span></label>
-					<input type="number" value="1" name="quantity" id="quantity" class="input-num-w-3" min="1">
+					<input type="number" value="1" name="quantity" id="quantity" class="input-num-w-3" min="1" max="{{=stock_qty}}">
 				</div>
+				{{pass}}
 				<div class="flex-fill">
 					{{if stock_qty:}}
 					<button type="submit" class="btn btn-mise-accent w-100">
@@ -148,6 +161,8 @@
 		<p>{{=XML(product['description'])}}</p>
 	</div>
 </div>
+
+{{print(session.cart_counter)}}
 
 {{block page_js}}
 <script>
@@ -175,4 +190,16 @@
 </script>
 
 <script src={{=URL('static','js/mise_slider.js')}}></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var flashDiv = document.querySelector('.w2p_flash');
+    if (flashDiv && flashDiv.innerHTML) {
+        flashDiv.innerHTML = flashDiv.innerHTML
+            .replace(/&lt;/g, '<')
+            .replace(/&gt;/g, '>')
+            .replace(/&amp;/g, '&');
+    }
+});
+</script>
 {{end page_js}}

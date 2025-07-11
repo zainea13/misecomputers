@@ -142,7 +142,7 @@ header .jumbotron {
     background-color: transparent;
 }
 .w2p_flash {
-    opacity: 0.9!important;
+    opacity: 0.9;
     right: 100px;
 }
 .right {

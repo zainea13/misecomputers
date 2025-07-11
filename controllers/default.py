@@ -6,6 +6,7 @@
 
 # ---- example index page ----
 from gluon import *
+from gluon.tools import XML
 import datetime
 from datetime import date, datetime, timedelta
 import json
@@ -20,6 +21,8 @@ from private.private import *
 stripe.api_key = stripe_api_keys['sk']
 STRIPE_PUBLISHABLE_KEY = stripe_api_keys['pk']
 
+# Override the default escape function to render raw HTML
+response._vars_escape = lambda x: XML(x)
 
 # Menu Stuff
 response.menu = [
@@ -47,6 +50,60 @@ def calculate_shipping(items):
     # caclulate shipping
     return rate + rate * 1.4 * math.log(items)
     
+
+# NOT FINISHED, this function is a work in progress
+def shopping_cart_count():
+    session_id = response.session_id
+    user_id = auth.user_id
+
+    # here we get the results from the database table, based on if the user is logged in or not
+    where_stmt = ""
+    if auth.user:
+        where_stmt = f"sc.user_id = {str(auth.user.id)}"
+    else:
+        where_stmt = f"sc.session_id = '{str(response.session_id)}'"
+
+    # here we fetch it, and then start adding up items
+    query = "SELECT sc.* FROM shopping_cart2 AS sc WHERE " + where_stmt
+    cart_items = db.executesql(query, as_dict=True)
+
+    total_items = 0
+    for item in cart_items:
+        total_items += int(item['quantity'])
+    
+    session.cart_counter = total_items
+
+    return total_items
+
+shopping_cart_count()
+
+
+def shopping_cart_subtotal():
+    session_id = response.session_id
+    user_id = auth.user_id
+
+    # here we get the results from the database table, based on if the user is logged in or not
+    where_stmt = ""
+    if auth.user:
+        where_stmt = f"sc.user_id = {str(auth.user.id)}"
+    else:
+        where_stmt = f"sc.session_id = '{str(response.session_id)}'"
+
+    # here we fetch it, and then start adding up items
+    query = "SELECT sc.* FROM shopping_cart2 AS sc WHERE " + where_stmt
+    cart_items = db.executesql(query, as_dict=True)
+
+    cart_subtotal = 0
+    for item in cart_items:
+        product_id = item['product_id']
+        product = db(db.products.id == product_id).select().first()
+        cart_subtotal += (float(product['price']) * int(item['quantity']))
+    
+    session.cart_subtotal = cart_subtotal
+
+    return cart_subtotal
+
+
 
 # ---- define pages ----
 
@@ -145,6 +202,7 @@ def product_entry_form():
 
 
 def item_page():
+    
     item = request.args(0).split("--") # value: 2--Test-Laptop-Product-2
     product_id = item[0] # 2 
     product = db.products[product_id] # returns rows for that product id
@@ -324,9 +382,19 @@ def add_to_cart():
         product_id = request.vars['product_id']
         session_id = request.vars['session_id']
         quantity = int(request.vars['quantity'])
-        
+        added_product = db(db.products.id == product_id).select().first()
+        image = db((db.product_images.product_id == product_id) & (db.product_images.main_image == True)).select().first()
+        img_src = image.image_filename
+        img_alt = image.image_alt
+        cat = (db(db.categories.id == added_product.category_id).select().first().category_name).lower()
+        cat = cat.replace("&","").replace(" ","_")
+        brand = (db(db.brand.id == added_product.brand_id).select().first()).brand_name.lower()
+
         product = None
         existing_quantity = 0
+
+        # Flag
+        added_successful = False
 
         # Flag used if the item already exists in the cart
         matched_cart = False
@@ -349,18 +417,70 @@ def add_to_cart():
                 else:
                     product = db.shopping_cart2(session_id=session_id, product_id=product_id)
                 
-                # If matched, set the existing quantity and matched_cart
+                # If exists in cart, set the existing quantity and matched_cart
                 existing_quantity = int(product['quantity'])
                 matched_cart = True
 
         # If there was a match update the quanity, otherwise add to cart
         if matched_cart:
-            new_quantity = quantity + existing_quantity
-            product.update_record(quantity=new_quantity)
+            # get the total qty in stock
+            
+            total_in_stock = int(added_product.stock_qty)
+            # check to make sure they're still in stock
+            if existing_quantity >= total_in_stock:
+                # if no more in stock, then just send them a message
+                if existing_quantity > total_in_stock:
+                    response.flash = XML(f"""There are only <strong>{total_in_stock}</strong> left in stock. There are <strong>{existing_quantity}</strong> in your cart.""")                    
+                else:
+                    response.flash = "There are no more in stock. You added the last one to your cart!"
+            else:
+                # if there are more in stock then add it up
+                new_quantity = quantity + existing_quantity
+                product.update_record(quantity=new_quantity)
+                added_successful = True
+            
         else:
             db.shopping_cart2.insert(user_id=user_id, product_id=product_id, quantity=quantity, session_id=session_id)
+            cart_counter = shopping_cart_count()
+            added_successful = True
+    
+    # get the cart values
+    cart_counter = shopping_cart_count()
+    cart_subtotal = shopping_cart_subtotal()
 
-        response.flash = "Added to cart"
+    success_message =   XML(f"""
+                                <div class="pie mb-2">
+                                    <div class="img-holder">
+                                        <img src="{URL(f'static/images/{cat}/{brand}/', img_src)}">
+                                    </div> 
+                                    <div class="words">
+                                        {quantity} × <strong>{added_product.product_name}</strong> was added to your cart.
+                                    </div> 
+                                </div>
+                                <hr>
+                                <div class="w-100">
+                                    <span>{cart_counter} items in cart</span><br>
+                                    <span>Cart subtotal: ${cart_subtotal:,.2f}</span>
+                                </div>
+                                """)
+
+    if added_successful:          
+        response.flash = success_message
+    
+    response.js = '''
+                $(document).ready(function() {
+                    var flashDiv = $(".w2p_flash");
+                    if (flashDiv.length && flashDiv.html()) {
+                        var content = flashDiv.html()
+                            .replace(/&lt;/g, "<")
+                            .replace(/&gt;/g, ">")
+                            .replace(/&amp;/g, "&");
+                        flashDiv.html(content);
+                    } 
+                });
+                ''' + f'$("#cart-counter").text("{cart_counter}");'
+
+    return locals()
 
 
 def shopping_cart2():
@@ -481,6 +601,24 @@ def update_cart():
     tax_amt = tax * subtotal
     total = tax_amt + subtotal
 
+
+    # Update the cart counter
+
+    cart_counter = shopping_cart_count()
+    response.flash = f"Your cart was updated!"
+    response.js = '''
+                $(document).ready(function() {
+                    var flashDiv = $(".w2p_flash");
+                    if (flashDiv.length && flashDiv.html()) {
+                        var content = flashDiv.html()
+                            .replace(/&lt;/g, "<")
+                            .replace(/&gt;/g, ">")
+                            .replace(/&amp;/g, "&");
+                        flashDiv.html(content);
+                    } 
+                });
+                ''' + f'$("#cart-counter").text("{cart_counter}");'
+
     return response.json(dict(
         success=True,
         subtotal=subtotal,
@@ -490,31 +628,6 @@ def update_cart():
         product_id=product_id,
         quantity=quantity
     ))
-
-
-# NOT FINISHED, this function is a work in progress
-def shopping_cart_count():
-    session_id = response.session_id
-    user_id = auth.user_id
-
-    # here we get the results from the database table, based on if the user is logged in or not
-    where_stmt = ""
-    if auth.user:
-        where_stmt = f"sc.user_id = {str(auth.user.id)}"
-    else:
-        where_stmt = f"sc.session_id = '{str(response.session_id)}'"
-
-    # here we fetch it, and then start adding up items
-    query = "SELECT sc.* FROM shopping_cart2 AS sc WHERE " + where_stmt
-    cart_items = db.executesql(query, as_dict=True)
-
-    total_items = 0
-    for item in cart_items:
-        total_items += int(item['quantity'])
-    
-    # print(total_items)
-
-    return locals()
 
 
 def account():
@@ -1036,6 +1149,11 @@ def checkout():
                         price=product.price,
                         quantity_of_item=item['quantity']
                     )
+
+                    # then deduct qty from product listing
+                    new_qty = int(product.stock_qty) - int(item['quantity'])
+                    product.update_record(stock_qty=new_qty)
+
 
                 # Add a record to Shipping Address table
                 db.shipping_address.insert(
