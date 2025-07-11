@@ -72,38 +72,34 @@ def aboutus():
     response.view="aboutus.html"
     return locals()
 
-def search():
-    
-
-    form = FORM(INPUT(_name='keyword', _type='text', _placeholder='Search...'),
-                INPUT(_type='submit', _value='Search'))
-
-    results = []
-    if form.process().accepted:
-        keyword = form.vars.keyword
-        if keyword:
-            results = db((db.products.product_name.contains(keyword))).select()
-        
-    
-    
-    return dict(form=form, results=results)
-
 def searchtop():
-    response.view="search.html"
-    results = None
-    #if form.process().accepted:
+    response.title = 'MISE - Search Results'
+    response.view = "search.html"
     keyword = request.vars.keyword
-    print(keyword)
-    if keyword:
-        results = db((db.products.product_name.contains(keyword))).select()
-    
-    response.title=f'MISE - Search results for "{keyword}"'
+    print("Keyword:", keyword)
 
-    # Print all fields to see what's available
+    product_results = []
+    category_results = []
+
+    if keyword:
+        # Search products by product_name
+        product_results = db(db.products.product_name.contains(keyword)).select()
+
+        # Search categories by category_name
+        category_results = db(db.categories.category_name.contains(keyword)).select()
+
+    # Debug info
     print("Products fields:", [field for field in db.products])
     print("Categories fields:", [field for field in db.categories])
+    print("Found products:", len(product_results))
+    print("Found categories:", len(category_results))
 
-    return dict(locals(), results=results)
+    return dict(locals(), 
+                product_results=product_results, 
+                category_results=category_results)
+
+
+
 
 def product_entry_form():
     response.title=f'MISE - Product Entry Form'
