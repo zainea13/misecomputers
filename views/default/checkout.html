@@ -17,9 +17,9 @@
 	</div>
 </div>
 
-    <h2 class="text-accent mb-2" style="margin-left: -15px;">Check Out</h2>
+    <h2 class="text-accent mb-4 mb-md-2" style="margin-left: -15px;">Check Out</h2>
     <div class="row">
-        <div class="col-7 pt-3">
+        <div class="col-md-7 order-2 order-md-1 pt-3">
             <!-- SHIPPING INFO FORM -->
             <div class="row mb-5">
                 <h5 class="w-100 pb-3 border-bottom mb-4">Shipping Information</h5>
@@ -165,12 +165,12 @@
                     </div>
                 </div>
             </div>
-            
+
         </div>
         
         <!-- Right Side Bar RECEIPT -->
-        <div class="col-5" >
-            <div class="bg-light p-3 rounded receipt sticky-top">
+        <div class="col-md-5 order-1 order-md-2" >
+            <div class="bg-light p-3 rounded receipt sticky-top h-md-50">
                 <h5>Items</h5>
                 <!-- LIST ITEMS IN CART -->
                 <div>
@@ -236,9 +236,9 @@
 
                 <hr class="w-100">
 
-                <!-- PLACE ORDER BUTTON -->
-                <div class="d-flex justify-content-end mt-auto">
-                    <button id="place-order" class="btn btn-mise-accent w-100">Place Order</button>
+                <!-- PLACE ORDER BUTTON md and up-->
+                <div class="justify-content-end mt-auto d-none d-md-flex">
+                    <button id="place-order" class="btn btn-mise-accent w-100 d-none d-md-block">Place Order</button>
                 </div>
                 
 
@@ -247,6 +247,10 @@
         </div>
     <!-- END MAIN ROW  -->
     </div>
+    <!-- PLACE ORDER BUTTON below md-->
+            <div class="d-flex justify-content-end mt-3 d-md-none">
+                <button id="place-order" class="btn btn-mise-accent w-100 d-block d-md-none">Place Order</button>
+            </div>
 {{pass}}
 
 
