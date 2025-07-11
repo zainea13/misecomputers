@@ -1,6 +1,6 @@
 {{extend 'layout.html'}}
 
-<h3 class="text-accent mb-4">Search Results for '{{=keyword}}'</h3>
+<h3 class="text-accent mb-4">Search Results {{if keyword:}}for '{{=keyword}}' {{pass}}</h3>
 
 
 <div class="row product-row flex-gap-2">
@@ -61,10 +61,13 @@
 
 <!-- add extra div boxes to fill up empty space to create a nice grid -->
         {{row_count = 3
-        if (len(results) % row_count):
-            extras =  row_count - (len(results) % row_count)}}
-            {{for i in range(extras):}}
-            <div class="product empty"></div>
+        if results:
+            if (len(results) % row_count):
+                extras =  row_count - (len(results) % row_count)
+        }}
+                {{for i in range(extras):}}
+                <div class="product empty"></div>
+                {{pass}}
             {{pass}}
         {{pass}}
 

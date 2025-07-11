@@ -8,8 +8,18 @@
     --highlight: hsl(202, 65%, 58%);
     --peach: hsl(25, 100%, 80%);
     --colorDanger: hsl(348, 78%, 49%); 
-
 }
+
+/*-------------------------------------------------------------------------------------------------------------------*/
+/* FONT */
+body {
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+}
+
+
+
+
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* GENERAL HTML ADJUSTMENTS */
@@ -163,7 +173,32 @@ input[type="checkbox"] {
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Nav Bar classes */
+.mise-logo {
+    width: min(27%, 160px);
+}
 
+#accordion {
+    overflow: clip;
+}
+
+.mise-dropdown-menu {
+    /* position: absolute; */
+    /* top: 100%; */
+    /* left: 0; */
+    /* z-index: 1000; */
+    /* display: none; */
+    /* float: left; */
+    /* min-width: 10rem; */
+    /* font-size: 1rem; */
+    /* color: #212529; */
+    /* text-align: left; */
+    /* list-style: none; */
+    /* background-color: #fff; */
+    /* background-clip: padding-box; */
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: .25rem;
+    overflow: clip;
+}
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Home Page */
@@ -186,7 +221,6 @@ input[type="checkbox"] {
     flex: 1 1 330px;
     padding: 1rem;
     border: 1px solid var(--peach);
-    min-width:350px;
 }
 
 .empty {
@@ -313,6 +347,13 @@ input[type="checkbox"] {
     left:25%;
     top:45%;
 }
+
+/*-------------------------------------------------------------------------------------------------------------------*/
+/* --------- shopping cart stuff ------------ */
+.update-cart button {
+    font-size: 0.875rem;
+}
+
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* --------- CHECKOUT STUFF ------------ */
