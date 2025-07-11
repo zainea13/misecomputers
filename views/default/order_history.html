@@ -1,41 +1,46 @@
 {{extend 'layout.html'}}
 
+{{from datetime import datetime}}
+
 <h1 class="text-accent mb-4">Order History</h1>
 
 {{if not orders:}}
 
-  <p>You have no past orders.</p>
+<p>You have no past orders.</p>
 
 {{else:}}
 
-  {{for order in orders:}}
+{{for order in orders:}}
+{{shipping_info = db(db.shipping_info.order_id == order.id).select().first()}}
+<div class="card mb-4 shadow p-3 rounded bg-light">
+	<div class="card-header">
 
-    <div class="card mb-4 shadow p-3 rounded bg-light">
-      <div class="card-header">
+		<strong>Order #{{=order.order_number}}</strong> <br>
+		Order Date: {{=order.order_date.strftime('%Y-%m-%d %I:%M %p')}} <br>
+		{{if shipping_info:}} Arrival Date: {{=shipping_info.arrival_date.strftime('%Y-%m-%d')}} <br> {{pass}}
+		{{if shipping_info:}} USPS Tracking Number: {{=shipping_info.tracking_number}}<br> {{pass}}
+		Total: ${{=order.total_cost}} | Items: {{=order.total_items}}
+	</div>
 
-        <strong>Order #{{=order.order_number}}</strong> <br>
-        Date: {{=order.order_date.strftime('%Y-%m-%d %I:%M %p')}} <br>
-        Total: ${{=order.total_cost}} | Items: {{=order.total_items}}
-      </div>
-
-      <div class="card-body">
-        <ul>
-          {{for item in order_lines[order.id]:}}
-            <li>
-              {{=item.quantity_of_item}} × 
-              {{
-                name = db.products[item.product_id].product_name
-                name_link = name.replace(" ", "-")
-                product_id = item.product_id
-              }}
-              <a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}"data-product-id={{=product_id}}>
-                {{=db.products[item.product_id].product_name}}
-              </a> at 
-              ${{=item.price}} each
-            </li>
-          {{pass}}
-        </ul>
-      </div>
-    </div>
-  {{pass}}
+	<div class="card-body">
+		<ul>
+			{{for item in order_lines[order.id]:}}
+			<li>
+				{{=item.quantity_of_item}} ×
+				{{
+				name = db.products[item.product_id].product_name
+				name_link = name.replace(" ", "-")
+				product_id = item.product_id
+				}}
+				<a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}"
+					data-product-id={{=product_id}}>
+					{{=db.products[item.product_id].product_name}}
+				</a> at
+				${{=item.price}} each
+			</li>
+			{{pass}}
+		</ul>
+	</div>
+</div>
+{{pass}}
 {{pass}}

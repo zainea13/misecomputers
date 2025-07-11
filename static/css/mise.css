@@ -27,6 +27,15 @@ input::placeholder {
     color: #dddddd !important;
 }
 
+input[type="checkbox"] {
+    margin-inline-end: .25rem;
+}
+
+p {
+    word-wrap: break-word;
+}
+
+
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* WEB 2 PY TWEAKS */
@@ -181,17 +190,14 @@ a.text-primary:active {
     color: var(--primary) !important;
 }
 
-p {
-    word-wrap: break-word;
-}
-
-input[type="checkbox"] {
-    margin-inline-end: .25rem;
-}
-
 .container {
     margin-bottom: 250px;
 }
+
+.footer {
+    height: fit-content;
+}
+
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* CUSTOM UTILITY CLASSES ------------------------- */
@@ -246,15 +252,13 @@ input[type="checkbox"] {
     padding: .25rem;
     border-radius: 100%;
     color: white;
-    font-size: .75rem;
+    font-size: 0.8125rem;
     font-weight: bold;
     text-align: center;
     vertical-align: middle;
     position: absolute;
-    /* top: -9px; */
-    /* right: -6px; */
-    top: 4px;
-    right: 7px;
+    top: 3px;
+    right: 4px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -269,22 +273,20 @@ input[type="checkbox"] {
 }
 
 .mise-dropdown-menu {
-    /* position: absolute; */
-    /* top: 100%; */
-    /* left: 0; */
-    /* z-index: 1000; */
-    /* display: none; */
-    /* float: left; */
-    /* min-width: 10rem; */
-    /* font-size: 1rem; */
-    /* color: #212529; */
-    /* text-align: left; */
-    /* list-style: none; */
-    /* background-color: #fff; */
-    /* background-clip: padding-box; */
     border: 1px solid rgba(0,0,0,.15);
     border-radius: .25rem;
     overflow: clip;
+}
+
+.mobile-icon::after {
+    /* display:none !important;
+    margin-left: 0;
+    content:none !important;
+    border:none; */
+}
+
+.card.search-mobile {
+    background:none;
 }
 
 /*-------------------------------------------------------------------------------------------------------------------*/
@@ -598,6 +600,10 @@ input[type="checkbox"] {
 @media (min-width: 992px) {
     .w-lg-75 {
         max-width:75%
+    }
+
+    #cart-counter {
+        right: 7px;
     }
 }
 

@@ -21,8 +21,6 @@ from private.private import *
 stripe.api_key = stripe_api_keys['sk']
 STRIPE_PUBLISHABLE_KEY = stripe_api_keys['pk']
 
-# Override the default escape function to render raw HTML
-response._vars_escape = lambda x: XML(x)
 
 # Menu Stuff
 response.menu = [
@@ -124,6 +122,35 @@ def terms():
 
 def aboutus():
     response.title='MISE - About Us'
+    return locals()
+
+def contact():
+    response.title='MISE - Contact'
+    form = SQLFORM.factory(
+        Field('name',
+              requires=IS_NOT_EMPTY()),
+        Field('email',
+              requires=IS_EMAIL()),
+        Field('message',
+              'text',
+              requires=IS_NOT_EMPTY())
+    )
+
+    if form.process().accepted:
+        mail.send(
+            to=f'misecomputers@gmail.com',
+            subject=f'Website Contact from {form.vars.name}',
+            reply_to=form.vars.email,
+            message=form.vars.message
+        )
+        mail.send(
+            to=form.vars.email,
+            subject=f'Your copy of your Contact email with Mise Computers',
+            message=f'<html lang="en"><head></head><body>You sent us this message: <p> {form.vars.message} </p> We will be in touch soon!</body></html>'
+        )
+        session.flash = "Email sent!"
+        redirect(URL('index'))      
+
     return locals()
 
 def search():
@@ -646,6 +673,16 @@ def account():
     else:
         # Redirect if no state_code
         redirect(URL('account_details'))
+
+    # Fetch orders for the current user
+    order = db(db.orders.user_id == user_info.id).select(orderby=~db.orders.order_date).first()
+    line_items = db(db.order_line_items.order_id == order.id).select()
+    from collections import defaultdict
+    order_lines = defaultdict(list)
+
+    for item in line_items:
+        order_lines[item.order_id].append(item)
+
 
     return locals()
 
@@ -1249,8 +1286,7 @@ def thankyou():
     # Get shipping info
     if session.ty:
         shipping_info = db(db.shipping_info.order_id == session.ty['order_id']).select().first()
-        date_string = shipping_info.arrival_date
-        date_object = datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S.%f")
+        date_object = shipping_info.arrival_date
         arrives = date_object.strftime("%A, %B %d, %Y")
 
 
