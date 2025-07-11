@@ -205,8 +205,18 @@
             doc.on('click', '.w2p_flash', function (event) {
                 event.preventDefault();
                 var t = $(this);
-                if (t.css('top') == '0px') t.slideUp('slow');
-                else t.fadeOut();
+                if (t.css('top') == '0px') {
+                    t.slideUp('slow');
+                } else {
+                    if (event.target.classList.contains("flash-cart-btn")) {
+                        let flash_link = $(event.target).attr('href');
+                        // event.preventDefault();
+                        // event.stopPropagation();
+                        window.location.href = flash_link;
+                    } else {
+                        t.fadeOut();
+                    }
+                }
             });
             doc.on('keyup', 'input.integer', function () {
                 var nvalue = this.value.reverse().replace(/[^0-9\-]|\-(?=.)/g, '').reverse();

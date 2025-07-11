@@ -75,9 +75,7 @@
 							MENU
 						</a>
 						<!-- CONTROLLER LINK FOR MOBILE MENU -->
-						<a 
-							class="	nav-link 
-									dropdown-toggle 
+						<a 	class="	nav-link
 									font-weight-bold 
 									text-primary 
 									align-items-center 
@@ -110,14 +108,29 @@
 				</ul>
 
 				<!-- SEARCH BAR -->
-				<form class="form-inline flex-grow-1" action="{{=URL('default', 'search')}}" method="post">
+				<form class="form-inline flex-grow-1 d-none d-md-block" action="{{=URL('default', 'search')}}" method="post">
 					<div class="input-group w-100">
 						<input class="form-control border-0 pill-left pl-4 search d-none d-md-block" type="text" name="keyword" placeholder="What would you like to search for today?">
 						<div class="input-group-append ml-bmd-auto">
-							<button class="fa fa-search text-primary btn btn-medium pill-bmd" aria-hidden="true" type="submit"></button>
+							<button class="fa fa-search text-primary btn btn-medium" aria-hidden="true" type="submit"></button>
 						</div>
 					</div>
 				</form>
+				<!-- CONTROLLER LINK FOR MOBILE SEARCH -->
+				<a 	class="	font-weight-bold 
+							text-primary  
+							d-md-none
+							mobile-icon
+							ml-auto" 
+					href="#" 
+					id="searchBtnMobile" 
+					data-toggle="collapse" 
+					data-target="#searchMobile" 
+					aria-expanded="false" 
+					aria-controls="searchMobile"
+					>
+					<i class="d-md-none fa fa-search text-primary btn btn-medium rounded-pill" aria-hidden="true"></i>
+				</a>
 
 				<!-- BEGIN LOGIN MENU ITEM AND DROPDOWN -->
 				<ul class="nav navbar-nav align-items-center flex-row flex-gap-2">
@@ -158,7 +171,9 @@
 							>
 							<div class="d-flex align-items-center no-arrow-menu flex-gap-25">
 								<div class="fa fa-user-circle-o fa-lg d-none d-lg-inline" aria-hidden="true"></div>
-								<div class="fa fa-user-circle-o fa-2x d-lg-none" aria-hidden="true"></div>
+								{{if auth.user:}}
+									<div class="fa fa-user-circle-o fa-2x d-lg-none" aria-hidden="true"></div>
+								{{pass}}
 									<div class="" style="width:min-content;">
 										{{if auth.user:}}
 											<span class="d-lg-block d-none">{{=auth.user.first_name}}</span>
@@ -258,6 +273,22 @@
 					</div>
 				</div>
 			</div>
+
+			<!-- MOBILE MENU FOR THE SEARCH BAR -->
+			<div class="card search-mobile border-0" style="overflow: clip;">
+				<div id="searchMobile" class="collapse" aria-labelledby="searchBtnMobile" data-parent="#accordion" style="overflow: clip;">
+					<div class="card-body px-0 py-2" style="overflow: clip;">
+						<form class="form-inline flex-grow-1 d-md-none" action="{{=URL('default', 'search')}}" method="post">
+							<div class="input-group w-100  mx-1">
+								<input class="form-control border-0 pill-left pl-4 search d-md-none" type="text" name="keyword" placeholder="What would you like to search for today?">
+								<div class="input-group-append ml-bmd-auto">
+									<button class="fa fa-search text-primary btn btn-medium" aria-hidden="true" type="submit"></button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
 		</div>
 	</nav>
 
@@ -276,12 +307,14 @@
 	<!-- BEGIN FOOTER ========================================= -->
 	{{block footer}}
 	<footer class="footer container-fluid bg-secondary rounded-top">
-		<div class="row">
-			<div><a href="{{=URL('privacy')}}" style="color:black">Privacy Notice</a>&nbsp;|&nbsp;</div> 
-			<div><a href="{{=URL('default','terms')}}" style="color:black">Terms of Use</a>&nbsp;|&nbsp;</div> 
-			<div><a href="{{=URL('default','aboutus')}}" style="color:black">About Us</a></div>
-			
-			<div class="ml-auto">{{=T('Copyright')}} &#169; {{=request.now.year}} MISE Computers, LLC</div>
+		<div class="row justify-content-between pb-3">
+			<div class="d-flex">
+				<div><a class="text-dark" href="{{=URL('privacy')}}">Privacy Notice</a>&nbsp;|&nbsp;</div> 
+				<div><a class="text-dark" href="{{=URL('default','terms')}}">Terms of Use</a>&nbsp;|&nbsp;</div> 
+				<div><a class="text-dark" href="{{=URL('default','aboutus')}}">About Us</a>&nbsp;|&nbsp;</div>
+				<div><a class="text-dark" href="{{=URL('default','contact')}}">Contact Support</a></div>
+			</div>
+			<div>{{=T('Copyright')}} &#169; {{=request.now.year}} MISE Computers, LLC</div>
 		</div>	
 	</footer>
 	{{end}}
@@ -304,70 +337,9 @@
 
 	<script>
 		"use strict"
-		// Control the drop down for menu items
-		// const categoryMenuBtn = document.getElementById('categoryMenuBtn');
-		// const userMenuBtn = document.getElementById('userMenuBtn');
-		// const categoryMenuItems = document.querySelector('.categoryMenu');
-		// const userMenuItems = document.querySelector('.userMenu');
-
-		// let userMenuClicked = false;
-		// let categoryMenuClicked = false;
-
-		// userMenuBtn.addEventListener('click', (e) => {
-		// 	e.preventDefault();
-
-		// 	if (!userMenuClicked) {
-		// 		if (categoryMenuClicked) {
-		// 			categoryMenuItems.classList.remove('show');
-		// 			categoryMenuClicked = false;
-		// 			categoryMenuItems.addEventListener('transitionend', function timer() {
-		// 				categoryMenuItems.style.display = 'none';
-		// 				categoryMenuItems.removeEventListener('transitionend', timer);
-		// 			}, { passive: true, once: true });
-		// 		}
-		// 		userMenuItems.style.display = "block";
-		// 		userMenuItems.offsetHeight; // This forces the browser to process the display change
-		// 		userMenuItems.classList.add('show');
-		// 		userMenuClicked = true;
-		// 	} else {
-		// 		userMenuItems.classList.remove('show');
-		// 		userMenuClicked = false;
-		// 		userMenuItems.addEventListener('transitionend', function timer() {
-		// 			userMenuItems.style.display = 'none';
-		// 			userMenuItems.removeEventListener('transitionend', timer);
-		// 		}, { passive: true, once: true });
-
-		// 	}
-
-			
-		// });
-
-		// categoryMenuBtn.addEventListener('click', (e) => {
-		// 	e.preventDefault();
-
-		// 	if (!categoryMenuClicked) {
-		// 		if (userMenuClicked) {
-		// 			userMenuItems.classList.remove('show');
-		// 			userMenuClicked = false;
-		// 			userMenuItems.addEventListener('transitionend', function timer() {
-		// 				userMenuItems.style.display = 'none';
-		// 				userMenuItems.removeEventListener('transitionend', timer);
-		// 			}, { passive: true, once: true });
-		// 		}
-		// 		categoryMenuItems.style.display = "block";
-		// 		categoryMenuItems.offsetHeight; // This forces the browser to process the display change
-		// 		categoryMenuItems.classList.add('show');
-		// 		categoryMenuClicked = true;
-		// 	} else {
-		// 		categoryMenuItems.classList.remove('show');
-		// 		categoryMenuClicked = false;
-		// 		categoryMenuItems.addEventListener('transitionend', function timer() {
-		// 			categoryMenuItems.style.display = 'none';
-		// 			categoryMenuItems.removeEventListener('transitionend', timer);
-		// 		}, { passive: true, once: true });
-
-		// 	}
-		// });
+		if (navigator.userAgent.includes("Chrome")) {
+			document.querySelector('#cart-counter').style.top = '4px';
+		}
 	</script>
 </body>
 </html>

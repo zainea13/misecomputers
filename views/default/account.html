@@ -2,9 +2,13 @@
 <div class="row">
     <div class="col-md-8 mx-auto mb-5 p-4 border rounded">
         <h2>Account Information</h2>
+        
         <hr>
+
+        <!-- USER INFO SECTION -->
         <div class="">
             <h5>User Information</h5>
+
             <span class="font-weight-bold text-uppercase font-small">Name:</span>
             <p>{{=user_info.first_name}} {{=user_info.last_name}}</p>
             
@@ -22,11 +26,51 @@
             {{else:}}{{pass}}
                 <i class="text-uppercase font-small">Email:</i> {{=user_info.email}}
             </p>
+
+            <!-- BUTTON TO UPDTATE Info -->
             <a href="{{=URL('default','account_details')}}" class="btn btn-primary">Update User Information</a>
+
         </div>
+
         <hr>
-        <!--- <a href="" class="btn btn-primary">View Order History</a> HYPERLINK TO ORRDER HISTORY--->
-        
+
+        <!-- ORDER HISTORY SECTION -->
+        <h5>Most Recent Order</h5>
+        {{if not order:}}
+
+            <p>You have no past orders.</p>
+
+        {{else:}}
+            <div class="card my-4 shadow p-3 rounded bg-light">
+                <div class="card-header">
+                    {{shipping_info = db(db.shipping_info.order_id == order.id).select().first()}}
+                    <strong>Order #{{=order.order_number}}</strong> <br>
+                    Order Date: {{=order.order_date.strftime('%Y-%m-%d %I:%M %p')}} <br>
+                    {{if shipping_info:}} Arrival Date: {{=shipping_info.arrival_date.strftime('%Y-%m-%d')}} <br> {{pass}}
+                    {{if shipping_info:}} USPS Tracking Number: {{=shipping_info.tracking_number}}<br> {{pass}}
+                    Total: ${{=order.total_cost}} | Items: {{=order.total_items}}
+                </div>
+                <div class="card-body">
+                    <ul>
+                    {{for item in order_lines[order.id]:}}
+                        <li>
+                        {{=item.quantity_of_item}} × 
+                        {{
+                            name = db.products[item.product_id].product_name
+                            name_link = name.replace(" ", "-")
+                            product_id = item.product_id
+                        }}
+                        <a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}"data-product-id={{=product_id}}>
+                            {{=db.products[item.product_id].product_name}}
+                        </a> at 
+                        ${{=item.price}} each
+                        </li>
+                    {{pass}}
+                    </ul>
+                </div>
+            </div>
+        {{pass}}
+
         <a href="{{=URL('default', 'order_history')}}" class="btn btn-primary">View Order History</a>
     </div>
 </div>
