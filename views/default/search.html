@@ -3,10 +3,9 @@
 <h3 class="text-accent mb-4">Search Results {{if keyword:}}for '{{=keyword}}' {{pass}}</h3>
 
 
-<!--Search Results layout-->
 <div class="row product-row flex-gap-2">
-{{if product_results:}}
-	{{for row in product_results:
+{{if results:}}
+	{{for row in results:
         name = row['product_name']
         name_link = name.replace(" ", "-")
         price = row['price']
@@ -62,10 +61,13 @@
 
 <!-- add extra div boxes to fill up empty space to create a nice grid -->
         {{row_count = 3
-        if (len(product_results) % row_count):
-            extras =  row_count - (len(product_results) % row_count)}}
-            {{for i in range(extras):}}
-            <div class="product empty"></div>
+        if results:
+            if (len(results) % row_count):
+                extras =  row_count - (len(results) % row_count)
+        }}
+                {{for i in range(extras):}}
+                <div class="product empty"></div>
+                {{pass}}
             {{pass}}
         {{pass}}
 

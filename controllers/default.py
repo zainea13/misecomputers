@@ -126,34 +126,21 @@ def aboutus():
     response.title='MISE - About Us'
     return locals()
 
-def searchtop():
-    response.title = 'MISE - Search Results'
-    response.view = "search.html"
+def search():
+    results = None
+    #if form.process().accepted:
     keyword = request.vars.keyword
-    print("Keyword:", keyword)
-
-    product_results = []
-    category_results = []
-
+    print(keyword)
     if keyword:
-        # Search products by product_name
-        product_results = db(db.products.product_name.contains(keyword)).select()
+        results = db((db.products.product_name.contains(keyword))).select()
+    
+    response.title=f'MISE - Search results for "{keyword}"'
 
-        # Search categories by category_name
-        category_results = db(db.categories.category_name.contains(keyword)).select()
-
-    # Debug info
+    # Print all fields to see what's available
     print("Products fields:", [field for field in db.products])
     print("Categories fields:", [field for field in db.categories])
-    print("Found products:", len(product_results))
-    print("Found categories:", len(category_results))
 
-    return dict(locals(), 
-                product_results=product_results, 
-                category_results=category_results)
-
-
-
+    return dict(locals(), results=results)
 
 def product_entry_form():
     response.title=f'MISE - Product Entry Form'
