@@ -155,19 +155,27 @@ def contact():
 
 def search():
     results = None
-    #if form.process().accepted:
     keyword = request.vars.keyword
     print(keyword)
+
     if keyword:
-        results = db((db.products.product_name.contains(keyword))).select()
-    
-    response.title=f'MISE - Search results for "{keyword}"'
+        # Join products and categories
+        results = db(
+            (db.products.category_id == db.categories.id) & 
+            (
+                db.products.product_name.contains(keyword) |
+                db.categories.category_name.contains(keyword)
+            )
+        ).select(db.products.ALL, db.categories.ALL)
+
+    response.title = f'MISE - Search results for "{keyword}"'
 
     # Print all fields to see what's available
     print("Products fields:", [field for field in db.products])
     print("Categories fields:", [field for field in db.categories])
 
     return dict(locals(), results=results)
+
 
 def product_entry_form():
     response.title=f'MISE - Product Entry Form'

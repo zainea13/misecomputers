@@ -1,63 +1,75 @@
 {{extend 'layout.html'}}
 
-<h3 class="text-accent mb-4">Search Results {{if keyword:}}for '{{=keyword}}' {{pass}}</h3>
+{{if keyword:}}
+    <h3 class="text-accent mb-4">Search Results for '{{=keyword}}'</h3>
+{{else:}}
+    <h3 class="text-accent mb-4">Search Results</h3>
+{{pass}}
+
 
 
 <div class="row product-row flex-gap-2">
 {{if results:}}
-	{{for row in results:
-        name = row['product_name']
+    {{for row in results:
+        product = row.products
+        category = row.categories
+
+        name = product.product_name
         name_link = name.replace(" ", "-")
-        price = row['price']
-        product_id = row['id']
-        cat_id_fix = row.category_id
-		main_image = db((db.product_images.product_id == row.id) & (db.product_images.main_image == True)).select().first()
-        img_src = main_image['image_filename']
-        img_alt = main_image['image_alt']
-        cat_name = (db(db.categories.id == cat_id_fix).select().first()).category_name.lower()
-        cat_name = cat_name.replace("&","").replace(" ","_")
-        brand = (db(db.brand.id == row['brand_id']).select().first()).brand_name.lower()
+        price = product.price
+        product_id = product.id
+        cat_id_fix = product.category_id
+
+        main_image = db((db.product_images.product_id == product.id) & (db.product_images.main_image == True)).select().first()
+        img_src = main_image['image_filename'] if main_image else 'default-img.png'
+        img_alt = main_image['image_alt'] if main_image else 'No image available'
+
+        cat_name = category.category_name.lower().replace("&","").replace(" ","_")
+        brand_row = db(db.brand.id == product.brand_id).select().first()
+        brand = brand_row.brand_name.lower() if brand_row else 'unknown'
     }}
     
-	<div class="col product">
-        <a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}"data-product-id={{=product_id}}>{{=IMG(_src=URL(f'static/images/{cat_name}/{brand}/', img_src), _onerror="this.onerror=null;this.src='%s';" % URL('static', 'images/default-img.png'), _alt=img_alt)}}</a>
-		<h4 class="mt-3">
-			<a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}"data-product-id={{=product_id}}>{{=name}}</a>
-		</h4>
-	
-		<ul>
-			{{
-            features = db((db.product_attribute.product_id == product_id)).select()
+    <div class="col product">
+        <a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}" data-product-id={{=product_id}}>
+            {{=IMG(_src=URL(f'static/images/{cat_name}/{brand}/', img_src), _onerror="this.onerror=null;this.src='%s';" % URL('static', 'images/default-img.png'), _alt=img_alt)}}
+        </a>
+        <h4 class="mt-3">
+            <a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}" data-product-id={{=product_id}}>
+                {{=name}}
+            </a>
+        </h4>
+
+        <ul>
+        {{
+            features = db(db.product_attribute.product_id == product_id).select()
             is_filter = db((db.category_attribute.category_id == cat_id_fix) & (db.category_attribute.isFilter == True)).select()
-
-
             for i in features:
                 for k in is_filter:
                     if i.attribute_id == k.attribute_id:
                         desc = db(db.attribute_description.id == i.attribute_id).select().first()
-                
-			            =LI(desc.attribute_name + ": " + i.attribute_value)
-                        pass
-                        pass
-			}}
-			{{pass}}
-		</ul>
+                        if desc:
+        }}
+                            <li>{{=desc.attribute_name}}: {{=i.attribute_value}}</li>
+        {{              pass
+                    pass
+				pass
+			pass
+        }}    
+        </ul>
 
-		<div class="price-info">
-			<p class="block">${{=f"{price:,.2f}"}}</p>
-            <a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}"data-product-id={{=product_id}}>
+        <div class="price-info">
+            <p class="block">${{=f"{price:,.2f}"}}</p>
+            <a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}" data-product-id={{=product_id}}>
                 <button class="btn btn-mise-accent">Learn More</button>
             </a>
-		</div>   
-	</div>
+        </div>   
+    </div>
     {{pass}}
-	
 {{else:}}
     <div class="col">
         <p><strong>No Results Found</strong></p>
     </div>
 {{pass}}
-
 
 <!-- add extra div boxes to fill up empty space to create a nice grid -->
         {{row_count = 3
@@ -72,6 +84,7 @@
         {{pass}}
 
     </div>
+
 
 
 
