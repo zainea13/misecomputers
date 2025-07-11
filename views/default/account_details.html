@@ -1,7 +1,7 @@
 {{extend 'layout.html'}}
 
 <div class="row">
-    <div class="col-6 mx-auto mb-5 fade-in-5">
+    <div class="col-8 mx-auto mb-5 fade-in-5">
         <h2 class="mb-4">Account Details</h2>
         {{if not customer_info or not customer_info.state_code or not customer_info.zip or not customer_info.city or customer_info.street_1 == '':}}
         <p class='text-danger small mtneg-1rem fade-in-12'><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please Update Account to Complete Registration</p>
