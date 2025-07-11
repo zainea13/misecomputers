@@ -59,37 +59,17 @@ def index():
 
 def privacy():
     response.title='MISE - Privacy Policy'
-    response.view="privacy.html"
     return locals()
 
 def terms():
     response.title='MISE - Terms'
-    response.view="terms.html"
     return locals()
 
 def aboutus():
     response.title='MISE - About Us'
-    response.view="aboutus.html"
     return locals()
 
 def search():
-    
-
-    form = FORM(INPUT(_name='keyword', _type='text', _placeholder='Search...'),
-                INPUT(_type='submit', _value='Search'))
-
-    results = []
-    if form.process().accepted:
-        keyword = form.vars.keyword
-        if keyword:
-            results = db((db.products.product_name.contains(keyword))).select()
-        
-    
-    
-    return dict(form=form, results=results)
-
-def searchtop():
-    response.view="search.html"
     results = None
     #if form.process().accepted:
     keyword = request.vars.keyword
