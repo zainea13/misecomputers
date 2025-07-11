@@ -39,7 +39,7 @@ db.define_table('customers',
 db.define_table('categories',
                 Field('category_name', notnull=True, unique=True),
                 format='%(category_name)s',
-  
+                migrate=True
                 )
 
 

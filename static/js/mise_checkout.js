@@ -4,10 +4,28 @@ const clearBtn = document.querySelector('.clear-btn');
 const shippingForm = document.querySelector('#shipping-info');
 const billingForm = document.querySelector('#billing-info');
 
-const placeOrderBtn = document.querySelector('#place-order');
+// const placeOrderBtn = document.querySelector('#place-order');
 
 const shippingArray = Array.from(shippingForm.elements);
 const billingArray = Array.from(billingForm.elements);
+
+const allplaceOrderBtns = document.querySelectorAll('#place-order');
+let placeOrderBtn;
+
+function assignBtn() {
+    allplaceOrderBtns.forEach(btn => {
+        let computed = getComputedStyle(btn);
+        if (computed.getPropertyValue('display') !== 'none') {
+            placeOrderBtn = btn;
+            console.log(placeOrderBtn)
+        }
+    });
+}
+
+assignBtn();
+window.addEventListener('resize', assignBtn);
+
+
 
 // disable scrolling if overlay exists
 const loadingScreen = document.querySelector('.loading-screen');

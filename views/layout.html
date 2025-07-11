@@ -53,63 +53,90 @@
 </head>
 
 <body>
-	<div class="w2p_flash alert alert-dismissable">{{=response.flash or ''}}</div>
 	
-<!-- Navbar ======================================= -->
-	<nav class="navbar navbar-light bg-secondary navbar-expand-lg mb-5">
-		
-		<div class="container mb-0">
+<div class="w2p_flash alert alert-dismissable">{{=response.flash or ''}}</div>
 
-			<!-- MISE Computers logo and logo hyperlinked to Home /index page-->
-			<a class="navbar-brand m-0" href="{{=URL('default','index')}}">
-				<img width="150" src="/misecomputers/static/images/miselogolong2.png" alt="Company Logo"/>
+	<!-- Navbar ======================================= -->
+	<nav class="navbar navbar-light bg-secondary navbar-expand-lg mb-5">
+		<div class="container mb-0 flex-gap-2">
+
+			<!-- MISE Computers logo -->
+			<a class="navbar-brand m-0 mise-logo" href="{{=URL('default','index')}}">
+				<img src="/misecomputers/static/images/miselogolong2.png" alt="Company Logo" class="w-100">
 			</a>
 
-			
-
-			<div class="collapse navbar-collapse" id="navbarNavDropdown">
-				<!--Categories Drop Down Menu-->
-				<ul class="navbar-nav mx-4">
+			<!-- CATEGORIES DROP DOWN MENU-->
+			<div class="d-flex align-items-center flex-grow-1 flex-gap-2" id="navbarNavDropdown">
+				<ul class="navbar-nav">
 					<li class="nav-item dropdown">
-						<a class="nav-link dropdown-toggle font-weight-bold text-primary" href="#" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-							<div class="fa fa-bars fa-lg align-items-center" aria-hidden="true"></div> 
+						<!-- CONTROLLER LINK FOR BIG SCREEN MENU -->
+						<a class="nav-link dropdown-toggle font-weight-bold text-primary align-items-center flex-gap-25 d-none d-md-flex" href="#" id="categoryMenuBtn" data-toggle="dropdown" aria-expanded="false" aria-haspopup="true">
+							<div class="fa fa-bars fa-lg" aria-hidden="true"></div> 
 							MENU
 						</a>
-						<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-							{{categories = db(db.categories).select()
-							for category in categories:
-								cat_id = category['id']
-								cat_name = category['category_name']
-								cat_link = cat_name.replace(" ", "-")
-							}}
-							<a class="dropdown-item text-capitalize" href="{{=URL('category_page', args=(str(cat_id) + '--' + cat_link))}}" data-product-id={{=cat_id}}>{{=cat_name}}</a>
-							{{pass}}
+						<!-- CONTROLLER LINK FOR MOBILE MENU -->
+						<a 
+							class="	nav-link 
+									dropdown-toggle 
+									font-weight-bold 
+									text-primary 
+									align-items-center 
+									d-flex 
+									flex-gap-25 
+									d-md-none" 
+							href="#" 
+							id="categoryMenuBtnMobile" 
+							data-toggle="collapse" 
+							data-target="#categoryMenuItems" 
+							aria-expanded="false" 
+							aria-controls="categoryMenuItems"
+							>
+							<div class="fa fa-bars fa-lg" aria-hidden="true"></div> 
+							MENU
+						</a>
+						<div class="d-none d-md-block">
+							<div class="dropdown-menu" style="position: absolute;">
+								{{categories = db(db.categories).select()
+								for category in categories:
+									cat_id = category['id']
+									cat_name = category['category_name']
+									cat_link = cat_name.replace(" ", "-")
+								}}
+								<a class="dropdown-item text-capitalize" href="{{=URL('category_page', args=(str(cat_id) + '--' + cat_link))}}" data-product-id={{=cat_id}}>{{=cat_name}}</a>
+								{{pass}}
+							</div>
 						</div>
 					</li>
 				</ul>
 
 				<!-- SEARCH BAR -->
-				<form class="form-inline flex-fill" action="{{=URL('default', 'searchtop')}}" method="post">
+				<form class="form-inline flex-grow-1" action="{{=URL('default', 'search')}}" method="post">
 					<div class="input-group w-100">
-						<input class="form-control border-0 pill-left pl-4 search" type="text" name="keyword" placeholder="What would you like to search for today?">
-						<div class="input-group-append">
-							<button class="fa fa-search text-primary btn btn-medium" aria-hidden="true" type="submit"></button>
+						<input class="form-control border-0 pill-left pl-4 search d-none d-md-block" type="text" name="keyword" placeholder="What would you like to search for today?">
+						<div class="input-group-append ml-bmd-auto">
+							<button class="fa fa-search text-primary btn btn-medium pill-bmd" aria-hidden="true" type="submit"></button>
 						</div>
 					</div>
 				</form>
 
 				<!-- BEGIN LOGIN MENU ITEM AND DROPDOWN -->
-				<ul class="nav navbar-nav align-items-center">
-
+				<ul class="nav navbar-nav align-items-center flex-row flex-gap-2">
 				{{if 'auth' in globals():}}
-					<li class="nav-item dropdown mx-4">
-						<a class="nav-link dropdown font-weight-bold text-primary" href="#" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-							<div class="d-flex align-items-center no-arrow-menu" style="gap:0.5rem;">
-								<div class="fa fa-user-circle-o fa-lg" aria-hidden="true"></div>
+					<li class="nav-item dropdown">
+
+						<!-- CONTROLLER LINK FOR BIG SCREEN MENU -->
+						<a 	class="nav-link dropdown font-weight-bold text-primary d-none d-md-flex" 
+							href="#" id="userMenuBtn" 
+							data-toggle="dropdown" 
+							aria-haspopup="true" 
+							aria-expanded="false"
+							>
+							<div class="d-flex align-items-center no-arrow-menu flex-gap-25">
+								<div class="fa fa-user-circle-o fa-lg d-none d-lg-inline" aria-hidden="true"></div>
+								<div class="fa fa-user-circle-o fa-2x d-lg-none" aria-hidden="true"></div>
 									<div class="" style="width:min-content;">
-										<!-- Checks to see if there is a user logged in, if so, display their name, if not display "login-->
 										{{if auth.user:}}
-											{{=auth.user.first_name}}
+											<span class="d-lg-block d-none">{{=auth.user.first_name}}</span>
 										{{else:}}
 											<p class="font-small p-0 m-0">
 												LOG-IN /<br>
@@ -117,12 +144,99 @@
 											</p>
 										{{pass}}
 									</div>
-								<i class="fa fa-caret-down" aria-hidden="true" style="position:relative; top:2px;"></i>
+								<i class="fa fa-caret-down d-lg-block d-none" aria-hidden="true" style="position:relative; top:2px;"></i>
 							</div>
-							
 						</a>
-						<div class="dropdown-menu dropdown-menu-right">
-							<!-- If you are logged in, you get these options -->
+
+						<!-- CONTROLLER LINK FOR MOBILE MENU -->
+						<a 	class="nav-link dropdown font-weight-bold text-primary d-md-none" 
+							href="#" id="userMenuBtnMobile" 
+							data-toggle="collapse" 
+							data-target="#userMenuItems" 
+							aria-expanded="false" 
+							aria-controls="userMenuItems"
+							>
+							<div class="d-flex align-items-center no-arrow-menu flex-gap-25">
+								<div class="fa fa-user-circle-o fa-lg d-none d-lg-inline" aria-hidden="true"></div>
+								<div class="fa fa-user-circle-o fa-2x d-lg-none" aria-hidden="true"></div>
+									<div class="" style="width:min-content;">
+										{{if auth.user:}}
+											<span class="d-lg-block d-none">{{=auth.user.first_name}}</span>
+										{{else:}}
+											<p class="font-small p-0 m-0">
+												LOG-IN /<br>
+												SIGN-UP
+											</p>
+										{{pass}}
+									</div>
+								<i class="fa fa-caret-down d-lg-block d-none" aria-hidden="true" style="position:relative; top:2px;"></i>
+							</div>
+						</a>
+
+						<div class="d-none d-md-block">
+							<div class="dropdown-menu dropdown-menu-right" style="position: absolute;">
+								<!-- If you are logged in, you get these options -->
+								{{if auth.user:}}
+									<a class="dropdown-item" href="{{=URL('default','account')}}">{{=T('Account')}}</a>
+									{{if 'change_password' not in auth.settings.actions_disabled:}}
+									<a class="dropdown-item" href="{{=URL('default','user/change_password')}}">{{=T('Change Password')}}</a>
+									{{pass}}
+									<a class="dropdown-item" href="{{=URL('default','user/logout')}}">{{=T('Logout')}}</a>
+									<!-- If you are not logged in, you get these options, the "else options" -->
+								{{else:}}
+									<a class="dropdown-item" href="{{=URL('default','user/login')}}">{{=T('Login')}} </a>
+									{{if 'register' not in auth.settings.actions_disabled:}}
+									<a class="dropdown-item" href="{{=URL('default','user/register')}}">{{=T('Sign up')}}</a>
+									{{pass}}
+									{{if 'retrieve_password' not in auth.settings.actions_disabled:}}
+									<a class="dropdown-item" href="{{=URL('default','user/retrieve_password')}}">{{=T('Lost Password')}}</a>
+									{{pass}}
+								{{pass}}
+							</div>
+						</div>
+					</li>
+				{{pass}}
+				<!-- END LOGIN MENU -->
+
+				<!-- SHOPPING CART ICON -->
+					<li class="nav-item d-flex" style="flex-direction: column;">
+						<a class="nav-link text-primary p-0" href="{{=URL('default','shopping_cart2')}}" title="Tooltip on bottom">
+							<div class="position-relative">
+								<div class="fa fa-shopping-cart" style="font-size:2.5rem;" aria-hidden="true"></div>
+								<div id="cart-counter"><div>{{=session.cart_counter}}</div></div>
+							</div>
+							<div class="d-lg-block d-none" style="margin-top: -6px;">
+								<span class="font-weight-bold " style="font-size:0.875rem; padding-inline-start: 2px;">CART</span>
+							</div>
+						</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<!-- MOBILE MENU FOR THE CATEGORY MENU -->
+		<div id="accordion" class="mt-2 w-100 d-md-none" style="overflow: clip;">
+			<div class="card border-0" style="overflow: clip;">
+				<div id="categoryMenuItems" class="collapse " aria-labelledby="categoryMenuBtnMobile" data-parent="#accordion" style="overflow: clip;">
+					<div class="card-body mise-dropdown-menu px-0 py-2" style="overflow: clip;">
+						{{categories = db(db.categories).select()
+						for category in categories:
+							cat_id = category['id']
+							cat_name = category['category_name']
+							cat_link = cat_name.replace(" ", "-")
+						}}
+						<a class="dropdown-item text-capitalize" href="{{=URL('category_page', args=(str(cat_id) + '--' + cat_link))}}" data-product-id={{=cat_id}}>{{=cat_name}}</a>
+						{{pass}}
+					</div>
+				</div>
+			</div>
+
+			<!-- MOBILE MENU FOR THE USER MENU -->
+			<div class="card border-0" style="overflow: clip;">
+				<div id="userMenuItems" class="collapse" aria-labelledby="userMenuBtnMobile" data-parent="#accordion" style="overflow: clip;">
+					<div class="card-body mise-dropdown-menu px-0 py-2" style="overflow: clip;">
+						<!-- If you are logged in, you get these options -->
+						{{if 'auth' in globals():}}
 							{{if auth.user:}}
 								<a class="dropdown-item" href="{{=URL('default','account')}}">{{=T('Account')}}</a>
 								{{if 'change_password' not in auth.settings.actions_disabled:}}
@@ -133,62 +247,34 @@
 								<!-- If you are not logged in, you get these options, the "else options" -->
 							{{else:}}
 								<a class="dropdown-item" href="{{=URL('default','user/login')}}">{{=T('Login')}} </a>
-								<!-- This just makes sure that registering a new user isn't disabled -->
 								{{if 'register' not in auth.settings.actions_disabled:}}
 								<a class="dropdown-item" href="{{=URL('default','user/register')}}">{{=T('Sign up')}}</a>
 								{{pass}}
-								<!-- This just makes sure that the ability to retrieve a password isnt' disabled -->
 								{{if 'retrieve_password' not in auth.settings.actions_disabled:}}
 								<a class="dropdown-item" href="{{=URL('default','user/retrieve_password')}}">{{=T('Lost Password')}}</a>
 								{{pass}}
 							{{pass}}
-						</div>
-					</li>
-				{{pass}}
-				<!-- END LOGIN MENU -->
-
-				<!-- SHOPPING CART ICON -->
-					<li class="nav-item d-flex" style="flex-direction: column;">
-						<a class="nav-link text-primary p-0" href="{{=URL('default','shopping_cart2')}}" title="Tooltip on bottom">
-							<div>
-								<div class="fa fa-cart-plus" style="font-size:2.5rem" aria-hidden="true"></div>
-							</div>
-							<div style="margin-top: -6px;">
-								<span class=" font-weight-bold" style="font-size:0.875rem; padding-inline-start: 2px;">CART</span>
-							</div>
-						</a>
-						
-					</li>
-				</ul>
-					
-				
+						{{pass}}
+					</div>
+				</div>
 			</div>
-			<!-- Hamburger icon, this exists only for smaller screen sizes, otherwise it is hidden -->
-			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-			</button>
 		</div>
 	</nav>
 
 	<!-- Masthead ===================================== -->
-		<!-- Here is where you can add custom header section on any page without
-		having to edit the layout.html page -->
+	<!-- Here is where you can add custom header section on any page without
+	having to edit the layout.html page -->
 	{{block header}}
 	{{end}}
 
 	<!-- Main ========================================= -->
-
 	<!-- Begin page content -->
 	<div class="container main-container">
 	{{include}}
 	</div>
 
-<!-- BEGIN FOOTER -->
-		<!-- this is default footer 
-			this will show up on every page, UNLESS you put a custom footer on that page
-			and surround it by block footer and end -->
-	
-	{{block footer}} <!-- this is default footer -->
+	<!-- BEGIN FOOTER ========================================= -->
+	{{block footer}}
 	<footer class="footer container-fluid bg-secondary rounded-top">
 		<div class="row">
 			<div><a href="{{=URL('privacy')}}" style="color:black">Privacy Notice</a>&nbsp;|&nbsp;</div> 
@@ -199,7 +285,6 @@
 		</div>	
 	</footer>
 	{{end}}
-
 
 	<!-- The javascript =============================== -->
 	<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script> -->
@@ -216,5 +301,73 @@
 	<script src="{{=URL('static','js/analytics.min.js')}}"></script>
 	<script type="text/javascript"> analytics.initialize({'Google Analytics':{trackingId:'{{=response.google_analytics_id}}'}});</script>
 	{{pass}}
+
+	<script>
+		"use strict"
+		// Control the drop down for menu items
+		// const categoryMenuBtn = document.getElementById('categoryMenuBtn');
+		// const userMenuBtn = document.getElementById('userMenuBtn');
+		// const categoryMenuItems = document.querySelector('.categoryMenu');
+		// const userMenuItems = document.querySelector('.userMenu');
+
+		// let userMenuClicked = false;
+		// let categoryMenuClicked = false;
+
+		// userMenuBtn.addEventListener('click', (e) => {
+		// 	e.preventDefault();
+
+		// 	if (!userMenuClicked) {
+		// 		if (categoryMenuClicked) {
+		// 			categoryMenuItems.classList.remove('show');
+		// 			categoryMenuClicked = false;
+		// 			categoryMenuItems.addEventListener('transitionend', function timer() {
+		// 				categoryMenuItems.style.display = 'none';
+		// 				categoryMenuItems.removeEventListener('transitionend', timer);
+		// 			}, { passive: true, once: true });
+		// 		}
+		// 		userMenuItems.style.display = "block";
+		// 		userMenuItems.offsetHeight; // This forces the browser to process the display change
+		// 		userMenuItems.classList.add('show');
+		// 		userMenuClicked = true;
+		// 	} else {
+		// 		userMenuItems.classList.remove('show');
+		// 		userMenuClicked = false;
+		// 		userMenuItems.addEventListener('transitionend', function timer() {
+		// 			userMenuItems.style.display = 'none';
+		// 			userMenuItems.removeEventListener('transitionend', timer);
+		// 		}, { passive: true, once: true });
+
+		// 	}
+
+			
+		// });
+
+		// categoryMenuBtn.addEventListener('click', (e) => {
+		// 	e.preventDefault();
+
+		// 	if (!categoryMenuClicked) {
+		// 		if (userMenuClicked) {
+		// 			userMenuItems.classList.remove('show');
+		// 			userMenuClicked = false;
+		// 			userMenuItems.addEventListener('transitionend', function timer() {
+		// 				userMenuItems.style.display = 'none';
+		// 				userMenuItems.removeEventListener('transitionend', timer);
+		// 			}, { passive: true, once: true });
+		// 		}
+		// 		categoryMenuItems.style.display = "block";
+		// 		categoryMenuItems.offsetHeight; // This forces the browser to process the display change
+		// 		categoryMenuItems.classList.add('show');
+		// 		categoryMenuClicked = true;
+		// 	} else {
+		// 		categoryMenuItems.classList.remove('show');
+		// 		categoryMenuClicked = false;
+		// 		categoryMenuItems.addEventListener('transitionend', function timer() {
+		// 			categoryMenuItems.style.display = 'none';
+		// 			categoryMenuItems.removeEventListener('transitionend', timer);
+		// 		}, { passive: true, once: true });
+
+		// 	}
+		// });
+	</script>
 </body>
 </html>

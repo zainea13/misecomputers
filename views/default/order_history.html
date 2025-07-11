@@ -1,6 +1,6 @@
 {{extend 'layout.html'}}
 
-<h1 class="text-accent">Order History</h1>
+<h1 class="text-accent mb-4">Order History</h1>
 
 {{if not orders:}}
 
@@ -23,10 +23,15 @@
           {{for item in order_lines[order.id]:}}
             <li>
               {{=item.quantity_of_item}} × 
-              {{=db.products[item.product_id].product_name}} at 
+              {{
+                name = db.products[item.product_id].product_name
+                name_link = name.replace(" ", "-")
+                product_id = item.product_id
+              }}
+              <a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}"data-product-id={{=product_id}}>
+                {{=db.products[item.product_id].product_name}}
+              </a> at 
               ${{=item.price}} each
-            
-            <a href="{{=URL('default', 'order_history')}}" class="btn btn-primary">View Order History</a>
             </li>
           {{pass}}
         </ul>

@@ -1,6 +1,6 @@
 {{extend 'layout.html'}}
 
-<h3 class="text-accent mb-4">Search Results for '{{=keyword}}'</h3>
+<h3 class="text-accent mb-4">Search Results {{if keyword:}}for '{{=keyword}}' {{pass}}</h3>
 
 
 <!--Search Results layout-->
@@ -58,7 +58,7 @@
         <p><strong>No Results Found</strong></p>
     </div>
 {{pass}}
-</div>
+
 
 <!-- add extra div boxes to fill up empty space to create a nice grid -->
         {{row_count = 3

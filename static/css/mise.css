@@ -8,8 +8,18 @@
     --highlight: hsl(202, 65%, 58%);
     --peach: hsl(25, 100%, 80%);
     --colorDanger: hsl(348, 78%, 49%); 
-
 }
+
+/*-------------------------------------------------------------------------------------------------------------------*/
+/* FONT */
+body {
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+}
+
+
+
+
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* GENERAL HTML ADJUSTMENTS */
@@ -20,8 +30,65 @@ input::placeholder {
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* WEB 2 PY TWEAKS */
+.w2p_flash .img-holder {
+    width:30%;
+    margin:0 auto;
+}
+
+.w2p_flash .words {
+    flex:1 1;
+}
+
+.img-holder img {
+    width:100%;
+}
+
+.w2p_flash .pie {
+    width:100%;
+    display: flex;
+    gap:1rem;
+}
+
+#closeflash {
+    position: absolute;
+    top:-5px  ;
+    right:3px ;
+}
+
+.w2p_flash {
+  opacity: unset;
+  right: 100px;
+  position: relative;
+}
+
 div.w2p_flash.alert {
+    opacity: unset;
     z-index: 2000;
+    display: none;
+    position: fixed;
+    top: 70px;
+    right: 75px;
+    cursor: pointer;
+    background-color: #f9edbe;
+    border-color: #f0c36d;
+}
+
+div.w2p_flash {
+  background-image: none;
+  border-radius: 4px;
+  -o-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  color: #333;
+  font-weight: 400;
+  min-width: 28px;
+  max-width: 300px;
+  opacity: 1;
+  vertical-align: baseline;
+  right: auto;
+  border-width: 1px;
+  margin: 0 0 20px;
+  padding: 15px 15px 15px 15px;
 }
 
 /*-------------------------------------------------------------------------------------------------------------------*/
@@ -43,7 +110,15 @@ a {
 }
 
 .border-primary {
-    border-color: var(--primary);
+    border-color: var(--primary) !important;
+}
+
+.border-accent {
+    border-color: var(--accent) !important;
+}
+
+.border-peach {
+    border-color: var(--peach) !important;
 }
 
 .btn {
@@ -125,6 +200,10 @@ input[type="checkbox"] {
     cursor: pointer;
 }
 
+.flex-gap-25 {
+    gap: .25rem;
+}
+
 .flex-gap-1 {
     gap: .5rem;
 }
@@ -145,9 +224,59 @@ input[type="checkbox"] {
     width: 3em;
 }
 
+.rounded-2 {
+    border-radius: 0.5rem;
+}
+
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Nav Bar classes */
+#cart-counter {
+    /* background-color: var(--accent); */
+    height: 1.4375rem;
+    width: 1.4375rem;
+    padding: .25rem;
+    border-radius: 100%;
+    color: white;
+    font-size: .75rem;
+    font-weight: bold;
+    text-align: center;
+    vertical-align: middle;
+    position: absolute;
+    /* top: -9px; */
+    /* right: -6px; */
+    top: 4px;
+    right: 7px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
+.mise-logo {
+    width: min(27%, 160px);
+}
+
+#accordion {
+    overflow: clip;
+}
+
+.mise-dropdown-menu {
+    /* position: absolute; */
+    /* top: 100%; */
+    /* left: 0; */
+    /* z-index: 1000; */
+    /* display: none; */
+    /* float: left; */
+    /* min-width: 10rem; */
+    /* font-size: 1rem; */
+    /* color: #212529; */
+    /* text-align: left; */
+    /* list-style: none; */
+    /* background-color: #fff; */
+    /* background-clip: padding-box; */
+    border: 1px solid rgba(0,0,0,.15);
+    border-radius: .25rem;
+    overflow: clip;
+}
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Home Page */
@@ -287,13 +416,23 @@ input[type="checkbox"] {
     text-align: center;
     padding: .25rem;
     display: block;
-    width: 50%;  
+    width: 50%;
+    border-radius: .5rem;
 }
 
 .out-of-stock.over-image {
     position: absolute;
     z-index: 50;
+    left:25%;
+    top:45%;
 }
+
+/*-------------------------------------------------------------------------------------------------------------------*/
+/* --------- shopping cart stuff ------------ */
+.update-cart button {
+    font-size: 0.875rem;
+}
+
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* --------- CHECKOUT STUFF ------------ */
@@ -331,7 +470,6 @@ input[type="checkbox"] {
 .receipt {
     display: flex;
     flex-direction: column;
-    height: 50%;
     z-index: 500;
 }
 
@@ -445,4 +583,36 @@ input[type="checkbox"] {
   0% { opacity: 0; }
   30% { opacity: 0; }
   100% { opacity: 1; }
+}
+
+/* LG SIZE */
+@media (min-width: 992px) {
+    .w-lg-75 {
+        max-width:75%
+    }
+}
+
+
+/* MD SIZE */
+@media (min-width: 768px) {
+    .h-md-50 {
+        max-height: 50%
+    }
+}
+
+@media (max-width: 768px) {
+    .ml-bmd-auto {
+        margin-left:auto;
+    }
+
+    .pill-bmd {
+        border-radius: 100vw !important;
+    }
+}
+
+@media (max-width:576px) {
+    .row {
+        margin-right:0;
+        margin-left:0;
+    }
 }
