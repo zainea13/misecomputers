@@ -96,7 +96,7 @@ def searchtop():
     print(keyword)
     if keyword:
         results = db((db.products.product_name.contains(keyword))).select()
-    is_filter = db((db.category_attribute.category_id == cat_id) & (db.category_attribute.isFilter == True)).select()
+                    
     response.title=f'MISE - Search results for "{keyword}"'
     return dict(locals(), results=results)
 
