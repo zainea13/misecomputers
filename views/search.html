@@ -4,7 +4,8 @@
 
 
 <div class="row product-row flex-gap-2">
-    {{for row in results:
+{{if results:}}
+	{{for row in results:
         name = row['product_name']
         name_link = name.replace(" ", "-")
         price = row['price']
@@ -47,11 +48,16 @@
             <a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}"data-product-id={{=product_id}}>
                 <button class="btn btn-mise-accent">Learn More</button>
             </a>
-		</div>
-        
-
+		</div>   
 	</div>
     {{pass}}
+	
+{{else:}}
+    <div class="col">
+        <p><strong>No Results Found</strong></p>
+    </div>
+{{pass}}
+</div>
 
 <!-- add extra div boxes to fill up empty space to create a nice grid -->
         {{row_count = 3
