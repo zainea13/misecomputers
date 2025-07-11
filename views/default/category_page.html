@@ -18,7 +18,7 @@
             </li>
             {{pass}}
             <li class="dropdown mr-3">
-                <p class="dropdown-toggle btn btn-primary btn-sm w-100px color-secondary" data-toggle="dropdown"
+                <p class="dropdown-toggle btn btn-primary btn-sm w-100" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">Price</p>
                 <fieldset id='Screen_Size' class="dropdown-menu">
                     <input class='ml-3' type="radio" name="Price[]" value="0--499" {{if request.vars['Price[]']=='0--499' :}}checked{{pass}}> under $500<br>
@@ -26,7 +26,7 @@
                     <input class='ml-3' type="radio" name="Price[]" value="1000--100000000" {{if request.vars['Price[]']=='1000--100000000' :}}checked{{pass}}> $1000+<br>
                 </fieldset>
             </li>
-            <li><input id="apply-btn" class="btn btn-sm btn-secondary w-100px " type="submit" value="Apply"></li>
+            <li><input id="apply-btn" class="btn btn-sm btn-accent w-100px text-white" type="submit" value="Apply"></li>
             <li><input id="clear-btn" class="bg-transparent text-muted btn-sm td-ul f-8rem ml-1 pt-2" type="submit"
                     value="clear all" style="text-decoration: underline; font-style: italic;"></li>
         </ul>
@@ -36,7 +36,7 @@
         <ul class="d-flex justify-content-end list-unstyled h-100 ml-auto col-lg-2 p-0">
             <li class="dropdown d-flex justify-content-end flex-grow-1 w-lg-75">
                 <p class="dropdown-toggle btn btn-primary btn-sm  color-secondary flex-grow-1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sort By</p>
-                <fieldset class="dropdown-menu dropdown-menu-right w-100">
+                <fieldset class="dropdown-menu dropdown-menu-right w-100" style="position: absolute; top: 33px; right: 0px; width: 150% !important;">
                     <input id="sort-default" class='' type="radio" name="ORDER" value="default" hidden checked>
                     <label for="sort-default" class='dropdown-item'>Best Selling</label>
                     <input id="price-asc" class='' type="radio" name="ORDER" value="price-asc" hidden {{if request.vars.ORDER=='price-asc' :}}checked{{pass}}>
