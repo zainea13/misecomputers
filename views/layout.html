@@ -124,7 +124,7 @@
 						<div class="dropdown-menu dropdown-menu-right">
 							<!-- If you are logged in, you get these options -->
 							{{if auth.user:}}
-								<a class="dropdown-item" href="{{=URL('default','account')}}">{{=T('Profile')}}</a>
+								<a class="dropdown-item" href="{{=URL('default','account')}}">{{=T('Account')}}</a>
 								{{if 'change_password' not in auth.settings.actions_disabled:}}
 								<a class="dropdown-item" href="{{=URL('default','user/change_password')}}">{{=T('Change Password')}}</a>
 								{{pass}}
@@ -191,9 +191,9 @@
 	{{block footer}} <!-- this is default footer -->
 	<footer class="footer container-fluid bg-secondary rounded-top">
 		<div class="row">
-			<div><a href="{{=URL('privacy')}}" style="color:black">Privacy Notice | </a></div>
-			<div> <a href="{{=URL('default','terms')}}" style="color:black">Terms of Use</a> </div> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<div> <a href="{{=URL('default','aboutus')}}" style="color:black"><h5>About Us</h5></a> </div>
+			<div><a href="{{=URL('privacy')}}" style="color:black">Privacy Notice</a>&nbsp;|&nbsp;</div> 
+			<div><a href="{{=URL('default','terms')}}" style="color:black">Terms of Use</a>&nbsp;|&nbsp;</div> 
+			<div><a href="{{=URL('default','aboutus')}}" style="color:black">About Us</a></div>
 			
 			<div class="ml-auto">{{=T('Copyright')}} &#169; {{=request.now.year}} MISE Computers, LLC</div>
 		</div>	

@@ -320,7 +320,7 @@ input[type="checkbox"] {
 }
 
 .search {
-    height: calc(1.5em + 1rem + 2px);
+    height: calc(1.5em + 1rem + 2px) !important;
 }
 
 .sticky-top {

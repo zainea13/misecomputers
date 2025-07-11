@@ -98,6 +98,11 @@ def searchtop():
         results = db((db.products.product_name.contains(keyword))).select()
                     
     response.title=f'MISE - Search results for "{keyword}"'
+
+    # Print all fields to see what's available
+    print("Products fields:", [field for field in db.products])
+    print("Categories fields:", [field for field in db.categories])
+
     return dict(locals(), results=results)
 
 def product_entry_form():

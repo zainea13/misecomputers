@@ -1,6 +1,6 @@
 {{extend 'layout.html'}}
 
-<h3 class="text-accent">Search Results for "{{=keyword}}"</h3>
+<h3 class="text-accent mb-4">Search Results for '{{=keyword}}'</h3>
 
 
 <div class="row product-row flex-gap-2">
@@ -9,10 +9,9 @@
         name_link = name.replace(" ", "-")
         price = row['price']
         product_id = row['id']
-		cat_id_fix = row.category_id
-		main_image=db((db.product_images.product_id == row.id)&(db.product_images.main_image == True)).select().first()
+        cat_id_fix = row.category_id
+		main_image = db((db.product_images.product_id == row.id) & (db.product_images.main_image == True)).select().first()
         img_src = main_image['image_filename']
-		print(img_src)
         img_alt = main_image['image_alt']
         cat_name = (db(db.categories.id == cat_id_fix).select().first()).category_name.lower()
         cat_name = cat_name.replace("&","").replace(" ","_")
@@ -20,7 +19,7 @@
     }}
     
 	<div class="col product">
-	<a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}"data-product-id={{=product_id}}>{{=IMG(_src=URL(f'static/images/{cat_name}/{brand}/', img_src), _onerror="this.onerror=null;this.src='%s';" % URL('static', 'images/default-img.png'), _alt=img_alt)}}</a>
+        <a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}"data-product-id={{=product_id}}>{{=IMG(_src=URL(f'static/images/{cat_name}/{brand}/', img_src), _onerror="this.onerror=null;this.src='%s';" % URL('static', 'images/default-img.png'), _alt=img_alt)}}</a>
 		<h4 class="mt-3">
 			<a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}"data-product-id={{=product_id}}>{{=name}}</a>
 		</h4>
@@ -28,7 +27,8 @@
 		<ul>
 			{{
             features = db((db.product_attribute.product_id == product_id)).select()
-is_filter = db((db.category_attribute.category_id == cat_id_fix) & (db.category_attribute.isFilter == True)).select()
+            is_filter = db((db.category_attribute.category_id == cat_id_fix) & (db.category_attribute.isFilter == True)).select()
+
 
             for i in features:
                 for k in is_filter:
