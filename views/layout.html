@@ -58,7 +58,7 @@
 <!-- Navbar ======================================= -->
 	<nav class="navbar navbar-light bg-secondary navbar-expand-lg mb-5">
 		
-		<div class="container mb-0">
+		<div class="container mb-0 flex-gap-2">
 
 			<!-- MISE Computers logo and logo hyperlinked to Home /index page-->
 			<a class="navbar-brand m-0" href="{{=URL('default','index')}}">
@@ -67,12 +67,12 @@
 
 			
 
-			<div class="collapse navbar-collapse" id="navbarNavDropdown">
+			<div class="d-flex align-items-center flex-grow-1 flex-gap-2" id="navbarNavDropdown">
 				<!--Categories Drop Down Menu-->
-				<ul class="navbar-nav mx-4">
+				<ul class="navbar-nav">
 					<li class="nav-item dropdown">
-						<a class="nav-link dropdown-toggle font-weight-bold text-primary" href="#" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-							<div class="fa fa-bars fa-lg align-items-center" aria-hidden="true"></div> 
+						<a class="nav-link dropdown-toggle font-weight-bold text-primary align-items-center d-flex flex-gap-25" href="#" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							<div class="fa fa-bars fa-lg d-none d-sm-inline" aria-hidden="true"></div> 
 							MENU
 						</a>
 						<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
@@ -89,27 +89,28 @@
 				</ul>
 
 				<!-- SEARCH BAR -->
-				<form class="form-inline flex-fill" action="{{=URL('default', 'searchtop')}}" method="post">
+				<form class="form-inline flex-grow-1" action="{{=URL('default', 'searchtop')}}" method="post">
 					<div class="input-group w-100">
-						<input class="form-control border-0 pill-left pl-4 search" type="text" name="keyword" placeholder="What would you like to search for today?">
-						<div class="input-group-append">
-							<button class="fa fa-search text-primary btn btn-medium" aria-hidden="true" type="submit"></button>
+						<input class="form-control border-0 pill-left pl-4 search d-none d-md-block" type="text" name="keyword" placeholder="What would you like to search for today?">
+						<div class="input-group-append ml-bmd-auto">
+							<button class="fa fa-search text-primary btn btn-medium pill-bmd" aria-hidden="true" type="submit"></button>
 						</div>
 					</div>
 				</form>
 
 				<!-- BEGIN LOGIN MENU ITEM AND DROPDOWN -->
-				<ul class="nav navbar-nav align-items-center">
+				<ul class="nav navbar-nav align-items-center flex-row flex-gap-2">
 
 				{{if 'auth' in globals():}}
-					<li class="nav-item dropdown mx-4">
+					<li class="nav-item dropdown">
 						<a class="nav-link dropdown font-weight-bold text-primary" href="#" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-							<div class="d-flex align-items-center no-arrow-menu" style="gap:0.5rem;">
-								<div class="fa fa-user-circle-o fa-lg" aria-hidden="true"></div>
+							<div class="d-flex align-items-center no-arrow-menu flex-gap-25" style="">
+								<div class="fa fa-user-circle-o fa-lg d-none d-lg-inline" aria-hidden="true"></div>
+								<div class="fa fa-user-circle-o fa-2x d-lg-none" aria-hidden="true"></div>
 									<div class="" style="width:min-content;">
 										<!-- Checks to see if there is a user logged in, if so, display their name, if not display "login-->
 										{{if auth.user:}}
-											{{=auth.user.first_name}}
+											<span class="d-lg-block d-none">{{=auth.user.first_name}}</span>
 										{{else:}}
 											<p class="font-small p-0 m-0">
 												LOG-IN /<br>
@@ -117,7 +118,7 @@
 											</p>
 										{{pass}}
 									</div>
-								<i class="fa fa-caret-down" aria-hidden="true" style="position:relative; top:2px;"></i>
+								<i class="fa fa-caret-down d-lg-block d-none" aria-hidden="true" style="position:relative; top:2px;"></i>
 							</div>
 							
 						</a>
@@ -153,8 +154,8 @@
 							<div>
 								<div class="fa fa-cart-plus" style="font-size:2.5rem" aria-hidden="true"></div>
 							</div>
-							<div style="margin-top: -6px;">
-								<span class=" font-weight-bold" style="font-size:0.875rem; padding-inline-start: 2px;">CART</span>
+							<div class="d-lg-block d-none" style="margin-top: -6px;">
+								<span class="font-weight-bold " style="font-size:0.875rem; padding-inline-start: 2px;">CART</span>
 							</div>
 						</a>
 						
@@ -163,10 +164,6 @@
 					
 				
 			</div>
-			<!-- Hamburger icon, this exists only for smaller screen sizes, otherwise it is hidden -->
-			<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-			</button>
 		</div>
 	</nav>
 

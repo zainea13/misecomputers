@@ -1,55 +1,57 @@
 {{extend 'layout.html'}}
 
 <!--FILTER CODE BEGINS-->
-<section id='filter_sort' class='px-4 d-flex flex-wrap'>
-    <form id="filter_form" class="d-flex w-100 h-100" method=GET>
-        <ul class="d-flex flex-wrap text-primary list-unstyled">
-{{
-    for key, value in options.items():
-}}
+<section id='filter_sort' class='d-flex flex-wrap row'>
+    <form id="filter_form" class="d-flex w-100 h-100 flex-wrap" method=GET>
+        <ul class="d-flex flex-wrap text-primary list-unstyled col-lg-10 p-0">
+            {{
+            for key, value in options.items():
+            }}
             <li class=" dropdown mr-3">
-                <p class="dropdown-toggle btn btn-primary btn-sm {{if len(key)>6:}}w-120px{{else:}}w-100px{{pass}} color-secondary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{=key}}</p>
+                <p class="dropdown-toggle btn btn-primary btn-sm {{if len(key)>6:}}w-120px{{else:}}w-100px{{pass}} color-secondary"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{=key}}</p>
                 <fieldset id='{{=key}}' class="dropdown-menu border" style="width:200px;">
-                {{for attr_value in value:}}
-                 <input class='ml-3' type="checkbox" name="{{=key}}[]" value="{{=attr_value}}" {{if key in filter_dict and attr_value in filter_dict[key]:}}checked{{pass}}> {{=attr_value}}<br>
-                {{pass}}
+                    {{for attr_value in value:}}
+                    <input class='ml-3' type="checkbox" name="{{=key}}[]" value="{{=attr_value}}" {{if key in filter_dict and attr_value in filter_dict[key]:}}checked{{pass}}> {{=attr_value}}<br>
+                    {{pass}}
                 </fieldset>
             </li>
-{{pass}}
+            {{pass}}
             <li class="dropdown mr-3">
-                <p class="dropdown-toggle btn btn-primary btn-sm w-100px color-secondary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Price</p>
+                <p class="dropdown-toggle btn btn-primary btn-sm w-100px color-secondary" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">Price</p>
                 <fieldset id='Screen_Size' class="dropdown-menu">
-                <input class='ml-3' type="radio" name="Price[]" value="0--499" {{if request.vars['Price[]'] == '0--499':}}checked{{pass}}> under $500<br>
-                <input class='ml-3' type="radio" name="Price[]" value="500--1000" {{if request.vars['Price[]'] == '500--1000':}}checked{{pass}}> $500 - $1000<br>
-                <input class='ml-3' type="radio" name="Price[]" value="1000--100000000" {{if request.vars['Price[]'] == '1000--100000000':}}checked{{pass}}> $1000+<br>
-            </fieldset>
+                    <input class='ml-3' type="radio" name="Price[]" value="0--499" {{if request.vars['Price[]']=='0--499' :}}checked{{pass}}> under $500<br>
+                    <input class='ml-3' type="radio" name="Price[]" value="500--1000" {{if request.vars['Price[]']=='500--1000' :}}checked{{pass}}> $500 - $1000<br>
+                    <input class='ml-3' type="radio" name="Price[]" value="1000--100000000" {{if request.vars['Price[]']=='1000--100000000' :}}checked{{pass}}> $1000+<br>
+                </fieldset>
             </li>
             <li><input id="apply-btn" class="btn btn-sm btn-secondary w-100px " type="submit" value="Apply"></li>
-            <li><input id="clear-btn" class="bg-transparent text-muted btn-sm td-ul f-8rem ml-1 pt-2" type="submit" value="clear all" style="text-decoration: underline; font-style: italic;"></li>
+            <li><input id="clear-btn" class="bg-transparent text-muted btn-sm td-ul f-8rem ml-1 pt-2" type="submit"
+                    value="clear all" style="text-decoration: underline; font-style: italic;"></li>
         </ul>
-<!--FILTER CODE ENDS-->
+        <!--FILTER CODE ENDS-->
 
-<!--SORT CODE BEGINS-->
-        <ul class=" w-25 d-flex justify-content-end list-unstyled h-100 ml-auto">
-            <li class="dropdown w-75 d-flex justify-content-end">
-            <p class="dropdown-toggle btn btn-primary btn-sm w-75 color-secondary" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sort By</p>
-            <fieldset class="dropdown-menu dropdown-menu-right w-100">
-            <input id="sort-default" class='' type="radio" name="ORDER" value="default" hidden checked>
-            <label for="sort-default" class='dropdown-item'>Best Selling</label>
-
-            <input id="price-asc" class='' type="radio" name="ORDER" value="price-asc" hidden {{if request.vars.ORDER == 'price-asc':}}checked{{pass}}>
-            <label for="price-asc" class='dropdown-item'>Price Low to High</label>
-
-            <input id="price-desc" class='' type="radio" name="ORDER" value="price-desc" hidden {{if request.vars.ORDER == 'price-desc':}}checked{{pass}}>
-            <label for="price-desc" class='dropdown-item'>Price High to Low</label>
-        </fieldset>
-    </li>
-</ul>
-</form>
-<!-- <p class='small text-muted td-ul mtneg-1rem'>{#{#=f"{len(products)} {link_arg[1]} found"}}</p> -->
+        <!--SORT CODE BEGINS-->
+        <ul class="d-flex justify-content-end list-unstyled h-100 ml-auto col-lg-2 p-0">
+            <li class="dropdown d-flex justify-content-end flex-grow-1 w-lg-75">
+                <p class="dropdown-toggle btn btn-primary btn-sm  color-secondary flex-grow-1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Sort By</p>
+                <fieldset class="dropdown-menu dropdown-menu-right w-100">
+                    <input id="sort-default" class='' type="radio" name="ORDER" value="default" hidden checked>
+                    <label for="sort-default" class='dropdown-item'>Best Selling</label>
+                    <input id="price-asc" class='' type="radio" name="ORDER" value="price-asc" hidden {{if request.vars.ORDER=='price-asc' :}}checked{{pass}}>
+                    <label for="price-asc" class='dropdown-item'>Price Low to High</label>
+                    <input id="price-desc" class='' type="radio" name="ORDER" value="price-desc" hidden {{if request.vars.ORDER=='price-desc' :}}checked{{pass}}>
+                    <label for="price-desc" class='dropdown-item'>Price High to Low</label>
+                </fieldset>
+            </li>
+        </ul>
+    </form>
+    <!-- <p class='small text-muted td-ul mtneg-1rem'>{#{#=f"{len(products)} {link_arg[1]} found"}}</p> -->
+    <hr class="w-100">
 </section>
 <!--SORT CODE ENDS-->
-	<hr>
+
 
 
 <div class="row">

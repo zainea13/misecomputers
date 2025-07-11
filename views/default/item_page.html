@@ -65,16 +65,15 @@
 .spec-body > div:first-of-type {
 	font-weight: bold;
 }
-
-
-
 </style>
 {{end head}}
 
 <div class="row mb-5">
 	<!-- Left column with images -->
-	<div class="col-6">
-		<div class="swiper-window">
+	<div class="col-md-6">
+		<h2 class="font-weight-bold mb-4 d-md-none">{{=product['product_name']}}</h2>
+		<h3 class="mb-5 d-md-none">${{=f"{product['price']:,.2f}"}}</h3>
+		<div class="swiper-window border border-peach rounded-2">
 			<div class="out-of-stock over-image">OUT OF STOCK</div>
 			<div class="swiper-wrapper" style="translate: 0px;">
 				{{for image in images:
@@ -98,9 +97,9 @@
 		</div>
 	</div>
 	<!-- Right column with info -->
-	<div class="col-6">
-		<h2 class="font-weight-bold mb-4">{{=product['product_name']}}</h2>
-		<h3 class="mb-5">${{=f"{product['price']:,.2f}"}}</h3>
+	<div class="col-md-6">
+		<h2 class="font-weight-bold mb-4 d-none d-md-block">{{=product['product_name']}}</h2>
+		<h3 class="mb-5 d-none d-md-block">${{=f"{product['price']:,.2f}"}}</h3>
 		<h5 class="border-bottom p-1 text-uppercase">Key Features</h5>
 		<ul class="mb-5">
 			{{
