@@ -30,7 +30,7 @@
 				</a>
 				<h4><a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}" class="text-body">{{=product['product_name']}}</a></h4>
 				<h5 class="text-dark">${{=f"{product['price']:.2f}"}}</h5>
-				<form id='update-cart-{{=product_id}}' method="post" action="#" class="mt-auto update-cart">
+				<form id='update-cart-{{=product_id}}' class="mt-auto update-cart">
                     {{if auth.user:}}
                     <input type="hidden" value="{{=auth.user.id}}" name="user_id" id="user_id">
                     {{pass}}
@@ -42,7 +42,9 @@
 							<label for="quantity" class="mr-2 mb-0"><span class="align-middle">QTY.</span></label>
 							<input id="quantity" class="quantityAmt input-num-w-3" name="quantityAmt" type="number" value="{{=item['quantity']}}" min="0" max="{{=product['stock_qty']}}" data-start-value="{{=item['quantity']}}" data-product-id="{{=product_id}}">
 						</div>
-						<button type="submit" class="quantityBtn d-none btn-primary"	data-product-id="{{=product_id}}">Update Qty.</button>
+						<button type="submit" class="quantityBtn d-none btn-primary" data-product-id="{{=product_id}}">
+							Update Qty.
+						</button>
 						<button type="submit" class="remove-item btn-primary" data-product-id="{{=product_id}}">
 							Remove 
 							<i class="fa fa-trash ml-1" aria-hidden="true"></i>
@@ -77,7 +79,7 @@
 				${{=f"{subtotal:,.2f}"}}
 			</div>
 		</div>
-		<!-- REMOVED BECAUSE I THINK IT CAN BE CONFUSING SINCE THIS DOESN'T INCLUD SHIPPING YET -->
+		<!-- 7/11 IZ - REMOVED BECAUSE I THINK IT CAN BE CONFUSING SINCE THIS DOESN'T INCLUD SHIPPING YET -->
 		<!-- <div class="row mx-0">
 			<div class="col">
 				Tax:
@@ -107,10 +109,12 @@
 <script>
 	"use strict"
 	const quantityAmts = document.querySelectorAll('.quantityAmt');
+	const quantityBtns = document.querySelectorAll('.quantityBtn');
 	const removeItem = document.querySelectorAll('.remove-item');
+	let productId;
 
 	function quantityChange() {
-		const productId = this.dataset.productId;
+		productId = this.dataset.productId;
 		const quantityBtn = document.querySelector(`.quantityBtn[data-product-id='${productId}']`);
 		if (this.value != this.dataset.startValue) {
 			quantityBtn.classList.remove("d-none");
@@ -118,68 +122,105 @@
 			quantityBtn.classList.add("d-none");
 		}
 	}
+	
+	function updateQtyClicked() {
+		productId = this.dataset.productId;
+	}
 
-	function removeCartItem() {
-		const productId = this.dataset.productId
-		let quantity = document.querySelector(`.quantityAmt[data-product-id='${productId}']`)
-		quantity.value = 0
+	function removeCartItem(e) {
+		productId = this.dataset.productId;
+		let quantity = document.querySelector(`.quantityAmt[data-product-id='${productId}']`);
+		quantity.value = 0;
 	}
 
 	quantityAmts.forEach(input => input.addEventListener("change", quantityChange))
+	quantityBtns.forEach(button => button.addEventListener("click", updateQtyClicked))
 	removeItem.forEach(button => button.addEventListener("click", removeCartItem))
     
-    jQuery('.update-cart').submit(function () {
 
-      const productId = this.querySelector('#product_id').value;
-      const productName = this.querySelector('#product_name').value;
-      const quantityInput = this.querySelector('.quantityAmt');
-      const quantityAmt = quantityInput.value;
+	// TODO taken off for testing on 7/11
 
-      const quantityBtn = document.querySelector(`.quantityBtn[data-product-id='${productId}']`);
-      const removeBtn = document.querySelector(`.remove-item[data-product-id='${productId}']`);
-      const userId = this.querySelector('#user_id').value;
-      const sessionId = this.querySelector('#session_id').value;
-      console.log('Submitting AJAX: ', { productId, quantityAmt, userId, sessionId });
+    // jQuery('.update-cart').submit(function () {
 
-      // ✅ Use jQuery.post to send exact data
-      jQuery.post(
-        '{{=URL('update_cart')}}',
-        {
-          product_id: productId,
-          quantityAmt: quantityAmt,
-          user_id: userId,
-          session_id: sessionId
-        },
-        function (data) {
-          if (data.success) {
-            console.log('AJAX success:', data);
+    //   const productId = this.querySelector('#product_id').value;
+    //   const productName = this.querySelector('#product_name').value;
+    //   const quantityInput = this.querySelector('.quantityAmt');
+    //   const quantityAmt = quantityInput.value;
 
-            jQuery('#cart-subtotal').text('$' + data.subtotal.toFixed(2));
-            jQuery('#cart-tax').text('$' + data.tax_amt.toFixed(2));
-            jQuery('#cart-total').text('$' + data.cart_total.toFixed(2));
-            jQuery('#cart-total-items').text(data.total_items);
+    //   const quantityBtn = document.querySelector(`.quantityBtn[data-product-id='${productId}']`);
+    //   const removeBtn = document.querySelector(`.remove-item[data-product-id='${productId}']`);
+    //   const userId = this.querySelector('#user_id').value;
+    //   const sessionId = this.querySelector('#session_id').value;
+    //   console.log('Submitting AJAX: ', { productId, quantityAmt, userId, sessionId });
 
-            quantityBtn.classList.add("d-none");
-            removeBtn.classList.remove("d-none");
+    //   // ✅ Use jQuery.post to send exact data
+    //   jQuery.post(
+    //     '{{=URL('update_cart')}}',
+    //     {
+    //       product_id: productId,
+    //       quantityAmt: quantityAmt,
+    //       user_id: userId,
+    //       session_id: sessionId
+    //     },
+    //     function (data) {
+    //       if (data.success) {
+    //         console.log('AJAX success:', data);
+
+    //         jQuery('#cart-subtotal').text('$' + data.subtotal.toFixed(2));
+    //         jQuery('#cart-tax').text('$' + data.tax_amt.toFixed(2));
+    //         jQuery('#cart-total').text('$' + data.cart_total.toFixed(2));
+    //         jQuery('#cart-total-items').text(data.total_items);
+
+    //         quantityBtn.classList.add("d-none");
+    //         removeBtn.classList.remove("d-none");
               
-            if (quantityAmt == 0) {
-              jQuery(`#product-${productId}`).remove();
-            }
-            if (document.querySelectorAll('.remove-item').length === 0) {
-                jQuery('#empty-message').removeClass('d-none');
-            }
+    //         if (quantityAmt == 0) {
+    //           jQuery(`#product-${productId}`).remove();
+    //         }
+    //         if (document.querySelectorAll('.remove-item').length === 0) {
+    //             jQuery('#empty-message').removeClass('d-none');
+    //         }
                
 
-            // Update start value
-            //quantityInput.dataset.startValue = quantityAmt;
-          } else {
-            alert('Error updating cart');
-          }
-        },
-        'json'
-      );
-        return false;
-    });
+    //         // Update start value
+    //         //quantityInput.dataset.startValue = quantityAmt;
+    //       } else {
+    //         alert('Error updating cart');
+    //       }
+    //     },
+    //     'json'
+    //   );
+    //     return false;
+    // });
+
+
+
+	// ? ALTERNATE
+
+	jQuery('.update-cart').submit(function (e) {
+		e.preventDefault();
+
+		const productId = this.querySelector('[name="product_id"]').value;
+		const quantity = this.querySelector('[name="quantityAmt"]').value;
+		const userId = this.querySelector('[name="user_id"]')?.value || '';
+		const sessionId = this.querySelector('[name="session_id"]').value;
+
+		jQuery.post("{{=URL('update_cart')}}", {
+			product_id: productId,
+			quantityAmt: quantity,
+			user_id: userId,
+			session_id: sessionId
+		}).done(function () {
+			// Success handling
+		}).fail(function () {
+			alert('Error updating cart');
+		});
+
+		
+		this.parentElement.remove()
+
+		return false;
+	});
 
 </script>
 {{end page_js}}
