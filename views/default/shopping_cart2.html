@@ -6,6 +6,7 @@
 <div class="row">
 	<div class="col-8 pr-5">
 		<div class="row product-row flex-gap-2">
+            <p id='empty-message' class='d-none'>Your shopping cart is empty.</p>
 			{{
 			if not cart_items:
 			}}
@@ -23,14 +24,19 @@
 				cat = cat.replace("&","").replace(" ","_")
 				brand = (db(db.brand.id == product['brand_id']).select().first()).brand_name.lower()
 			}}
-			<div class="col product">
+			<div id='product-{{=product_id}}' class="col product">
 				<a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}" >
 					{{=IMG(_src=URL(f'static/images/{cat}/{brand}/', image['image_filename']))}}
 				</a>
 				<h4><a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}" class="text-body">{{=product['product_name']}}</a></h4>
 				<h5 class="text-dark">${{=f"{product['price']:.2f}"}}</h5>
-				<form method="post" action="#" class="mt-auto">
-					<input type="hidden" name="product_id" value="{{=product_id}}">
+				<form id='update-cart-{{=product_id}}' method="post" action="#" class="mt-auto update-cart">
+                    {{if auth.user:}}
+                    <input type="hidden" value="{{=auth.user.id}}" name="user_id" id="user_id">
+                    {{pass}}
+                    <input type="hidden" value="{{=response.session_id}}" name="session_id" id="session_id">
+					<input type="hidden" name="product_id" value="{{=product_id}}" id="product_id">
+                    <input type="hidden" name="product_name" value="{{=name}}" id="product_name">
 					<div class="d-flex align-items-center justify-content-between w-100 flex-gap-1">
 						<div class="d-flex align-items">
 							<label for="quantity" class="mr-2 mb-0"><span class="align-middle">QTY.</span></label>
@@ -59,7 +65,7 @@
 			<div class="col">
 				Total Items:
 			</div>
-			<div class="col-auto text-right">
+			<div id='cart-total-items' class="col-auto text-right">
 				{{=total_items}}
 			</div>
 		</div>
@@ -67,7 +73,7 @@
 			<div class="col">
 				Subtotal:
 			</div>
-			<div class="col-auto text-right">
+			<div id='cart-subtotal' class="col-auto text-right">
 				${{=f"{subtotal:,.2f}"}}
 			</div>
 		</div>
@@ -75,7 +81,7 @@
 			<div class="col">
 				Tax:
 			</div>
-			<div class="col-auto text-right">
+			<div id='cart-tax' class="col-auto text-right">
 				${{=f"{tax_amt:,.2f}"}}
 			</div>
 		</div>
@@ -83,7 +89,7 @@
 			<div class="col text-uppercase">
 				Total:
 			</div>
-			<div class="col-auto text-right">
+			<div id='cart-total' class="col-auto text-right">
 				${{=f"{total:,.2f}"}}
 			</div>
 		</div>
@@ -100,11 +106,11 @@
 <script>
 	"use strict"
 	const quantityAmts = document.querySelectorAll('.quantityAmt');
-	const removeItem = document.querySelectorAll('.remove-item')
+	const removeItem = document.querySelectorAll('.remove-item');
 
 	function quantityChange() {
-		const productId = this.dataset.productId
-		const quantityBtn = document.querySelector(`.quantityBtn[data-product-id='${productId}']`)
+		const productId = this.dataset.productId;
+		const quantityBtn = document.querySelector(`.quantityBtn[data-product-id='${productId}']`);
 		if (this.value != this.dataset.startValue) {
 			quantityBtn.classList.remove("d-none");
 		} else {
@@ -120,5 +126,59 @@
 
 	quantityAmts.forEach(input => input.addEventListener("change", quantityChange))
 	removeItem.forEach(button => button.addEventListener("click", removeCartItem))
+    
+    jQuery('.update-cart').submit(function () {
+
+      const productId = this.querySelector('#product_id').value;
+      const productName = this.querySelector('#product_name').value;
+      const quantityInput = this.querySelector('.quantityAmt');
+      const quantityAmt = quantityInput.value;
+
+      const quantityBtn = document.querySelector(`.quantityBtn[data-product-id='${productId}']`);
+      const removeBtn = document.querySelector(`.remove-item[data-product-id='${productId}']`);
+      const userId = this.querySelector('#user_id').value;
+      const sessionId = this.querySelector('#session_id').value;
+      console.log('Submitting AJAX: ', { productId, quantityAmt, userId, sessionId });
+
+      // ✅ Use jQuery.post to send exact data
+      jQuery.post(
+        '{{=URL('update_cart')}}',
+        {
+          product_id: productId,
+          quantityAmt: quantityAmt,
+          user_id: userId,
+          session_id: sessionId
+        },
+        function (data) {
+          if (data.success) {
+            console.log('AJAX success:', data);
+
+            jQuery('#cart-subtotal').text('$' + data.subtotal.toFixed(2));
+            jQuery('#cart-tax').text('$' + data.tax_amt.toFixed(2));
+            jQuery('#cart-total').text('$' + data.cart_total.toFixed(2));
+            jQuery('#cart-total-items').text(data.total_items);
+
+            quantityBtn.classList.add("d-none");
+            removeBtn.classList.remove("d-none");
+              
+            if (quantityAmt == 0) {
+              jQuery(`#product-${productId}`).remove();
+            }
+            if (document.querySelectorAll('.remove-item').length === 0) {
+                jQuery('#empty-message').removeClass('d-none');
+            }
+               
+
+            // Update start value
+            //quantityInput.dataset.startValue = quantityAmt;
+          } else {
+            alert('Error updating cart');
+          }
+        },
+        'json'
+      );
+        return false;
+    });
+
 </script>
 {{end page_js}}

@@ -440,7 +440,75 @@ def shopping_cart2():
     return locals()
 
 
-# TODO NOT FINISHED, this function is a work in progress
+def update_cart():
+    # ----------------------------------
+    # # Quantity update logic
+    # ----------------------------------
+
+    # get values from form after clicking "update quanity" or "remove"
+    if request.post_vars:
+        # VARIABLES
+        session_id = request.post_vars['session_id']
+        user_id = request.post_vars['user_id']
+        quantity = request.post_vars['quantityAmt']
+        product_id = request.post_vars['product_id']
+        product = None
+        
+
+        # Check if a user is logged in, use user_id or session_id
+        if auth.user:
+            product = db.shopping_cart2(user_id=user_id, product_id=product_id)
+        else:
+            product = db.shopping_cart2(session_id=session_id, product_id=product_id)
+
+        # Delete a cart item if quantity is 0, or update record
+        if not int(quantity):
+            product.delete_record()
+        else:
+            # print(product)
+            product.update_record(quantity=quantity)
+    
+    # ----------------------------------
+    # # Retrieve all the items in the cart
+    # ----------------------------------
+
+    # Check if the user is logged in
+    where_stmt = ""
+    if auth.user:
+        where_stmt = f"sc.user_id = {str(auth.user.id)}"
+    else:
+        where_stmt = f"sc.session_id = '{str(response.session_id)}'"
+
+    # Get the items from the database
+    query = "SELECT sc.* FROM shopping_cart2 AS sc WHERE " + where_stmt
+    cart_items = db.executesql(query, as_dict=True)
+    subtotal = 0
+    total_items = 0
+
+    for item in cart_items:
+        product_id= item['product_id']
+        product = db(db.products.id == product_id).select().first()
+        subtotal += (float(product['price']) * int(item['quantity']))
+        total_items += int(item['quantity'])
+        
+
+    config = db(db.config).select().first()
+    tax = float(config['tax'])
+    tax_amt = tax * subtotal
+    total = tax_amt + subtotal
+
+    return response.json(dict(
+        success=True,
+        subtotal=subtotal,
+        tax_amt=tax_amt,
+        cart_total=total,
+        total_items=total_items,
+        product_id=product_id,
+        quantity=quantity
+    ))
+
+
+# NOT FINISHED, this function is a work in progress
 def shopping_cart_count():
     session_id = response.session_id
     user_id = auth.user_id
