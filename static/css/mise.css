@@ -51,8 +51,15 @@ input::placeholder {
 
 #closeflash {
     position: absolute;
-    top:-5px  ;
+    top:3px  ;
     right:3px ;
+    font-size: 1.25rem;
+    background: rgba(255,255,255,0.5); /* same as colorDanger */
+    line-height: .9rem;
+    padding: 0 .1rem;
+    border-radius: 4px;
+    border: 1px solid var(--colorDanger);
+    color: var(--colorDanger);
 }
 
 .w2p_flash {
@@ -71,6 +78,7 @@ div.w2p_flash.alert {
     cursor: pointer;
     background-color: #f9edbe;
     border-color: #f0c36d;
+    opacity: .9;
 }
 
 div.w2p_flash {
@@ -88,8 +96,9 @@ div.w2p_flash {
   right: auto;
   border-width: 1px;
   margin: 0 0 20px;
-  padding: 15px 15px 15px 15px;
+  padding: 1.25rem;
 }
+
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* override some bootstrap colors and classes */

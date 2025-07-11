@@ -462,11 +462,19 @@ def add_to_cart():
                                     <span>{cart_counter} items in cart</span><br>
                                     <span>Cart subtotal: ${cart_subtotal:,.2f}</span>
                                 </div>
+                                <hr>
+                                <div class="w-100">
+                                    <a class="btn btn-secondary w-100 flash-cart-btn" href="{URL('default','shopping_cart2')}">
+                                        Go to cart
+                                    </a>
+                                </div>
                                 """)
 
     if added_successful:          
         response.flash = success_message
     
+    # hacky fix for flash response, turns html into html
+    # last line "cart counter" updates the cart_counter
     response.js = '''
                 $(document).ready(function() {
                     var flashDiv = $(".w2p_flash");
@@ -478,40 +486,51 @@ def add_to_cart():
                         flashDiv.html(content);
                     } 
                 });
-                ''' + f'$("#cart-counter").text("{cart_counter}");'
+                ''' + f'$("#cart-counter").text("{cart_counter}");' 
+                
 
     return locals()
 
 
 def shopping_cart2():
     response.title=f'MISE - Shopping Cart'
+
+
     # ----------------------------------
     # # Quantity update logic
     # ----------------------------------
 
+
     # get values from form after clicking "update quanity" or "remove"
-    if request.post_vars:
-        # VARIABLES
-        session_id = response.session_id
-        user_id = auth.user_id
-        quantity = request.post_vars['quantityAmt']
-        product_id = request.post_vars['product_id']
-        product = None
+    # if request.post_vars:
+    #     # VARIABLES
+    #     session_id = response.session_id
+    #     user_id = auth.user_id
+    #     quantity = request.post_vars['quantityAmt']
+    #     product_id = request.post_vars['product_id']
+    #     product = None
         
 
-        # Check if a user is logged in, use user_id or session_id
-        if auth.user:
-            product = db.shopping_cart2(user_id=user_id, product_id=product_id)
-        else:
-            product = db.shopping_cart2(session_id=session_id, product_id=product_id)
+    #     # Check if a user is logged in, use user_id or session_id
+    #     if auth.user:
+    #         product = db.shopping_cart2(user_id=user_id, product_id=product_id)
+    #     else:
+    #         product = db.shopping_cart2(session_id=session_id, product_id=product_id)
 
-        # Delete a cart item if quantity is 0, or update record
-        if not int(quantity):
-            product.delete_record()
-        else:
-            # print(product)
-            product.update_record(quantity=quantity)
+    #     # Delete a cart item if quantity is 0, or update record
+    #     if not int(quantity):
+    #         product.delete_record()
+    #     else:
+    #         # print(product)
+    #         product.update_record(quantity=quantity)
+
+    #     response.flash = f"Your cart was updated via shopping_cart!"
     
+    # update the cart counter
+    cart_counter = shopping_cart_count()
+    response.js = f'$("#cart-counter").text("{cart_counter}");'
+
+
     # ----------------------------------
     # # Retrieve all the items in the cart
     # ----------------------------------
@@ -545,17 +564,27 @@ def shopping_cart2():
 
 
 def update_cart():
+
+    # Define the form being used
+    form = SQLFORM(db.shopping_cart2)
+
     # ----------------------------------
     # # Quantity update logic
     # ----------------------------------
 
     # get values from form after clicking "update quanity" or "remove"
-    if request.post_vars:
+    if form.accepts:
         # VARIABLES
-        session_id = request.post_vars['session_id']
-        user_id = request.post_vars['user_id']
-        quantity = request.post_vars['quantityAmt']
-        product_id = request.post_vars['product_id']
+        session_id = request.vars['session_id']
+        user_id = request.vars['user_id']
+        quantity = request.vars['quantityAmt']
+        product_id = request.vars['product_id']
+
+        print(f"session_id: {session_id}")
+        print(f"user_id: {user_id}")
+        print(f"product_id: {product_id}")
+        print(f"quantity: {quantity}")
+
         product = None
         
 
@@ -572,41 +601,16 @@ def update_cart():
             # print(product)
             product.update_record(quantity=quantity)
     
-    # ----------------------------------
-    # # Retrieve all the items in the cart
-    # ----------------------------------
-
-    # Check if the user is logged in
-    where_stmt = ""
-    if auth.user:
-        where_stmt = f"sc.user_id = {str(auth.user.id)}"
-    else:
-        where_stmt = f"sc.session_id = '{str(response.session_id)}'"
-
-    # Get the items from the database
-    query = "SELECT sc.* FROM shopping_cart2 AS sc WHERE " + where_stmt
-    cart_items = db.executesql(query, as_dict=True)
-    subtotal = 0
-    total_items = 0
-
-    for item in cart_items:
-        product_id= item['product_id']
-        product = db(db.products.id == product_id).select().first()
-        subtotal += (float(product['price']) * int(item['quantity']))
-        total_items += int(item['quantity'])
-        
-
-    config = db(db.config).select().first()
-    tax = float(config['tax'])
-    tax_amt = tax * subtotal
-    total = tax_amt + subtotal
-
+    shopping_cart2()
 
     # Update the cart counter
 
     cart_counter = shopping_cart_count()
     response.flash = f"Your cart was updated!"
-    response.js = '''
+
+    # hacky fix for flash response, turns html into html
+    # last line "cart counter" updates the cart_counter
+    javascript_code = '''
                 $(document).ready(function() {
                     var flashDiv = $(".w2p_flash");
                     if (flashDiv.length && flashDiv.html()) {
@@ -617,18 +621,15 @@ def update_cart():
                         flashDiv.html(content);
                     } 
                 });
-                ''' + f'$("#cart-counter").text("{cart_counter}");'
+                ''' + f'$("#cart-counter").text("{cart_counter}");' 
+    
+    # check if there are no more products in cart
+    if cart_counter == 0:
+        print('its zero!')
+        javascript_code += "document.getElementById('empty-message').classList.remove('d-none');"
 
-    return response.json(dict(
-        success=True,
-        subtotal=subtotal,
-        tax_amt=tax_amt,
-        cart_total=total,
-        total_items=total_items,
-        product_id=product_id,
-        quantity=quantity
-    ))
-
+    response.js = javascript_code
+  
 
 def account():
     response.title=f'MISE - Your Account'
