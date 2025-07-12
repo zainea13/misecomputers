@@ -257,7 +257,7 @@ a.text-primary:active {
     text-align: center;
     vertical-align: middle;
     position: absolute;
-    top: 3px;
+    top: 4px;
     right: 4px;
     display: flex;
     justify-content: center;
@@ -603,6 +603,7 @@ a.text-primary:active {
     }
 
     #cart-counter {
+        top: 3px;
         right: 7px;
     }
 }
