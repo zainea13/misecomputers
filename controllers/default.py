@@ -113,11 +113,11 @@ def index():
     return dict(message=T('Welcome to web2py!'), categories=categories)
 
 def privacy():
-    response.title='MISE - Privacy Policy'
+    response.title='MISE - Privacy Notice'
     return locals()
 
 def terms():
-    response.title='MISE - Terms'
+    response.title='MISE - Terms of Use'
     return locals()
 
 def aboutus():
@@ -125,7 +125,7 @@ def aboutus():
     return locals()
 
 def contact():
-    response.title='MISE - Contact'
+    response.title='MISE - Contact Us'
     form = SQLFORM.factory(
         Field('name',
               requires=IS_NOT_EMPTY()),
@@ -159,7 +159,7 @@ def search():
     print(keyword)
 
     if keyword:
-        # Join products and categories
+        # Join products and categories tables
         results = db(
             (db.products.category_id == db.categories.id) & 
             (
