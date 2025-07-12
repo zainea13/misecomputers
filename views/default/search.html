@@ -14,7 +14,10 @@
         product = row.products
         category = row.categories
 		brand = row.brand
-
+		attribute = row.product_attribute
+		attribute_name = row.attribute_description.attribute_name
+		attribute_value = row.product_attribute.attribute_value 
+		
         name = product.product_name
         name_link = name.replace(" ", "-")
         price = product.price
