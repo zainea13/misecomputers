@@ -1375,6 +1375,25 @@ def checkout():
         else:
             # Fallback
             response.flash = 'Please fill out the form correctly.'
+
+            # hacky fix for flash response, turns html into html
+            # last line "cart counter" updates the cart_counter
+            javascript_code = '''
+                        $(document).ready(function() {
+                            var flashDiv = $(".w2p_flash");
+                            if (flashDiv.length && flashDiv.html()) {
+                                var content = flashDiv.html()
+                                    .replace(/&lt;/g, "<")
+                                    .replace(/&gt;/g, ">")
+                                    .replace(/&amp;/g, "&");
+                                flashDiv.html(content);
+                                flashDiv.delay(3000).fadeOut(500);
+                            } 
+                        });
+                        ''' + f'$("#cart-counter").text("{cart_counter}");'
+
+            response.js = javascript_code
+
             return json.dumps(dict(status='error', stripe_error='Please fill out the form correctly.'))
     
     return dict(
