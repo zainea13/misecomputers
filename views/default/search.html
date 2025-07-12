@@ -9,22 +9,32 @@
 
 
 <div class="row product-row flex-gap-2">
+{{ 
+seen_products = set() 
+}}
+
 {{if results:}}
     {{for row in results:
         product = row.products
+        product_id = product.id
+
+        if product_id in seen_products:
+            continue
+        seen_products.add(product_id)
+
         category = row.categories
-		brand = row.brand
-		attribute = row.product_attribute
-		attribute_name = row.attribute_description.attribute_name
-		attribute_value = row.product_attribute.attribute_value 
-		
+        brand = row.brand
+        attribute = row.product_attribute
+        attribute_name = row.attribute_description.attribute_name
+        attribute_value = row.product_attribute.attribute_value 
+
         name = product.product_name
         name_link = name.replace(" ", "-")
         price = product.price
-        product_id = product.id
         cat_id_fix = product.category_id
 
-        main_image = db((db.product_images.product_id == product.id) & (db.product_images.main_image == True)).select().first()
+        main_image = db((db.product_images.product_id == product.id) & 
+                        (db.product_images.main_image == True)).select().first()
         img_src = main_image['image_filename'] if main_image else 'default-img.png'
         img_alt = main_image['image_alt'] if main_image else 'No image available'
 
