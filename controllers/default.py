@@ -654,6 +654,28 @@ def update_cart():
     tax_amt = tax * subtotal
     total = tax_amt + subtotal
 
+    # Update the cart counter
+    cart_counter = shopping_cart_count()
+
+    response.flash = f"Your cart was updated!"
+
+    # hacky fix for flash response, turns html into html
+    # last line "cart counter" updates the cart_counter
+    javascript_code = '''
+                $(document).ready(function() {
+                    var flashDiv = $(".w2p_flash");
+                    if (flashDiv.length && flashDiv.html()) {
+                        var content = flashDiv.html()
+                            .replace(/&lt;/g, "<")
+                            .replace(/&gt;/g, ">")
+                            .replace(/&amp;/g, "&");
+                        flashDiv.html(content);
+                    } 
+                });
+                ''' + f'$("#cart-counter").text("{cart_counter}");' 
+
+    response.js = javascript_code
+
     return response.json(dict(
         success=True,
         subtotal=subtotal,
