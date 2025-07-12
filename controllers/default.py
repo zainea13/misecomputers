@@ -162,14 +162,17 @@ def search():
         # Join products and categories tables
         results = db(
             (db.products.category_id == db.categories.id) & 
-            (db.products.brand_id == db.brand.id) & 
-            
+            (db.products.brand_id == db.brand.id) &
+            (db.products.id == db.product_attribute.product_id) &
+            (db.product_attribute.attribute_id == db.attribute_description.id)&
             (
                 db.products.product_name.contains(keyword) |
                 db.categories.category_name.contains(keyword) |
-                db.brand.brand_name.contains(keyword)
+                db.brand.brand_name.contains(keyword)|
+                db.attribute_description.attribute_name.contains(keyword) |
+                db.product_attribute.attribute_value.contains(keyword)
             )
-        ).select(db.products.ALL, db.categories.ALL, db.brand.ALL)
+        ).select(db.products.ALL, db.categories.ALL, db.brand.ALL,db.product_attribute.ALL, db.attribute_description.attribute_name, db.product_attribute.attribute_value)
 
     response.title = f'MISE - Search results for "{keyword}"'
 
