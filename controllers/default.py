@@ -670,9 +670,10 @@ def update_cart():
                             .replace(/&gt;/g, ">")
                             .replace(/&amp;/g, "&");
                         flashDiv.html(content);
+                        flashDiv.delay(3000).fadeOut(500);
                     } 
                 });
-                ''' + f'$("#cart-counter").text("{cart_counter}");' 
+                ''' + f'$("#cart-counter").text("{cart_counter}");'
 
     response.js = javascript_code
 
@@ -1423,8 +1424,7 @@ def order_confirmation_email():
 
     # Get shipping info
     shipping_info = db(db.shipping_info.order_id == session.ty['order_id']).select().first()
-    date_string = shipping_info.arrival_date
-    date_object = datetime.strptime(date_string, "%Y-%m-%d %H:%M:%S.%f")
+    date_object = shipping_info.arrival_date
     arrives = date_object.strftime("%A, %B %d, %Y")
 
     email_message += f'<h2 style="margin-top:36px;">Shipping Details:</h2><p>Your items are expected to arrive on <strong>{arrives}</strong>.</p><p>USPS Tracking number: <strong>{shipping_info.tracking_number}</strong></p>'
