@@ -265,7 +265,7 @@ a.text-primary:active {
 }
 
 .mise-logo {
-    width: min(18%, 160px);
+    width: min(28%, 160px);
 }
 
 #accordion {
@@ -612,6 +612,9 @@ a.text-primary:active {
 @media (min-width: 768px) {
     .h-md-50 {
         max-height: 50%
+    }
+    .mise-logo {
+        width: min(18%, 160px);
     }
 }
 
