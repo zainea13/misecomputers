@@ -312,6 +312,7 @@ def filtered_products(cat_id, filter_dict, order):
         product_list = [product for product in product_list if min_price <= product['price'] <= max_price] # only adds a product_id if it fits within selected range
 
     if not filter_dict:
+        product_list.sort(key=lambda p: int(p['stock_qty']) < 1)
         return product_list # if there aren't any more filters, return the list of products
 
     for attribute, values in filter_dict.items():
@@ -332,6 +333,8 @@ def filtered_products(cat_id, filter_dict, order):
 
     # filters common_product_ids for ids in the correct category and in the selected price range
     products = [p for p in product_list if p['id'] in common_product_ids]
+    products.sort(key=lambda p: int(p['stock_qty']) < 1)
+
     return products
 
 
@@ -688,7 +691,8 @@ def update_cart():
         cart_total=total,
         total_items=total_items,
         product_id=product_id,
-        quantity=quantity
+        quantity=quantity,
+        cart_counter=cart_counter
     ))
 
 
