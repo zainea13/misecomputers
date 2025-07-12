@@ -783,12 +783,13 @@ def account():
 
     # Fetch orders for the current user
     order = db(db.orders.user_id == user_info.id).select(orderby=~db.orders.order_date).first()
-    line_items = db(db.order_line_items.order_id == order.id).select()
-    from collections import defaultdict
-    order_lines = defaultdict(list)
+    if order:
+        line_items = db(db.order_line_items.order_id == order.id).select()
+        from collections import defaultdict
+        order_lines = defaultdict(list)
 
-    for item in line_items:
-        order_lines[item.order_id].append(item)
+        for item in line_items:
+            order_lines[item.order_id].append(item)
 
 
     return locals()

@@ -309,10 +309,10 @@
 	<footer class="footer container-fluid bg-secondary rounded-top">
 		<div class="row justify-content-between pb-3">
 			<div class="d-flex">
-				<div><a class="text-dark" href="{{=URL('privacy')}}">Privacy Notice</a>&nbsp;|&nbsp;</div> 
-				<div><a class="text-dark" href="{{=URL('default','terms')}}">Terms of Use</a>&nbsp;|&nbsp;</div> 
-				<div><a class="text-dark" href="{{=URL('default','aboutus')}}">About Us</a>&nbsp;|&nbsp;</div>
-				<div><a class="text-dark" href="{{=URL('default','contact')}}">Contact Support</a></div>
+				<div class="footer-link flex-grow-1 flex-shrink-1"><a class="text-dark" href="{{=URL('privacy')}}">Privacy Notice</a></div> 
+				<div class="footer-link flex-grow-1 flex-shrink-1"><a class="text-dark" href="{{=URL('default','terms')}}">Terms of Use</a></div> 
+				<div class="footer-link flex-grow-1 flex-shrink-1"><a class="text-dark" href="{{=URL('default','aboutus')}}">About Us</a></div>
+				<div class="flex-grow-1 flex-shrink-1"><a class="text-dark" href="{{=URL('default','contact')}}">Contact Support</a></div>
 			</div>
 			<div>{{=T('Copyright')}} &#169; {{=request.now.year}} MISE Computers, LLC</div>
 		</div>	

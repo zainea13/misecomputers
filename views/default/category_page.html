@@ -12,7 +12,7 @@
                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{=key}}</p>
                 <fieldset id='{{=key}}' class="dropdown-menu border" style="width:200px;">
                     {{for attr_value in value:}}
-                    <input class='ml-3' type="checkbox" name="{{=key}}[]" value="{{=attr_value}}" {{if key in filter_dict and attr_value in filter_dict[key]:}}checked{{pass}}> {{=attr_value}}<br>
+                    <input class='ml-3' type="checkbox" name="{{=key}}[]" id="{{=key}}[]" value="{{=attr_value}}" {{if key in filter_dict and attr_value in filter_dict[key]:}}checked{{pass}}> <label for="{{=key}}[]">{{=attr_value}}</label><br>
                     {{pass}}
                 </fieldset>
             </li>
