@@ -162,18 +162,22 @@ def search():
         # Join products and categories tables
         results = db(
             (db.products.category_id == db.categories.id) & 
+            (db.products.brand_id == db.brand.id) & 
+            
             (
                 db.products.product_name.contains(keyword) |
-                db.categories.category_name.contains(keyword)
+                db.categories.category_name.contains(keyword) |
+                db.brand.brand_name.contains(keyword)
             )
-        ).select(db.products.ALL, db.categories.ALL)
+        ).select(db.products.ALL, db.categories.ALL, db.brand.ALL)
 
     response.title = f'MISE - Search results for "{keyword}"'
 
     # Print all fields to see what's available
     print("Products fields:", [field for field in db.products])
     print("Categories fields:", [field for field in db.categories])
-
+    print("Brand fields:", [field for field in db.brand])
+ 
     return dict(locals(), results=results)
 
 
