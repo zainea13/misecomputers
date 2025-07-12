@@ -79,6 +79,7 @@
 				${{=f"{subtotal:,.2f}"}}
 			</div>
 		</div>
+		
 		<!-- 7/11 IZ - REMOVED BECAUSE I THINK IT CAN BE CONFUSING SINCE THIS DOESN'T INCLUD SHIPPING YET -->
 		<!-- <div class="row mx-0">
 			<div class="col">
@@ -97,6 +98,12 @@
 			</div>
 		</div> -->
 
+		<hr>
+		<div class="row mx-0">
+			<div class="col">
+				(Tax &amp; Shipping calculated at checkout.)
+			</div>
+		</div>
 		<hr>
 		{{if cart_items:}}
 		<a class="btn btn-mise-accent text-white w-100" href="{{=URL('checkout')}}">Check out</a>

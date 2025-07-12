@@ -21,19 +21,19 @@
         <h2 class="text-accent mb-4 mb-md-2 w-100" >Check Out</h2>
         <div class="col-md-7 order-2 order-md-1 pt-3">
             <!-- SHIPPING INFO FORM -->
-            <div class="row mb-5">
+            <div class="row mb-4">
                 <h5 class="w-100 pb-3 border-bottom mb-4">Shipping Information</h5>
 
                 {{=shipping_form.custom.begin}}
                     
                     <div class="row form-group">
                         <div class="col-6">
-                            <label for="{{=shipping_form.custom.widget.first_name['_id']}}" class="form-control-label">{{=shipping_form.custom.label.first_name}}</label>
+                            <label for="{{=shipping_form.custom.widget.first_name['_id']}}" class="form-control-label">{{=shipping_form.custom.label.first_name}}<span class="text-danger"> *</span></label>
                             {{=shipping_form.custom.widget.first_name}}
                         </div>
                         <div class="col-6 pl-0">
                             <div class="label-group">
-                                <label for="{{=shipping_form.custom.widget.last_name['_id']}}" class="form-control-label">{{=shipping_form.custom.label.last_name}}</label>
+                                <label for="{{=shipping_form.custom.widget.last_name['_id']}}" class="form-control-label">{{=shipping_form.custom.label.last_name}}<span class="text-danger"> *</span></label>
                                 {{=shipping_form.custom.widget.last_name}}
                             </div>
                         </div>
@@ -42,7 +42,7 @@
                     <div class="row">
                         <div class="col-12 form-group">
                             <div class="label-group">
-                                <label for="{{=shipping_form.custom.widget.street_1['_id']}}" class="form-control-label">{{=shipping_form.custom.label.street_1}}</label>
+                                <label for="{{=shipping_form.custom.widget.street_1['_id']}}" class="form-control-label">{{=shipping_form.custom.label.street_1}}<span class="text-danger"> *</span></label>
                                 {{=shipping_form.custom.widget.street_1}}
                             </div>
                         </div>
@@ -57,21 +57,21 @@
                     <div class="row form-group">
                         <div class="col-5">
                             <div class="label-group">
-                                <label for="{{=shipping_form.custom.widget.city['_id']}}" class="form-control-label">{{=shipping_form.custom.label.city}}</label>
+                                <label for="{{=shipping_form.custom.widget.city['_id']}}" class="form-control-label">{{=shipping_form.custom.label.city}}<span class="text-danger"> *</span></label>
                                 {{=shipping_form.custom.widget.city}}
                             </div>
                         </div>
 
                         <div class="col-4 pl-0">
                             <div class="label-group">
-                                <label for="{{=shipping_form.custom.widget.state['_id']}}" class="form-control-label">{{=shipping_form.custom.label.state}}</label>
+                                <label for="{{=shipping_form.custom.widget.state['_id']}}" class="form-control-label">{{=shipping_form.custom.label.state}}<span class="text-danger"> *</span></label>
                                 {{=shipping_form.custom.widget.state}}
                             </div>
                         </div>
 
                         <div class="col-3 pl-0">
                             <div class="label-group">
-                                <label for="{{=shipping_form.custom.widget.zip['_id']}}" class="form-control-label">{{=shipping_form.custom.label.zip}}</label>
+                                <label for="{{=shipping_form.custom.widget.zip['_id']}}" class="form-control-label">{{=shipping_form.custom.label.zip}}<span class="text-danger"> *</span></label>
                                 {{=shipping_form.custom.widget.zip}}
                             </div>
                         </div>
@@ -79,7 +79,7 @@
                     <div class="row form-group">
                         <div class="col-12">
                             <div class="label-group">
-                                <label for="{{=shipping_form.custom.widget.email['_id']}}" class="form-control-label">{{=shipping_form.custom.label.email}}</label>
+                                <label for="{{=shipping_form.custom.widget.email['_id']}}" class="form-control-label">{{=shipping_form.custom.label.email}}<span class="text-danger"> *</span></label>
                                 {{=shipping_form.custom.widget.email}}
                             </div>
                         </div>
@@ -90,18 +90,18 @@
             </div>
 
             <!-- BILLING INFO FORM -->
-            <div class="row mb-5">
+            <div class="row mb-4">
                 <h5 class="w-100 pb-3 border-bottom mb-4">Billing Information</h5>
 
                 {{=billing_form.custom.begin}}
                     <div class="row form-group">
                         <div class="col-6">
-                            <label for="{{=billing_form.custom.widget.first_name['_id']}}" class="form-control-label">{{=billing_form.custom.label.first_name}}</label>
+                            <label for="{{=billing_form.custom.widget.first_name['_id']}}" class="form-control-label">{{=billing_form.custom.label.first_name}}<span class="text-danger"> *</span></label>
                             {{=billing_form.custom.widget.first_name}}
                         </div>
                         <div class="col-6 pl-0">
                             <div class="label-group">
-                                <label for="{{=billing_form.custom.widget.last_name['_id']}}" class="form-control-label">{{=billing_form.custom.label.last_name}}</label>
+                                <label for="{{=billing_form.custom.widget.last_name['_id']}}" class="form-control-label">{{=billing_form.custom.label.last_name}}<span class="text-danger"> *</span></label>
                                 {{=billing_form.custom.widget.last_name}}
                             </div>
                         </div>
@@ -110,13 +110,13 @@
                     <div class="row">
                         <div class="col-12 form-group">
                             <div class="label-group">
-                                <label for="{{=billing_form.custom.widget.street_1['_id']}}" class="form-control-label">{{=billing_form.custom.label.street_1}}</label>
+                                <label for="{{=billing_form.custom.widget.street_1['_id']}}" class="form-control-label">{{=billing_form.custom.label.street_1}}<span class="text-danger"> *</span></label>
                                 {{=billing_form.custom.widget.street_1}}
                             </div>
                         </div>
                         <div class="col-12 form-group">
                             <div class="label-group">
-                                <label for="{{=billing_form.custom.widget.street_2['_id']}}" class="form-control-label">{{=billing_form.custom.label.street_2}}</label>
+                                <label for="{{=billing_form.custom.widget.street_2['_id']}}" class="form-control-label">{{=billing_form.custom.label.street_2}}<span class="text-danger"> *</span></label>
                                 {{=billing_form.custom.widget.street_2}}
                             </div>
                         </div>
@@ -125,21 +125,21 @@
                     <div class="row form-group">
                         <div class="col-5">
                             <div class="label-group">
-                                <label for="{{=billing_form.custom.widget.city['_id']}}" class="form-control-label">{{=billing_form.custom.label.city}}</label>
+                                <label for="{{=billing_form.custom.widget.city['_id']}}" class="form-control-label">{{=billing_form.custom.label.city}}<span class="text-danger"> *</span></label>
                                 {{=billing_form.custom.widget.city}}
                             </div>
                         </div>
 
                         <div class="col-4 pl-0">
                             <div class="label-group">
-                                <label for="{{=billing_form.custom.widget.state['_id']}}" class="form-control-label">{{=billing_form.custom.label.state}}</label>
+                                <label for="{{=billing_form.custom.widget.state['_id']}}" class="form-control-label">{{=billing_form.custom.label.state}}<span class="text-danger"> *</span></label>
                                 {{=billing_form.custom.widget.state}}
                             </div>
                         </div>
 
                         <div class="col-3 pl-0">
                             <div class="label-group">
-                                <label for="{{=billing_form.custom.widget.zip['_id']}}" class="form-control-label">{{=billing_form.custom.label.zip}}</label>
+                                <label for="{{=billing_form.custom.widget.zip['_id']}}" class="form-control-label">{{=billing_form.custom.label.zip}}<span class="text-danger"> *</span></label>
                                 {{=billing_form.custom.widget.zip}}
                             </div>
                         </div>
@@ -156,7 +156,8 @@
             
             <!-- CREDIT CARD FORM -->
             <div class="row mb-5">
-                <h5 class="w-100 pb-3 border-bottom mb-4">Payment Information</h5>
+                <h5 class="w-100 pb-3 border-bottom mb-1">Payment Information</h5>
+                <p class="text-danger mt-0 mb-4">All fields required</p>
                 <div class="payment-form w-100 payment-container px-3">                
                         <div class="form-group">
                         <div id="payment-element">

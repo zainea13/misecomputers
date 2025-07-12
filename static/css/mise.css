@@ -243,6 +243,10 @@ a.text-primary:active {
     border-radius: 0.5rem;
 }
 
+.w-min-content {
+    width: min-content;
+}
+
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Nav Bar classes */
 #cart-counter {

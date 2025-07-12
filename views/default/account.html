@@ -74,3 +74,19 @@
         <a href="{{=URL('default', 'order_history')}}" class="btn btn-primary">View Order History</a>
     </div>
 </div>
+
+{{block page_js}}
+<script>
+$(document).ready(function() {
+    var flashDiv = $(".w2p_flash");
+    if (flashDiv.length && flashDiv.html()) {
+        var content = flashDiv.html()
+            .replace(/&lt;/g, "<")
+            .replace(/&gt;/g, ">")
+            .replace(/&amp;/g, "&");
+        flashDiv.html(content);
+        flashDiv.delay(3000).fadeOut(500);
+    }
+});
+</script>
+{{end page_js}}
