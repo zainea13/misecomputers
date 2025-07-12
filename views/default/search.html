@@ -27,10 +27,14 @@
         cat_name = category.category_name.lower().replace("&","").replace(" ","_")
         brand_row = db(db.brand.id == product.brand_id).select().first()
         brand = brand_row.brand_name.lower() if brand_row else 'unknown'
+        stock_qty = product.stock_qty
     }}
     
     <div class="col product">
-        <a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}" data-product-id={{=product_id}}>
+        <a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}" data-product-id={{=product_id}} class="position-relative">
+            {{if not stock_qty:}}
+                <div class="out-of-stock over-image">OUT OF STOCK</div>
+            {{pass}}
             {{=IMG(_src=URL(f'static/images/{cat_name}/{brand}/', img_src), _onerror="this.onerror=null;this.src='%s';" % URL('static', 'images/default-img.png'), _alt=img_alt)}}
         </a>
         <h4 class="mt-3">
