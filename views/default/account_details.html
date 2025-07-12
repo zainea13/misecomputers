@@ -7,95 +7,78 @@
         <p class='text-danger small mtneg-1rem fade-in-12'><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> Please Update Account to Complete Registration</p>
         {{pass}}
         <div class="border rounded p-4 fade-in-5">
-            <form method="post">
-                <input type="hidden" name="user_id" value="{{=auth.user.id}}">
-                <div class="row form-group">
-                    <div class="col-6">
-                        <div class="label-group">
-                            <label for="first_name" class="form-control-label">First Name</label>
-                            <input type="text" class="form-control string" id="first_name" name="first_name" value="{{=user_info.first_name}}">
-                        </div>
-                    </div>
-                    <div class="col-6 pl-0">
-                        <div class="label-group">
-                            <label for="last_name" class="form-control-label">Last Name</label>
-                            <input type="text" class="form-control string" id="last_name" name="last_name" value="{{=user_info.last_name}}">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-12 form-group">
-                        <div class="label-group">
-                            <label for="street_1" class="form-control-label">Address Line 1</label>
-                            <input type="text" class="form-control string" id="street_1" name="street_1" {{if customer_info.street_1 != '':}}value="{{=customer_info.street_1}}"{{else:}} placeholder='123 Main St.'{{pass}}>
-                        </div>
-                    </div>
-                    <div class="col-12 form-group">
-                        <div class="label-group">
-                            <label for="street_2" class="form-control-label">Address Line 2</label>
-                            <input type="text" class="form-control string" id="street_2" name="street_2" value="{{=customer_info.street_2 if customer_info and customer_info.street_2 else ''}}">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row form-group">
-                    <div class="col-5">
-                        <div class="label-group">
-                            <label for="city" class="form-control-label">City</label>
-                            <input type="text" class="form-control string" id="city" name="city" {{if customer_info.city:}}value="{{=customer_info.city}}"{{else:}} placeholder='City' {{pass}}>
-                        </div>
-                    </div>
-
-                    <div class="col-4 pl-0">
-                        <div class="label-group">
-                            <label for="state" class="form-control-label w-100">State</label>
-                            <select name="state" id="state" class="form-control">
-                                <option value="0">Choose a state...</option>
-                                {{
-                                    states = db(db.states).select()
-                                    for state in states:                        
-                                }}
-                                    <option value="{{=state['id']}}" {{if customer_info.state_code == state['id']:}} selected {{pass}}>{{=state['state_name']}}</option>
-                                {{pass}}
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="col-3 pl-0">
-                        <div class="label-group">
-                            <label for="zip" class="form-control-label">Zip Code</label>
-                            <input type="text" class="form-control string" id="zip" name="zip" {{if customer_info.zip:}}value="{{=customer_info.zip}}"{{else:}} placeholder='12345' {{pass}}>
-                        </div>
-                    </div>
+            {{=form.custom.begin}}
                     
-                </div>
+                    <div class="row form-group">
+                        <div class="col-6">
+                            <label for="{{=form.custom.widget.first_name['_id']}}" class="form-control-label">{{=form.custom.label.first_name}}<span class="text-danger"> *</span></label>
+                            {{=form.custom.widget.first_name}}
+                        </div>
+                        <div class="col-6 pl-0">
+                            <div class="label-group">
+                                <label for="{{=form.custom.widget.last_name['_id']}}" class="form-control-label">{{=form.custom.label.last_name}}<span class="text-danger"> *</span></label>
+                                {{=form.custom.widget.last_name}}
+                            </div>
+                        </div>
+                    </div>
 
-                <div class="row form-group">
-                    
-                    <div class="col-12">
-                        <div class="label-group">
-                            <label for="pemail" class="form-control-label">Email</label>
-                            <input type="text" class="form-control string" id="email" name="email" value="{{=user_info.email}}">
+                    <div class="row">
+                        <div class="col-12 form-group">
+                            <div class="label-group">
+                                <label for="{{=form.custom.widget.street_1['_id']}}" class="form-control-label">{{=form.custom.label.street_1}}<span class="text-danger"> *</span></label>
+                                {{=form.custom.widget.street_1}}
+                            </div>
+                        </div>
+                        <div class="col-12 form-group">
+                            <div class="label-group">
+                                <label for="{{=form.custom.widget.street_2['_id']}}" class="form-control-label">{{=form.custom.label.street_2}}</label>
+                                {{=form.custom.widget.street_2}}
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <div class="row form-group">
-                    <div class="col-5">
-                        <div class="label-group">
-                            <label for="phone" class="form-control-label">Phone</label>
-                            <input type="text" class="form-control string" id="phone" name="phone" {{if customer_info.phone:}}value="{{=customer_info.phone}}"{{else:}} placeholder='+1 (234-5678)' {{pass}}>
+
+                    <div class="row form-group">
+                        <div class="col-5">
+                            <div class="label-group">
+                                <label for="{{=form.custom.widget.city['_id']}}" class="form-control-label">{{=form.custom.label.city}}<span class="text-danger"> *</span></label>
+                                {{=form.custom.widget.city}}
+                            </div>
+                        </div>
+
+                        <div class="col-4 pl-0">
+                            <div class="label-group">
+                                <label for="{{=form.custom.widget.state['_id']}}" class="form-control-label">{{=form.custom.label.state}}<span class="text-danger"> *</span></label>
+                                {{=form.custom.widget.state}}
+                            </div>
+                        </div>
+
+                        <div class="col-3 pl-0">
+                            <div class="label-group">
+                                <label for="{{=form.custom.widget.zip['_id']}}" class="form-control-label">{{=form.custom.label.zip}}<span class="text-danger"> *</span></label>
+                                {{=form.custom.widget.zip}}
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <div class="row form-group mb-0">
-                    <div class="col-6 mt-5">
-                        <input type="submit" value="Update" class="btn btn-primary">
+                    <div class="row form-group">
+                        <div class="col-12">
+                            <div class="label-group">
+                                <label for="{{=form.custom.widget.email['_id']}}" class="form-control-label">{{=form.custom.label.email}}<span class="text-danger"> *</span></label>
+                                {{=form.custom.widget.email}}
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </form>
+                    <div class="row form-group">
+                        <div class="col-6">
+                            <div class="label-group">
+                                <label for="{{=form.custom.widget.phone['_id']}}" class="form-control-label">{{=form.custom.label.phone}}<span class="text-danger"> *</span></label>
+                                {{=form.custom.widget.phone}}
+                            </div>
+                        </div>
+                    </div>
+                    {{=form.custom.widget.user_id}} 
+                    <hr>
+                    <button type="submit" class="btn btn-primary">Update Account Details</button>                  
+                {{=form.custom.end}}  
 
         </div>
     </div>

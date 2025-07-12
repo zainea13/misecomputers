@@ -29,7 +29,7 @@
 					{{=IMG(_src=URL(f'static/images/{cat}/{brand}/', image['image_filename']))}}
 				</a>
 				<h4><a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}" class="text-body">{{=product['product_name']}}</a></h4>
-				<h5 class="text-dark">${{=f"{product['price']:.2f}"}}</h5>
+				<h5 class="text-dark">${{=f"{product['price']:,.2f}"}}</h5>
 				<form id='update-cart-{{=product_id}}' class="mt-auto update-cart">
                     {{if auth.user:}}
                     <input type="hidden" value="{{=auth.user.id}}" name="user_id" id="user_id">

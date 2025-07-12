@@ -162,18 +162,22 @@ def search():
         # Join products and categories tables
         results = db(
             (db.products.category_id == db.categories.id) & 
+            (db.products.brand_id == db.brand.id) & 
+            
             (
                 db.products.product_name.contains(keyword) |
-                db.categories.category_name.contains(keyword)
+                db.categories.category_name.contains(keyword) |
+                db.brand.brand_name.contains(keyword)
             )
-        ).select(db.products.ALL, db.categories.ALL)
+        ).select(db.products.ALL, db.categories.ALL, db.brand.ALL)
 
     response.title = f'MISE - Search results for "{keyword}"'
 
     # Print all fields to see what's available
     print("Products fields:", [field for field in db.products])
     print("Categories fields:", [field for field in db.categories])
-
+    print("Brand fields:", [field for field in db.brand])
+ 
     return dict(locals(), results=results)
 
 
@@ -791,47 +795,118 @@ def account():
         for item in line_items:
             order_lines[item.order_id].append(item)
 
-
     return locals()
 
 # account details page, to update account details
 def account_details():
     
     # select auth user database table based on current id
-    user_info = db(db.auth_user.id == auth.user.id).select().first()
+    user_info = None
+    customer_info = None
+    customer_state = None
 
-    # look up user details based on the auth user id
-    customer_info = db((db.customers.user_id == auth.user.id)).select().first()
+    if auth.user:
+        # get user details
+        # select auth user database table based on current id
+        user_info = db(db.auth_user.id == auth.user.id).select().first()
+        # look up customer details based on the auth user id
+        customer_info = db(db.customers.user_id == auth.user.id).select().first()
+        # get the state for the user
+        if customer_info and customer_info.state_code:
+            customer_state = db(db.states.id == customer_info.state_code).select().first().id
 
     if not customer_info:
         db.customers.insert(user_id=auth.user.id, street_1='')
         customer_info = db(db.customers.user_id == auth.user.id).select().first()
 
-    try:
-        if request.vars:
-            
-            r = request.vars
-            user_info.update_record(first_name=r.first_name, last_name=r.last_name, email=r.email)
-
-            # Update auth.user to match
-            auth.user.update(first_name=r.first_name, last_name=r.last_name, email=r.email)
-                
-            customer_info.update_record(
-                                    street_1 = r.street_1, 
-                                    street_2 = r.street_2, 
-                                    city = r.city,
-                                    state_code = r.state,
-                                    zip = r.zip,                            
-                                    phone = r.phone
-                                    )
-            # print("requested end")
-        
-    except:
-        pass
+    form = SQLFORM.factory(
+                Field('first_name', 
+                      label="First Name", 
+                      default=(user_info.first_name if user_info else ""), 
+                      requires=IS_NOT_EMPTY()),
+                Field('last_name', 
+                      label="Last Name", 
+                      default=(user_info.last_name if user_info else ""),
+                      requires=IS_NOT_EMPTY()),
+                Field('street_1', 
+                      label="Address Line 1",
+                      default=(customer_info.street_1 if customer_info else ""), 
+                      requires=IS_NOT_EMPTY()),
+                Field('street_2', 
+                      label="Address Line 2",
+                      default=(customer_info.street_2 if customer_info else "")),
+                Field('city', 
+                      label="City",
+                      default=(customer_info.city if customer_info else ""),
+                      requires=IS_NOT_EMPTY()),
+                Field('state', 'reference states', 
+                      label="State", 
+                      default=(customer_state if customer_state else 0), 
+                      requires=IS_IN_DB(db, 'states.id', '%(state_name)s', zero="Choose a state...", error_message='Pick a state')),
+                Field('zip', 
+                      label="Zip Code",
+                      default=(customer_info.zip if customer_info else ""), 
+                      requires=IS_NOT_EMPTY()),
+                Field('email',
+                      label="Email",
+                      default=(user_info.email if user_info else ""),
+                      requires=IS_EMAIL()),
+                Field('phone',
+                      label="Phone",
+                      default=(customer_info.phone if customer_info else ""),
+                      requires=IS_MATCH('^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$'),
+                ),
+                Field('user_id',
+                      default=(auth.user.id if auth.user else response.session_id)),
+                _class='order-forms w-100 px-3',
+                _name='account_details',
+                _id='account_details',
+                formname="account_details"
+            )
     
-    # after updating the data, we put you back to the account page
-    if request.vars:
-        redirect(URL('account'))
+    # set the user_id field to hidden
+    form.custom.widget.user_id['_type'] = 'hidden'
+    # shipping_form.custom.widget.first_name['_class'] = 'form-control string input-error'
+
+    # give the shipping form placeholders
+    form.custom.widget.first_name['_placeholder'] = "John"
+    form.custom.widget.last_name['_placeholder'] = "Doe"
+    form.custom.widget.street_1['_placeholder'] = "123 Main St."
+    form.custom.widget.street_2['_placeholder'] = "Apt. 1"
+    form.custom.widget.city['_placeholder'] = "Anywhere"
+    form.custom.widget.zip['_placeholder'] = "12345"
+    form.custom.widget.email['_placeholder'] = "email@web.com"
+    form.custom.widget.phone['_placeholder'] = "555-555-5555"
+
+    # needed to generate _formkey
+
+
+    if form.process().accepted:
+        r = form.vars
+        user_info.update_record(first_name=r.first_name, last_name=r.last_name, email=r.email)
+
+        # Update auth.user to match
+        auth.user.update(first_name=r.first_name, last_name=r.last_name, email=r.email)
+            
+        customer_info.update_record(
+                                street_1 = r.street_1, 
+                                street_2 = r.street_2, 
+                                city = r.city,
+                                state_code = r.state,
+                                zip = r.zip,                            
+                                phone = r.phone
+                                )
+        # print("requested end")
+
+        # after updating the data, we put you back to the account page
+        db.commit()
+        session.flash = "Account updated"
+
+        
+        redirect(URL('account')) 
+
+    
+    
 
     response.title=f'MISE - Account Details for {user_info.first_name}'
     return locals()
