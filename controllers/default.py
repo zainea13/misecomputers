@@ -808,7 +808,8 @@ def account_details():
         # look up customer details based on the auth user id
         customer_info = db(db.customers.user_id == auth.user.id).select().first()
         # get the state for the user
-        customer_state = db(db.states.id == customer_info.state_code).select().first().id
+        if customer_info and customer_info.state_code:
+            customer_state = db(db.states.id == customer_info.state_code).select().first().id
 
     if not customer_info:
         db.customers.insert(user_id=auth.user.id, street_1='')
@@ -836,7 +837,7 @@ def account_details():
                       requires=IS_NOT_EMPTY()),
                 Field('state', 'reference states', 
                       label="State", 
-                      default=(customer_state or 0), 
+                      default=(customer_state if customer_state else 0), 
                       requires=IS_IN_DB(db, 'states.id', '%(state_name)s', zero="Choose a state...", error_message='Pick a state')),
                 Field('zip', 
                       label="Zip Code",
