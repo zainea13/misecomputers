@@ -51,32 +51,28 @@
 	</div>
 </div>
 
-	<br />
+	
 
 	<!--Second Row-->
 	<div class="row">
 		<div class="top-brands w-100 p-4">
-			<div class="row ">
-				<div class="col">
-					<h3>Top Brands</h3>
+			<hr class="w-100 my-4" >
+			<h3 class="mb-4">Our Brands</h3>
+			<div class="row d-flex px-5 flex-gap-2">
+				{{
+					brands = db(db.brand).select()
+					for brand in brands:
+				}}
+				<a href="{{=URL('search')}}?keyword={{=brand.brand_name}}" class="brand-link d-flex align-items-center justify-content-center brand-icon" title="See all {{=brand.brand_name}} items.">
+				<div class=" d-flex align-items-center justify-content-center py-3">
+					<div class="brand-color">
+						<div class="brand-link d-flex align-items-center justify-content-center">
+							<img class="w-75 filter-logo" src="{{=brand.brand_logo}}" alt="{{=brand.brand_name}} logo" style="{{if brand.brand_name in ('Apple', 'HP', 'Dell'):}} width:50% !important; {{pass}}">
+						</div>
+					</div>
 				</div>
-				<div class="col">
-					<img class="w-50" src="/misecomputers/static/images/HomePage/applelogotrans.png" alt="Apple Logo">
-				</div>
-				<div class="col">
-					<img class="w-50" src="/misecomputers/static/images/HomePage/delllogotrans.png" alt="Dell Logo">
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col">
-				</div>
-				<div class="col">
-					<img style="float:right;" class="w-50" src="/misecomputers/static/images/HomePage/acerlogotrans.png" alt="Acer Logo">
-				</div>
-				<div class="col">
-					<img style="float:right;" class="w-10" src="/misecomputers/static/images/HomePage/hplogotrans.png" alt="HP Logo">
-				</div>
+				</a>
+				{{pass}}
 			</div>
 		</div>
 	</div>

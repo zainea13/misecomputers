@@ -688,7 +688,8 @@ def update_cart():
         cart_total=total,
         total_items=total_items,
         product_id=product_id,
-        quantity=quantity
+        quantity=quantity,
+        cart_counter=cart_counter
     ))
 
 

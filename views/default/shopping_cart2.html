@@ -145,61 +145,6 @@
 	removeItem.forEach(button => button.addEventListener("click", removeCartItem))
     
 
-	// TODO taken off for testing on 7/11
-
-    // jQuery('.update-cart').submit(function () {
-
-    //   const productId = this.querySelector('#product_id').value;
-    //   const productName = this.querySelector('#product_name').value;
-    //   const quantityInput = this.querySelector('.quantityAmt');
-    //   const quantityAmt = quantityInput.value;
-
-    //   const quantityBtn = document.querySelector(`.quantityBtn[data-product-id='${productId}']`);
-    //   const removeBtn = document.querySelector(`.remove-item[data-product-id='${productId}']`);
-    //   const userId = this.querySelector('#user_id').value;
-    //   const sessionId = this.querySelector('#session_id').value;
-    //   console.log('Submitting AJAX: ', { productId, quantityAmt, userId, sessionId });
-
-    //   // ✅ Use jQuery.post to send exact data
-    //   jQuery.post(
-    //     '{{=URL('update_cart')}}',
-    //     {
-    //       product_id: productId,
-    //       quantityAmt: quantityAmt,
-    //       user_id: userId,
-    //       session_id: sessionId
-    //     },
-    //     function (data) {
-    //       if (data.success) {
-    //         console.log('AJAX success:', data);
-
-    //         jQuery('#cart-subtotal').text('$' + data.subtotal.toFixed(2));
-    //         jQuery('#cart-tax').text('$' + data.tax_amt.toFixed(2));
-    //         jQuery('#cart-total').text('$' + data.cart_total.toFixed(2));
-    //         jQuery('#cart-total-items').text(data.total_items);
-
-    //         quantityBtn.classList.add("d-none");
-    //         removeBtn.classList.remove("d-none");
-              
-    //         if (quantityAmt == 0) {
-    //           jQuery(`#product-${productId}`).remove();
-    //         }
-    //         if (document.querySelectorAll('.remove-item').length === 0) {
-    //             jQuery('#empty-message').removeClass('d-none');
-    //         }
-               
-
-    //         // Update start value
-    //         //quantityInput.dataset.startValue = quantityAmt;
-    //       } else {
-    //         alert('Error updating cart');
-    //       }
-    //     },
-    //     'json'
-    //   );
-    //     return false;
-    // });
-
 
 
 	// ? ALTERNATE
@@ -223,7 +168,7 @@
 		}).done(function (data) {
 			if (data.success) {
 				console.log('AJAX success:', data);
-
+				$("#cart-counter").text(data.cart_counter);
 				jQuery('#cart-subtotal').text('$' + data.subtotal.toFixed(2));
 				// jQuery('#cart-tax').text('$' + data.tax_amt.toFixed(2));
 				// jQuery('#cart-total').text('$' + data.cart_total.toFixed(2));
