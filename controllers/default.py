@@ -106,13 +106,46 @@ def shopping_cart_subtotal():
 # ---- define pages ----
 
 def index():
-    response.title='MISE Computer Store'
+    response.title = 'MISE Computer Store'
     session.forced = True
     session_id = response.session_id
 
     categories = db(db.categories).select()
-    featured_products = db(db.products.featured == True).select(limitby=(0, 6))
 
+    featured_products_raw = db(db.products.featured == True).select(limitby=(0, 6))
+    featured_products = []
+
+    for product in featured_products_raw:
+        # Get product image
+        image = db((db.product_images.product_id == product.id) &
+                   (db.product_images.main_image == True)).select().first()
+
+        # Get filterable attributes for the category
+        is_filter = db((db.category_attribute.category_id == product.category_id) &
+                       (db.category_attribute.isFilter == True)).select()
+
+        # Get actual product attributes
+        attributes = db(db.product_attribute.product_id == product.id).select()
+
+        feature_list = []
+        for attr in attributes:
+            for f in is_filter:
+                if attr.attribute_id == f.attribute_id:
+                    desc = db(db.attribute_description.id == attr.attribute_id).select().first()
+                    if desc:
+                        feature_list.append(dict(name=desc.attribute_name, value=attr.attribute_value))
+
+        featured_products.append(dict(
+            product=product,
+            image=image,
+            features=feature_list
+        ))
+    
+    
+    
+    
+    
+    
     # More Items to Consider (Random products)
     more_items = db(
         (db.products.id == db.product_images.product_id) &
