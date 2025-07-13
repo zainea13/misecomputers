@@ -331,6 +331,8 @@ a.text-primary:active {
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Adjusting product items */
 
+
+
 .product {
     display: flex;
     flex-direction: column;

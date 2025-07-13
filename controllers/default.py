@@ -116,7 +116,8 @@ def index():
     # More Items to Consider (Random products)
     more_items = db(
         (db.products.id == db.product_images.product_id) &
-        (db.product_images.main_image == True)
+        (db.product_images.main_image == True) &
+        (db.products.stock_qty != 0)
     ).select(
         db.products.ALL,
         db.product_images.image_filename,
