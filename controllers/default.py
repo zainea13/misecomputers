@@ -910,7 +910,7 @@ def account_details():
                 Field('phone',
                       label="Phone",
                       default=(customer_info.phone if customer_info else ""),
-                      requires=IS_MATCH('^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$'),
+                      requires=IS_MATCH(r'^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$'),
                 ),
                 Field('user_id',
                       default=(auth.user.id if auth.user else response.session_id)),
