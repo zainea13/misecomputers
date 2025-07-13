@@ -321,7 +321,10 @@ a.text-primary:active {
 
 .brand-link {
     vertical-align: middle;
-    flex: 1 1 0;
+    flex: 1 1 125px;
+    width: 125px;
+    height: 125px;
+    max-width: 132px;
 }
 
 .filter-logo {
