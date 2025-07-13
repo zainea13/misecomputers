@@ -112,7 +112,7 @@ def index():
 
     categories = db(db.categories).select()
 
-    featured_products_raw = db(db.products.featured == True).select(limitby=(0, 6))
+    featured_products_raw = db((db.products.featured == True) & (db.products.stock_qty != 0)).select(limitby=(0, 6))
     featured_products = []
 
     for product in featured_products_raw:
@@ -139,12 +139,7 @@ def index():
             product=product,
             image=image,
             features=feature_list
-        ))
-    
-    
-    
-    
-    
+        )) 
     
     # More Items to Consider (Random products)
     more_items = db(

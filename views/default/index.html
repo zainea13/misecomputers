@@ -5,97 +5,203 @@
 
 <!-- First Row: Welcome Section -->
 <div class="row">
-  <div class="col-lg-6 order-1">
-    <h4>Welcome to M.I.S.E. Computer Store – Cleveland's Trusted Tech Partner!</h4>
-    <p>Founded in 2025 by graduates of Cleveland Codes Academy, M.I.S.E. Computer Store was created to bring affordable, genuine, and reliable computers to individuals, students, and businesses in our community.</p>
+	<div class="col-lg-6 order-1">
+		<h4>Welcome to M.I.S.E. Computer Store – Cleveland's Trusted Tech Partner!</h4>
+		<p>Founded in 2025 by graduates of Cleveland Codes Academy, M.I.S.E. Computer Store was created to bring
+			affordable, genuine, and reliable computers to individuals, students, and businesses in our community.</p>
 
-    <p>Our goal is simple — to challenge major retailers by offering you:</p>
-    <ul>
-      <li>Original products</li>
-      <li>Factory-backed warranties</li>
-      <li>Community-friendly prices</li>
-      <li>Honest, reliable service</li>
-    </ul>
+		<p>Our goal is simple — to challenge major retailers by offering you:</p>
+		<ul>
+			<li>Original products</li>
+			<li>Factory-backed warranties</li>
+			<li>Community-friendly prices</li>
+			<li>Honest, reliable service</li>
+		</ul>
 
-    <p>Shop smarter. Get quality. Save more.</p>
-    <p>Start shopping now!</p>
-  </div>
+		<p>Shop smarter. Get quality. Save more.</p>
+		<p>Start shopping now!</p>
+	</div>
 
-  <!-- Featured Products Section -->
-  <div class="col-lg-6 order-2">
-    <h2 class="mt-4">Featured Products</h2>
-    <div class="row">
-      {{for item in featured_products:}}
-        <div class="col-md-6"> <!-- Adjusted to fit 2 per row -->
-          <div class="card mb-4">
-            {{if item['image'] and item['image'].image_filename:}}
-              <img src="{{=URL('static', 'images/homepagefeaturedproductImages/' + item['image'].image_filename)}}" class="card-img-top">
-            {{else:}}
-              <img src="{{=URL('static', 'images/default.jpg')}}" class="card-img-top" alt="No Image">
-            {{pass}}
 
-            <div class="card-body">
-              <h5 class="card-title">{{=item['product'].product_name}}</h5>
-              <p class="card-text">${{=item['product'].price}}</p>
-              <ul class="list-unstyled">
-                {{for feature in item['features']:}}
-                  <li><strong>{{=feature['name']}}:</strong> {{=feature['value']}}</li>
-                {{pass}}
-              </ul>
-              <a href="{{=URL('default', 'product_details', args=[item['product'].id])}}" class="btn btn-primary">View Details</a>
-            </div>
-          </div>
-        </div>
-      {{pass}}
-    </div>
-  </div>
+	<!-- Featured Products Section -->
+	<div class="col-lg-6 order-2 ">
+		<h4>Featured Products</h4>
+		
+
+			<div id="carouselExampleIndicators" class="carousel slide d-flex align-items-center" data-ride="carousel">
+				<!-- INDICATORS AT THE BOTTOM -->
+				<ol class="carousel-indicators m-0">
+					{{for num, item in enumerate(featured_products):}}
+						<li data-target="#carouselExampleIndicators" data-slide-to="{{=num}}" class="bg-dark border-0"></li>
+					{{pass}}
+				</ol>
+
+				<!-- CAROUSEL WINDOW -->
+				<div class="carousel-inner px-3">
+					<!-- EACH CAROUSEL ITEM -->
+					{{for item in featured_products:}}
+					{{ 
+						cat = (db(db.categories.id == item['product'].category_id).select().first()).category_name.lower()
+						cat_name = cat.replace("&","").replace(" ","_")
+						brand = (db(db.brand.id == item['product'].brand_id).select().first()).brand_name.lower()
+						name = item['product'].product_name
+						name_link = name.replace(" ", "-")
+						product_id = item['product'].id
+					}}
+					<div class="carousel-item px-2">
+						<div class="row border border-peach rounded mx-0 py-3">
+							<!-- IMAGE FIRST COLUMN -->
+							<div class="col-md-5 d-flex justify-content-center px-0"><!-- d-flex align-items-center border-right -->
+								<a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}">
+									{{if item['image'] and item['image'].image_filename:}}
+									<img src="{{=URL('static', f'images/{cat_name}/{brand}/' + item['image'].image_filename)}}"
+										class="card-img border rounded-2" >
+									{{else:}}
+										<img src="{{=URL('static', 'images/default.jpg')}}" class="card-img border rounded-2" alt="No Image">
+									{{pass}}
+								</a>
+							</div>
+							<!-- PRODUCT INFO SECOND COLUMN -->
+							<div class="col-md-7 d-flex flex-column px-0">
+								<h5>
+									<a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}"
+										data-product-id="{{=item['product'].id}}">{{=item['product'].product_name}}</a>
+								</h5>
+								<p class="font-weight-bold block">
+									${{=item['product'].price}}</p>
+								<ul class="list-unstyled">
+									{{for feature in item['features']:}}
+									<li><strong>{{=feature['name']}}:</strong> {{=feature['value']}}</li>
+									{{pass}}
+								</ul>
+							</div>
+							<div class="w-100 d-flex justify-content-center mx-4 mt-auto">
+								<a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}" class="btn btn-mise-accent w-50">Learn More</a>
+							</div>
+						</div>
+					</div>
+					{{pass}}
+				</div>
+				<!-- ARROW CONTROLLERS -->
+				<button class="carousel-control-prev" type="button" data-target="#carouselExampleIndicators"
+					data-slide="prev">
+					<span class="carousel-control-prev-icon" aria-hidden="true" style="filter:invert(100%)"></span>
+					<span class="sr-only">Previous</span>
+				</button>
+				<button class="carousel-control-next" type="button" data-target="#carouselExampleIndicators"
+					data-slide="next">
+					<span class="carousel-control-next-icon" aria-hidden="true" style="filter:invert(100%)"></span>
+					<span class="sr-only">Next</span>
+				</button>
+			</div>
+
+		
+	</div>
 </div>
-
 <!-- Second Row: Our Brands -->
-<div class="row mt-5">
-  <div class="top-brands w-100 p-4">
-    <hr class="w-100 my-4">
-    <h3 class="mb-4">Our Brands</h3>
-    <div class="row d-flex px-5 flex-gap-2">
-      {{
-        brands = db(db.brand).select()
-        for brand in brands:
-      }}
-      <a href="{{=URL('search')}}?keyword={{=brand.brand_name}}" class="brand-link d-flex align-items-center justify-content-center brand-icon" title="See all {{=brand.brand_name}} items.">
-        <div class="d-flex align-items-center justify-content-center py-3">
-          <div class="brand-color">
-            <div class="brand-link d-flex align-items-center justify-content-center">
-              <img class="w-75 filter-logo" src="{{=brand.brand_logo}}" alt="{{=brand.brand_name}} logo" style="{{if brand.brand_name in ('Apple', 'HP', 'Dell'):}} width:50% !important; {{pass}}">
-            </div>
-          </div>
-        </div>
-      </a>
-      {{pass}}
-    </div>
-  </div>
+<div class="row mt-4 pb-5 border-top border-bottom">
+	<div class="top-brands w-100">
+		<h3 class="my-4">Our Brands</h3>
+		<div class="row d-flex px-5 flex-gap-2 justify-content-center">
+			{{
+			brands = db(db.brand).select()
+			for brand in brands:
+			}}
+			<a href="{{=URL('search')}}?keyword={{=brand.brand_name}}"
+				class="brand-link d-flex align-items-center justify-content-center brand-icon"
+				title="See all {{=brand.brand_name}} items.">
+				<div class="d-flex align-items-center justify-content-center py-3">
+					<div class="brand-color">
+						<div class="brand-link d-flex align-items-center justify-content-center">
+							<img class="w-75 filter-logo" src="{{=brand.brand_logo}}" alt="{{=brand.brand_name}} logo"
+								style="{{if brand.brand_name in ('Apple', 'HP', 'Dell'):}} width:50% !important; {{pass}}">
+						</div>
+					</div>
+				</div>
+			</a>
+			{{pass}}
+		</div>
+	</div>
 </div>
 
-<!-- More Items to Consider -->
-<div class="row mt-5">
-  <div class="col-12">
-    <h3>More Items to Consider</h3>
-    <div class="row">
-      {{for item in more_items:}}
-        {{
-          img_src = item.product_images.image_filename
-          cat_name = db(db.categories.id == item.products.category_id).select().first().category_name.lower().replace("&", "").replace(" ", "_")
-          brand = db(db.brand.id == item.products.brand_id).select().first().brand_name.lower()
-        }}
-        <div class="col-md-4 mb-4">
-          <div class="card">
-            <img class="card-img-top" src="{{=URL(f'static/images/{cat_name}/{brand}', img_src)}}" alt="{{=item.product_images.image_alt}}" style="height: 200px; object-fit: contain;">
-            <div class="card-body">
-              <h5 class="card-title">{{=item.products.product_name}}</h5>
-              <p class="card-text">${{=item.products.price}}</p>
-            </div>
-          </div>
-        </div>
-      {{pass}}
-    </div>
-  </div>
+
+<!-- More Items to Consider Section -->
+<div class="row mt-4">
+	<h3 class="my-4">More Items to Consider</h3>
 </div>
+<div class="row product-row flex-gap-2">
+	{{ 	for item in more_items:
+			img_src = item.product_images.image_filename
+			img_alt = item.product_images.image_alt
+			cat_name = (db(db.categories.id == item.products.category_id).select().first()).category_name.lower()
+			cat_name = cat_name.replace("&","").replace(" ","_")
+			brand = (db(db.brand.id == item.products.brand_id).select().first()).brand_name.lower()
+			product_id = item.products.id
+			price = item.products.price
+			name = item.products.product_name
+			name_link = name.replace(" ", "-")
+			stock_qty = item.products.stock_qty
+	}}
+		<div class="col product justify-content-between border-secondary">
+			<a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}" data-product-id={{=product_id}} class="position-relative">
+				{{if not stock_qty:}}
+					<div class="out-of-stock over-image">OUT OF STOCK</div>
+				{{pass}}
+				{{=IMG(_src=URL(f'static/images/{cat_name}/{brand}/', img_src), _onerror="this.onerror=null;this.src='%s';" % URL('static', 'images/default-img.png'), _alt=img_alt)}}
+			</a>
+			<h4 class="mt-3">
+				<a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}" data-product-id={{=product_id}}>{{=name}}</a>
+			</h4>
+		
+			<div class="price-info mt-3">
+				{{if not stock_qty:}}
+					<p class="block"><s>${{=f"{price:,.2f}"}}</s></p>
+				{{else:}}
+					<p class="block">${{=f"{price:,.2f}"}}</p>
+				{{pass}}
+				<a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}" data-product-id={{=product_id}}>
+					<button class="btn btn-mise-accent font-weight-bold">Learn More</button>
+				</a>
+			</div>
+		</div>
+
+		
+	{{ pass }}
+</div>
+
+
+<script>
+	"use strict"
+	document.addEventListener('DOMContentLoaded', function () {
+		const carouselItems = document.querySelectorAll('.carousel-item');
+		carouselItems[0].classList.add('active');
+
+		document.querySelector('.carousel-indicators').firstElementChild.classList.add('active');
+
+		let maxHeight = 0;
+
+		carouselItems.forEach(item => {
+			const originalDisplay = item.style.display;
+
+			item.style.visibility = 'hidden';
+			item.style.position = 'absolute';
+			item.style.display = 'block';
+
+			const itemHeight = item.offsetHeight
+
+			if (itemHeight > maxHeight) {
+				maxHeight = itemHeight;
+			}
+			console.log(maxHeight)
+
+			item.style.visibility = '';
+			item.style.position = '';
+			item.style.display = originalDisplay;
+		});
+
+		carouselItems.forEach(item => {
+			item.firstElementChild.style.minHeight = maxHeight + 'px';
+		});
+
+	});
+</script>

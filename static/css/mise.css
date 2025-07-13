@@ -131,6 +131,10 @@ a {
     border-color: var(--primary) !important;
 }
 
+.border-secondary {
+    border-color: var(--secondary) !important;
+}
+
 .border-accent {
     border-color: var(--accent) !important;
 }
@@ -321,15 +325,43 @@ a.text-primary:active {
 
 .brand-link {
     vertical-align: middle;
-    flex: 1 1 125px;
-    width: 125px;
-    height: 125px;
-    max-width: 132px;
+    flex: 1 1 120px;
+    width: 115px;
+    height: 115px;
+    max-width: 125px;
 }
 
 .filter-logo {
     filter: saturate(0%) brightness(0%) grayscale(100%);  
 }
+
+.carousel-item img {
+    width: auto;
+    max-height:175px;
+}
+
+.carousel-indicators {
+    bottom: -1rem;
+}
+
+button[class^="carousel-control-"] {
+  /* Your CSS styles here */
+  width: auto;
+  border-radius: 0;
+} 
+
+.carousel-control-prev {
+    background-image: linear-gradient(to right, rgba(255,255,255,1) , rgba(255,255,255,0));
+}
+
+.carousel-control-next {
+    background-image: linear-gradient(to left, rgba(255,255,255,1) , rgba(255,255,255,0));
+}
+
+button[class^="carousel-control-"]:focus {
+  /* Your CSS styles here */
+  box-shadow: none;
+} 
 
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Adjusting product items */
@@ -391,6 +423,54 @@ a.text-primary:active {
     &:hover {
         background-color: transparent;
         color: var(--accent) !important;
+    }
+}
+
+.btn-mise-primary {
+    line-height: 1;
+    border: 2px solid var(--primary);
+    cursor: pointer;
+    background-color: var(--primary);
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+    padding: .75rem 1.25rem;
+
+    &:hover {
+        background-color: transparent;
+        color: var(--primary) !important;
+    }
+}
+
+.btn-mise-secondary {
+    line-height: 1;
+    border: 2px solid var(--secondary);
+    cursor: pointer;
+    background-color: var(--secondary);
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+    padding: .75rem 1.25rem;
+
+    &:hover {
+        background-color: transparent;
+        color: var(--secondary) !important;
+    }
+}
+
+.btn-mise-peach {
+    line-height: 1;
+    border: 2px solid var(--peach);
+    cursor: pointer;
+    background-color: var(--peach);
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+    padding: .75rem 1.25rem;
+
+    &:hover {
+        background-color: transparent;
+        color: var(--peach) !important;
     }
 }
 
