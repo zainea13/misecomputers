@@ -76,4 +76,34 @@
 			</div>
 		</div>
 	</div>
+
+
+
+<!-- More Items to Consider Section -->
+<div class="row mt-5">
+  <div class="col-12">
+    <h3>More Items to Consider</h3>
+    <div class="row">
+      {{ for item in more_items: 
+			print(item)
+			img_src = item.product_images.image_filename
+			cat_name = (db(db.categories.id == item.products.category_id).select().first()).category_name.lower()
+			print(cat_name)
+			cat_name = cat_name.replace("&","").replace(" ","_")
+			brand = (db(db.brand.id == item.products.brand_id).select().first()).brand_name.lower()
+		}}
+        <div class="col-md-4 mb-4">
+          <div class="card">
+            <img class="card-img-top" src="{{=URL(f'static/images/{cat_name}/{brand}', img_src)}}" alt="{{=item.product_images.image_alt}}" style="height: 200px; object-fit: contain;">
+
+            <div class="card-body">
+              <h5 class="card-title">{{=item.products.product_name}}</h5>
+              <p class="card-text">${{=item.products.price}}</p>
+              <!-- Optional: Add more product details here -->
+            </div>
+          </div>
+        </div>
+      {{ pass }}
+    </div>
+  </div>
 </div>
