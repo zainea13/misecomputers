@@ -229,7 +229,7 @@ def search():
             distinct=True
         )
 
-        # Filter for the keyword in any relevant field,
+        # Filter for the keyword in any relevant field
         for row in all_results:
             product = row.products
             category = row.categories
@@ -322,30 +322,57 @@ def item_page():
     item = request.args(0).split("--") # value: 2--Test-Laptop-Product-2
     product_id = item[0] # 2 
     product = db.products[product_id] # returns rows for that product id
-    cat = (db(db.categories.id == product.category_id).select().first().category_name).lower()
-    cat = cat.replace("&","").replace(" ","_")
+    
+    cat = db(db.categories.id == product.category_id).select().first()
+    #cat = (db(db.categories.id == product.category_id).select().first().category_name).lower()
+    #cat = cat.replace("&","").replace(" ","_")
+    if not cat:
+        redirect(URL('default', 'index'))  # Or show error page
+        
     brand = (db(db.brand.id == product.brand_id).select().first()).brand_name.lower()
+    
     images = db(db.product_images.product_id == product_id).select() # grabs images that match product id
 
-    stock_qty = product.stock_qty
+    stock_qty = product.stock_qty  
     
     # test = session.my_test
     session_id = response.session_id
     response.title=f'MISE - {product['product_name']}'
-    return locals()
+    
 
+    #Additional code for Breadcrumbs
+    cat_name = cat.category_name.title()
+    cat_slug = cat.category_name.lower().replace("&", "").replace(" ", "_")
+
+    breadcrumbs = [
+        {'name': 'Home', 'url': URL('default', 'index')},
+        {'name': cat_name, 'url': URL('default', 'category_page', args=[str(cat.id) + '--' + cat_slug])},
+        {'name': 'Product Details', 'url': ''} # Current page: no URL
+        #{'name': product.product_name, 'url': ''}  # Current page: no URL
+    ]
+
+    return locals()
 
 def category_page():
     link_arg = request.args(0).split("--")
     cat_id = link_arg[0]
     cat_id_fix = link_arg[0]
-    cat_name_fix = ""
+    #cat_name_fix = ""
+    category = db(db.categories.id == int(cat_id)).select().first()
+    cat_name_fix = category.category_name.title() if category else "Unknown Category"
 
     for row in db(db.categories).select():
         if row['id'] == int(cat_id):
             cat_name_fix = row['category_name'].title() 
-        else:
-            pass
+        #else:
+        #    pass
+        break
+    
+     # Breadcrumbs setup
+    breadcrumbs = [
+        {'name': 'Home', 'url': URL('default', 'index')},
+        {'name': cat_name_fix, 'url': ''}  # Current page, no URL
+    ]
     
     options = get_filter_dict(cat_id) # filter options based on category and products
     filter_dict = get_selected_filters(options) # filters selected by user

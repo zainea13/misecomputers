@@ -68,6 +68,24 @@
 </style>
 {{end head}}
 
+
+<!-- BREADCRUMBS -->
+{{if 'breadcrumbs' in locals():}}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+    {{for crumb in breadcrumbs[:-1]:}}
+      <li class="breadcrumb-item">
+        <a href="{{=crumb['url']}}">{{=crumb['name']}}</a>
+      </li>
+    {{pass}}
+    <li class="breadcrumb-item active" aria-current="page">{{=breadcrumbs[-1]['name']}}</li>
+  </ol>
+</nav>
+{{pass}}
+
+
+
+
 <div class="row mb-5">
 	<!-- Left column with images -->
 	<div class="col-md-6">
@@ -86,7 +104,7 @@
 				img_src = image['image_filename']
 				img_alt = image['image_alt']
 				}}
-				<div class="swiper-item"><img src={{=URL(f'static/images/{cat}/{brand}', img_src)}}
+				<div class="swiper-item"><img src={{=URL(f'static/images/{cat_slug}/{brand}', img_src)}}
 						onerror="this.onerror=null;this.src='{{=URL('static', 'images/default-img.png')}}';"
 						alt={{=img_alt}}>
 				</div>
@@ -99,7 +117,7 @@
 			img_src = image['image_filename']
 			img_alt = image['image_alt']
 			}}
-			<div class="thumbnail" data-count={{=count}}><img src={{=URL(f'static/images/{cat}/{brand}', img_src)}}
+			<div class="thumbnail" data-count={{=count}}><img src={{=URL(f'static/images/{cat_slug}/{brand}', img_src)}}
 					onerror="this.onerror=null;this.src='{{=URL('static', 'images/default-img.png')}}';"
 					alt={{=img_alt}}></div>
 			{{pass}}

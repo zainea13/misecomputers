@@ -1,5 +1,18 @@
 {{extend 'layout.html'}}
 
+
+{{if 'breadcrumbs' in locals():}}
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb">
+        {{for crumb in breadcrumbs[:-1]:}}
+            <li class="breadcrumb-item"><a href="{{=crumb['url']}}">{{=crumb['name']}}</a></li>
+        {{pass}}
+        <li class="breadcrumb-item active" aria-current="page">{{=breadcrumbs[-1]['name']}}</li>
+      </ol>
+    </nav>
+{{pass}}
+
+
 <!--FILTER CODE BEGINS-->
 <section id='filter_sort' class='d-flex flex-wrap row'>
     <form id="filter_form" class="d-flex w-100 h-100 flex-wrap" method=GET>
