@@ -1515,11 +1515,11 @@ def order_confirmation_email():
     # # Send confirmation email
     # ----------------------------------
 
-    mise_host_url = "http://127.0.0.1:8000/misecomputers/default/"
-    img_host_url = "https://www.ianzainea.com/mise/images/"
+    mise_host_url = "https://misecomputers.pythonanywhere.com/misecomputers"
+    img_host_url = f"{mise_host_url}/static/images"
 
     # Begin building the email message
-    email_message = f'<html lang="en"><head></head><body style="box-sizing: border-box;"><div style="width:800px; margin:0 auto; border-radius: 6px; overflow: clip;"><div style="padding:16px; background-color: hsl(203, 81%, 83%); text-align: center;"><a href="http://127.0.0.1:8000/misecomputers/default/index" target="_blank"><img src="https://www.ianzainea.com/mise/images/miselogolong2.png" alt="MISE logo" style="width:250px;"></a></div><div style="background-color: hsl(0, 0%, 98%); padding:16px;"><h1>Thank you for your order with MISE Computers</h1>'
+    email_message = f'<html lang="en"><head></head><body style="box-sizing: border-box;"><div style="width:800px; margin:0 auto; border-radius: 6px; overflow: clip;"><div style="padding:16px; background-color: hsl(203, 81%, 83%); text-align: center;"><a href="{mise_host_url}" target="_blank"><img src="{img_host_url}/miselogolong2.png" alt="MISE logo" style="width:250px;"></a></div><div style="background-color: hsl(0, 0%, 98%); padding:16px;"><h1>Thank you for your order with MISE Computers</h1>'
                                     
     # Put in order number
     email_message += f'<p>Your order number is <strong>#{session.ty["order_number"]}</strong></p>'
@@ -1551,7 +1551,7 @@ def order_confirmation_email():
         brand = (db(db.brand.id == product.brand_id).select().first()).brand_name.lower()
         qty = item.quantity_of_item
 
-        email_message += f'<table style="background-color: hsl(0, 0%, 100%); width:100%; border:1px solid hsl(39, 100%, 50%); border-radius: 4px; overflow: clip; background-clip:border-box; margin:25px 0px;"><tr><td rowspan="3" style="width:30%;"><img src="https://www.ianzainea.com/mise/images/{cat}/{brand}/{image}" alt="image of {product.product_name}" style="width:100%; display: block; border-radius: 0 4px 4px;"></td><td colspan="2" style="padding:16px; vertical-align: bottom;"><h3 style="margin:0;padding:0;">{product.product_name}</h3></td></tr><tr><td style="padding:0 16px; vertical-align: top;"> Price: {product.price} </td><td style="padding: 0 16px; vertical-align: top;"> Qty: <strong>{qty}</strong></td></tr><tr><td colspan="2"><p>&nbsp;</p></td></tr></table>'
+        email_message += f'<table style="background-color: hsl(0, 0%, 100%); width:100%; border:1px solid hsl(39, 100%, 50%); border-radius: 4px; overflow: clip; background-clip:border-box; margin:25px 0px;"><tr><td rowspan="3" style="width:30%;"><img src="{img_host_url}/{cat}/{brand}/{image}" alt="image of {product.product_name}" style="width:100%; display: block; border-radius: 0 4px 4px;"></td><td colspan="2" style="padding:16px; vertical-align: bottom;"><h3 style="margin:0;padding:0;">{product.product_name}</h3></td></tr><tr><td style="padding:0 16px; vertical-align: top;"> Price: {product.price} </td><td style="padding: 0 16px; vertical-align: top;"> Qty: <strong>{qty}</strong></td></tr><tr><td colspan="2"><p>&nbsp;</p></td></tr></table>'
 
     # Add end of html
     email_message += f'<p style="margin-top:30px;text-align:center; width:100%;">Thanks again for shopping with us! See you again soon!</p></div><p style="margin-top:30px;text-align:center;">MISE Computers &copy;{datetime.now().year}</p></div></body></html>'
