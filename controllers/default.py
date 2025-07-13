@@ -884,7 +884,7 @@ def account_details():
                 ),
                 Field('user_id',
                       default=(auth.user.id if auth.user else response.session_id)),
-                _class='order-forms w-100 px-3',
+                _class='order-forms w-100 px-0 px-md-3',
                 _name='account_details',
                 _id='account_details',
                 formname="account_details"
@@ -1017,7 +1017,7 @@ def build_shipping_form():
                       requires=IS_EMAIL()),
                 Field('user_id',
                       default=(auth.user.id if auth.user else response.session_id)),
-                _class='order-forms w-100 px-3',
+                _class='order-forms w-100 px-0 px-md-3',
                 _name='shipping-info',
                 _id='shipping-info',
                 formname="shipping"
@@ -1071,7 +1071,7 @@ def build_billing_form():
                 Field('zip', 
                       label="Zip Code", 
                       requires=IS_NOT_EMPTY()),
-                _class=f'order-forms w-100 px-3 {collapse}',
+                _class=f'order-forms w-100 px-0 px-md-3 {collapse}',
                 _name='billing-info',
                 _id='billing-info',
                 formname="billing"
