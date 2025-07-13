@@ -729,6 +729,12 @@ button[class^="carousel-control-"]:focus {
     }
 }
 
+@media (max-width: 1200px) {
+    .extra {
+        margin-top:3rem !important;
+    }
+}
+
 /* LG SIZE */
 @media (min-width: 992px) {
     .w-lg-75 {
@@ -764,9 +770,6 @@ button[class^="carousel-control-"]:focus {
         border-radius: 100vw !important;
     }
 
-    .extra {
-        margin-top:3rem !important;
-    }
 }
 
 @media (max-width:576px) {
