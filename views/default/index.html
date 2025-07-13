@@ -55,7 +55,7 @@
 								<a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}">
 									{{if item['image'] and item['image'].image_filename:}}
 									<img src="{{=URL('static', f'images/{cat_name}/{brand}/' + item['image'].image_filename)}}"
-										class="card-img border rounded-2" >
+										class="card-img border rounded-2 {{if str(product_id) in ['202','']:}}p-3{{pass}}" alt="{{=item['image'].image_alt}}">
 									{{else:}}
 										<img src="{{=URL('static', 'images/default.jpg')}}" class="card-img border rounded-2" alt="No Image">
 									{{pass}}

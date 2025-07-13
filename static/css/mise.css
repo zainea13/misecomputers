@@ -342,6 +342,7 @@ a.text-primary:active {
 .carousel-item img {
     width: auto;
     max-height:175px;
+    margin-bottom:1rem;
 }
 
 .carousel-indicators {
