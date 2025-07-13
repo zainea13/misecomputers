@@ -49,9 +49,9 @@
 						product_id = item['product'].id
 					}}
 					<div class="carousel-item px-2">
-						<div class="row border border-peach rounded mx-0 py-3">
+						<div class="row border border-peach rounded mx-0 p-mise">
 							<!-- IMAGE FIRST COLUMN -->
-							<div class="col-md-5 d-flex justify-content-center px-0"><!-- d-flex align-items-center border-right -->
+							<div class="col-xl-5 d-flex justify-content-center px-0"><!-- d-flex align-items-center border-right -->
 								<a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}">
 									{{if item['image'] and item['image'].image_filename:}}
 									<img src="{{=URL('static', f'images/{cat_name}/{brand}/' + item['image'].image_filename)}}"
@@ -62,7 +62,7 @@
 								</a>
 							</div>
 							<!-- PRODUCT INFO SECOND COLUMN -->
-							<div class="col-md-7 d-flex flex-column px-0">
+							<div class="col-xl-7 d-flex flex-column px-0">
 								<h5>
 									<a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}"
 										data-product-id="{{=item['product'].id}}">{{=item['product'].product_name}}</a>
@@ -76,7 +76,7 @@
 								</ul>
 							</div>
 							<div class="w-100 d-flex justify-content-center mx-4 mt-auto">
-								<a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}" class="btn btn-mise-accent w-50">Learn More</a>
+								<a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}" class="btn btn-mise-accent w-md-50">Learn More</a>
 							</div>
 						</div>
 					</div>
@@ -99,7 +99,7 @@
 	</div>
 </div>
 <!-- Second Row: Our Brands -->
-<div class="row mt-4 pb-5 border-top border-bottom">
+<div class="row mt-4 pb-5 border-top border-bottom extra">
 	<div class="top-brands w-100">
 		<h3 class="my-4">Our Brands</h3>
 		<div class="row d-flex px-5 flex-gap-2 justify-content-center">

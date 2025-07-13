@@ -251,6 +251,10 @@ a.text-primary:active {
     width: min-content;
 }
 
+.p-mise {
+    padding:1rem;
+}
+
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* Nav Bar classes */
 #cart-counter {
@@ -718,6 +722,13 @@ button[class^="carousel-control-"]:focus {
   100% { opacity: 1; }
 }
 
+/* XL SIZE */
+@media (min-width: 1200px) {
+    .p-mise {
+        padding:1rem 0;
+    }
+}
+
 /* LG SIZE */
 @media (min-width: 992px) {
     .w-lg-75 {
@@ -739,6 +750,9 @@ button[class^="carousel-control-"]:focus {
     .mise-logo {
         width: min(18%, 160px);
     }
+    .w-md-50 {
+        max-width: 50%;
+    }
 }
 
 @media (max-width: 768px) {
@@ -748,6 +762,10 @@ button[class^="carousel-control-"]:focus {
 
     .pill-bmd {
         border-radius: 100vw !important;
+    }
+
+    .extra {
+        margin-top:3rem !important;
     }
 }
 
