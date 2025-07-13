@@ -16,6 +16,10 @@ import stripe
 import random
 import math
 
+#---search page ---
+from gluon.sqlhtml import SQLFORM
+from gluon import DAL, Field
+
 from private.private import *
 
 stripe.api_key = stripe_api_keys['sk']
@@ -203,33 +207,54 @@ def contact():
     return locals()
 
 def search():
-    results = None
+    results = []
     keyword = request.vars.keyword
-    print(keyword)
+    print("Keyword:", keyword)
 
     if keyword:
-        # Join products and categories tables
-        results = db(
-            (db.products.category_id == db.categories.id) & 
+        # Match by individual fields
+        base_query = (
+            (db.products.category_id == db.categories.id) &
             (db.products.brand_id == db.brand.id) &
             (db.products.id == db.product_attribute.product_id) &
-            (db.product_attribute.attribute_id == db.attribute_description.id)&
-            (
-                db.products.product_name.contains(keyword) |
-                db.categories.category_name.contains(keyword) |
-                db.brand.brand_name.contains(keyword)|
-                db.attribute_description.attribute_name.contains(keyword) |
-                db.product_attribute.attribute_value.contains(keyword)
-            )
-        ).select(db.products.ALL, db.categories.ALL, db.brand.ALL,db.product_attribute.ALL, db.attribute_description.attribute_name, db.product_attribute.attribute_value)
+            (db.product_attribute.attribute_id == db.attribute_description.id)
+        )
+
+        all_results = db(base_query).select(
+            db.products.ALL,
+            db.categories.ALL,
+            db.brand.ALL,
+            db.product_attribute.ALL,
+            db.attribute_description.ALL,
+            distinct=True
+        )
+
+        # Filter for the keyword in any relevant field,
+        for row in all_results:
+            product = row.products
+            category = row.categories
+            brand = row.brand
+            attribute_name = row.attribute_description.attribute_name or ""
+            attribute_value = row.product_attribute.attribute_value or ""
+            combined_attr = f"{attribute_name} {attribute_value}"
+            
+            if (
+                keyword.lower() in (product.product_name or "").lower()
+                or keyword.lower() in (category.category_name or "").lower()
+                or keyword.lower() in (brand.brand_name or "").lower()
+                or keyword.lower() in attribute_name.lower()
+                or keyword.lower() in attribute_value.lower()
+                or keyword.lower() in combined_attr.lower()
+            ):
+                results.append(row)
 
     response.title = f'MISE - Search results for "{keyword}"'
 
-    # Print all fields to see what's available
-    print("Products fields:", [field for field in db.products])
-    print("Categories fields:", [field for field in db.categories])
-    print("Brand fields:", [field for field in db.brand])
- 
+    # Debug output
+    print("Products fields:", [field.name for field in db.products])
+    print("Categories fields:", [field.name for field in db.categories])
+    print("Brand fields:", [field.name for field in db.brand])
+    
     return dict(locals(), results=results)
 
 

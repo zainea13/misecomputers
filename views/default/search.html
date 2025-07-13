@@ -6,82 +6,83 @@
     <h3 class="text-accent mb-4">Search Results</h3>
 {{pass}}
 
-
-
 <div class="row product-row flex-gap-2">
 {{ 
 seen_products = set() 
 }}
 
 {{if results:}}
-    {{for row in results:
-        product = row.products
-        product_id = product.id
+    {{for row in results:}}
+        {{product = row.products}}
+        {{product_id = product.id}}
 
-        if product_id in seen_products:
-            continue
-        seen_products.add(product_id)
+        {{if product_id in seen_products: continue}}
+        {{seen_products.add(product_id)}}
 
-        category = row.categories
-        brand = row.brand
-        attribute = row.product_attribute
-        attribute_name = row.attribute_description.attribute_name
-        attribute_value = row.product_attribute.attribute_value 
+        {{category = row.categories}}
+        {{brand = row.brand}}
+        {{attribute_name = row.attribute_description.attribute_name}}
+        {{attribute_value = row.product_attribute.attribute_value}}
 
-        name = product.product_name
-        name_link = name.replace(" ", "-")
-        price = product.price
-        cat_id_fix = product.category_id
+        {{name = product.product_name}}
+        {{name_link = name.replace(" ", "-")}}
+        {{price = product.price}}
+        {{cat_id_fix = product.category_id}}
 
-        main_image = db((db.product_images.product_id == product.id) & 
-                        (db.product_images.main_image == True)).select().first()
-        img_src = main_image['image_filename'] if main_image else 'default-img.png'
-        img_alt = main_image['image_alt'] if main_image else 'No image available'
+        {{main_image = db((db.product_images.product_id == product.id) & 
+                          (db.product_images.main_image == True)).select().first()}}
+        {{img_src = main_image.image_filename if main_image else 'default-img.png'}}
+        {{img_alt = main_image.image_alt if main_image else 'No image available'}}
 
-        cat_name = category.category_name.lower().replace("&","").replace(" ","_")
-        brand_row = db(db.brand.id == product.brand_id).select().first()
-        brand = brand_row.brand_name.lower() if brand_row else 'unknown'
-        stock_qty = product.stock_qty
-    }}
-    
-    <div class="col product">
-        <a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}" data-product-id={{=product_id}} class="position-relative">
-            {{if not stock_qty:}}
-                <div class="out-of-stock over-image">OUT OF STOCK</div>
-            {{pass}}
-            {{=IMG(_src=URL(f'static/images/{cat_name}/{brand}/', img_src), _onerror="this.onerror=null;this.src='%s';" % URL('static', 'images/default-img.png'), _alt=img_alt)}}
-        </a>
-        <h4 class="mt-3">
-            <a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}" data-product-id={{=product_id}}>
-                {{=name}}
+        {{cat_name = category.category_name.lower().replace("&", "").replace(" ", "_")}}
+        {{brand_name = brand.brand_name.lower() if brand else 'unknown'}}
+        {{stock_qty = product.stock_qty}}
+
+        <div class="col product">
+            <a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}" data-product-id="{{=product_id}}" class="position-relative">
+                {{if not stock_qty:}}
+                    <div class="out-of-stock over-image">OUT OF STOCK</div>
+                {{pass}}
+                {{=IMG(_src=URL(f'static/images/{cat_name}/{brand_name}/', img_src), 
+                        _onerror="this.onerror=null;this.src='%s';" % URL('static', 'images/default-img.png'), 
+                        _alt=img_alt)}}
             </a>
-        </h4>
 
-        <ul>
-        {{
-            features = db(db.product_attribute.product_id == product_id).select()
-            is_filter = db((db.category_attribute.category_id == cat_id_fix) & (db.category_attribute.isFilter == True)).select()
-            for i in features:
-                for k in is_filter:
-                    if i.attribute_id == k.attribute_id:
-                        desc = db(db.attribute_description.id == i.attribute_id).select().first()
-                        if desc:
-        }}
+            <h4 class="mt-3">
+                <a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}" data-product-id="{{=product_id}}">
+                    {{=name}}
+                </a>
+            </h4>
+
+            <!-- Display concatenated attribute name and value from matched row -->
+            <div>{{=attribute_name}}: {{=attribute_value}}</div>
+
+            <!-- Filtered product attributes display -->
+            <ul>
+            {{
+                features = db(db.product_attribute.product_id == product_id).select()
+                is_filter = db((db.category_attribute.category_id == cat_id_fix) & (db.category_attribute.isFilter == True)).select()
+                for i in features:
+                    for k in is_filter:
+                        if i.attribute_id == k.attribute_id:
+                            desc = db(db.attribute_description.id == i.attribute_id).select().first()
+                            if desc:
+            }}
                             <li>{{=desc.attribute_name}}: {{=i.attribute_value}}</li>
-        {{              pass
+            {{              pass
+                        pass
                     pass
-				pass
-			pass
-        }}    
-        </ul>
+                pass
+            }}    
+            </ul>
 
-        <div class="price-info">
-            <p class="block">${{=f"{price:,.2f}"}}</p>
-            <a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}" data-product-id={{=product_id}}>
-                <button class="btn btn-mise-accent">Learn More</button>
-            </a>
-        </div>   
-    </div>
+            <div class="price-info">
+                <p class="block">${{=f"{price:,.2f}"}}</p>
+                <a href="{{=URL('item_page', args=(str(product_id) + '--' + name_link))}}" data-product-id="{{=product_id}}">
+                    <button class="btn btn-mise-accent">Learn More</button>
+                </a>
+            </div>   
+        </div>
     {{pass}}
 {{else:}}
     <div class="col">
@@ -89,48 +90,46 @@ seen_products = set()
     </div>
 {{pass}}
 
-<!-- add extra div boxes to fill up empty space to create a nice grid -->
-        {{row_count = 3
-        if results:
-            if (len(results) % row_count):
-                extras =  row_count - (len(results) % row_count)
-        }}
-                {{for i in range(extras):}}
-                <div class="product empty"></div>
-                {{pass}}
-            {{pass}}
-        {{pass}}
-
-    </div>
-
-
-
-
+<!-- Extra empty divs to fill grid -->
+{{row_count = 3}}
+{{if results and len(results) % row_count:}}
+    {{extras = row_count - (len(results) % row_count)}}
+    {{for i in range(extras):}}
+        <div class="product empty"></div>
+    {{pass}}
+{{pass}}
+</div>
 
 {{block page_js}}
-    <script>
-    "use strict"
+<script>
+"use strict"
 
-    const filter_form = document.getElementById("filter_form");
-    const sortRadios = document.querySelectorAll('input[name="ORDER"]');
+const filter_form = document.getElementById("filter_form");
+const sortRadios = document.querySelectorAll('input[name="ORDER"]');
 
-    window.onload = function() {
-        document.getElementById("apply-btn").onclick = applyFilters;
-        document.getElementById("clear-btn").onclick = clearFilters;
+window.onload = function () {
+    document.getElementById("apply-btn").onclick = applyFilters;
+    document.getElementById("clear-btn").onclick = clearFilters;
 
-        sortRadios.forEach(radio => {
-          radio.addEventListener('change', () => {
-          const ORDER = filter_form.querySelector('input[name="ORDER"]:checked');
-          filter_form.submit();});
-        });}
+    sortRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+            const ORDER = filter_form.querySelector('input[name="ORDER"]:checked');
+            filter_form.submit();
+        });
+    });
+}
 
+function applyFilters() {
+    filter_form.submit();
+}
 
-    function applyFilters() {
-        filter_form.submit();}
-
-    function clearFilters() {
-        filter_form.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
-        filter_form.querySelectorAll('input[type="radio"]').forEach(el => {if (el.name !== 'ORDER') {el.checked = false;}});}
-    </script>
+function clearFilters() {
+    filter_form.querySelectorAll('input[type="checkbox"]').forEach(el => el.checked = false);
+    filter_form.querySelectorAll('input[type="radio"]').forEach(el => {
+        if (el.name !== 'ORDER') {
+            el.checked = false;
+        }
+    });
+}
+</script>
 {{end page_js}}
-
