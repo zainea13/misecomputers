@@ -108,9 +108,29 @@ def shopping_cart_subtotal():
 def index():
     response.title='MISE Computer Store'
     session.forced = True
-    categories = db(db.categories).select()
+    session_id = response.session_id
 
-    return dict(message=T('Welcome to web2py!'), categories=categories)
+    categories = db(db.categories).select()
+    featured_products = db(db.products.featured == True).select(limitby=(0, 6))
+
+    # More Items to Consider (Random products)
+    more_items = db(
+        (db.products.id == db.product_images.product_id) &
+        (db.product_images.main_image == True)
+    ).select(
+        db.products.ALL,
+        db.product_images.image_filename,
+        db.product_images.image_alt,
+        orderby='RANDOM()',
+        limitby=(0, 6)
+    )
+
+    return dict(
+        categories=categories,
+        featured_products=featured_products,
+        more_items=more_items,
+        session_id=session_id
+    )
 
 def privacy():
     response.title='MISE - Privacy Notice'

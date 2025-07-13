@@ -58,9 +58,10 @@ db.define_table('products',
                 Field('category_id', 'reference categories'),
                 Field('description', 'text'),
                 Field('brand_id', 'reference brand'),
+                Field('deal_of_day', 'boolean', default=False),
+                Field('featured', 'boolean', default=False),
                 format='%(product_name)s',
                 )
-
 
 db.define_table('product_images',
                 Field('product_id', 'reference products'),

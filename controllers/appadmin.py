@@ -10,6 +10,7 @@ import datetime
 import copy
 import gluon.contenttype
 import gluon.fileutils
+from io import TextIOWrapper
 
 is_gae = request.env.web2py_runtime_gae or False
 
@@ -176,8 +177,12 @@ def csv():
 
 
 def import_csv(table, file):
-    table.import_from_csv_file(file)
-
+    text_file = TextIOWrapper(file, encoding='utf-8')
+    table.import_from_csv_file(
+        text_file,
+        unique=['brand_name'],  # Multiple fields for uniqueness
+        update_on_duplicate=True
+    )
 
 def select():
     import re
