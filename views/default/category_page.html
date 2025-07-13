@@ -6,13 +6,18 @@
         <ul class="d-flex flex-wrap text-primary list-unstyled col-lg-10 p-0">
             {{
             for key, value in options.items():
+                value = sorted(value)
             }}
             <li class=" dropdown mr-3">
                 <p class="dropdown-toggle btn btn-primary btn-sm {{if len(key)>6:}}w-120px{{else:}}w-100px{{pass}} color-secondary"
                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{=key}}</p>
-                <fieldset id='{{=key}}' class="dropdown-menu border" style="width:200px;">
+                <fieldset id='{{=key}}' class="dropdown-menu border p-3"  style="width: max-content;">
                     {{for attr_value in value:}}
-                    <input class='ml-3 filter-checkbox' type="checkbox" name="{{=key}}[]" id="{{=key}}[]" value="{{=attr_value}}" {{if key in filter_dict and attr_value in filter_dict[key]:}}checked{{pass}}> <label for="{{=key}}[]">{{=attr_value}}</label><br>
+                        
+                        <div class="w-100 d-flex align-items-center mb-2 flex-gap-25">
+                            <input class='filter-checkbox' type="checkbox" name="{{=key}}[]" id="{{=key}}-{{=attr_value}}" value="{{=attr_value}}" {{if key in filter_dict and attr_value in filter_dict[key]:}}checked{{pass}}> 
+                            <label class="m-0 flex-grow-1" for="{{=key}}-{{=attr_value}}">{{=attr_value}}</label><br>
+                        </div>
                     {{pass}}
                 </fieldset>
             </li>
@@ -21,9 +26,12 @@
                 <p class="dropdown-toggle btn btn-primary btn-sm w-100px" data-toggle="dropdown"
                     aria-haspopup="true" aria-expanded="false">Price</p>
                 <fieldset id='Screen_Size' class="dropdown-menu">
-                    <input class='ml-3' type="radio" name="Price[]" value="0--499" {{if request.vars['Price[]']=='0--499' :}}checked{{pass}}> under $500<br>
-                    <input class='ml-3' type="radio" name="Price[]" value="500--1000" {{if request.vars['Price[]']=='500--1000' :}}checked{{pass}}> $500 - $1000<br>
-                    <input class='ml-3' type="radio" name="Price[]" value="1000--100000000" {{if request.vars['Price[]']=='1000--100000000' :}}checked{{pass}}> $1000+<br>
+                    <input class='ml-3' type="radio" name="Price[]" value="0--499" id="price1" {{if request.vars['Price[]']=='0--499' :}}checked{{pass}}> 
+                    <label for="price1">under $500</label><br>
+                    <input class='ml-3' type="radio" name="Price[]" value="500--1000" id="price2" {{if request.vars['Price[]']=='500--1000' :}}checked{{pass}}> 
+                    <label for="price2">$500 - $1000</label><br>
+                    <input class='ml-3' type="radio" name="Price[]" value="1000--100000000" id="price3" {{if request.vars['Price[]']=='1000--100000000' :}}checked{{pass}}> 
+                    <label for="price3">$1000+</label><br>
                 </fieldset>
             </li>
             <li><input id="apply-btn" class="btn btn-sm btn-secondary w-100px text-white" type="submit" value="Apply"></li>
@@ -139,16 +147,28 @@
     const filter_form = document.getElementById("filter_form");
     const sortRadios = document.querySelectorAll('input[name="ORDER"]');
     const filterChecks = document.querySelectorAll('.filter-checkbox');
+    const priceRadio = document.querySelectorAll('[id^="price"]');
 
     window.onload = function() {
         document.getElementById("apply-btn").onclick = applyFilters;
         document.getElementById("clear-btn").onclick = clearFilters;
 
+        
         sortRadios.forEach(radio => {
           radio.addEventListener('change', () => {
           const ORDER = filter_form.querySelector('input[name="ORDER"]:checked');
           filter_form.submit();});
-        });}
+        });
+
+    
+        document.querySelectorAll('.dropdown-menu').forEach(dropdownMenu => {
+            dropdownMenu.addEventListener('click', function(event) {
+                event.stopPropagation();
+            });
+        });
+    }
+
+    
 
 
     function applyFilters() {
@@ -161,6 +181,12 @@
 
     filterChecks.forEach(check => {
         check.addEventListener('change', function() {
+            document.getElementById('apply-btn').focus()
+        });
+    });
+
+    priceRadio.forEach(radio => {
+        radio.addEventListener('change', function() {
             document.getElementById('apply-btn').focus()
         });
     });
