@@ -297,15 +297,35 @@ a.text-primary:active {
 /* Home Page */
 
 .top-brands {
-    border: 2px solid black;
-    border-radius: 20px;
-    background-color: #FFCFA3
+    border-radius: .5rem;
+
 }
 
 .footer-link {
     border-right: 1px solid #343a40;
     padding-right:.5rem;
     margin-right: .5rem;
+}
+
+.brand-icon {
+    
+    border: 2px solid hsl(0, 0%, 90%);
+    border-radius: .5rem;
+    /* background-color: var(--peach); */
+}
+
+.brand-color {
+    filter: invert(45%);
+    /* use website to generate different filter colors https://codepen.io/sosuke/pen/Pjoqqp */
+}
+
+.brand-link {
+    vertical-align: middle;
+    flex: 1 1 0;
+}
+
+.filter-logo {
+    filter: saturate(0%) brightness(0%) grayscale(100%);  
 }
 
 /*-------------------------------------------------------------------------------------------------------------------*/

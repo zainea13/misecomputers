@@ -108,9 +108,29 @@ def shopping_cart_subtotal():
 def index():
     response.title='MISE Computer Store'
     session.forced = True
-    categories = db(db.categories).select()
+    session_id = response.session_id
 
-    return dict(message=T('Welcome to web2py!'), categories=categories)
+    categories = db(db.categories).select()
+    featured_products = db(db.products.featured == True).select(limitby=(0, 6))
+
+    # More Items to Consider (Random products)
+    more_items = db(
+        (db.products.id == db.product_images.product_id) &
+        (db.product_images.main_image == True)
+    ).select(
+        db.products.ALL,
+        db.product_images.image_filename,
+        db.product_images.image_alt,
+        orderby='RANDOM()',
+        limitby=(0, 6)
+    )
+
+    return dict(
+        categories=categories,
+        featured_products=featured_products,
+        more_items=more_items,
+        session_id=session_id
+    )
 
 def privacy():
     response.title='MISE - Privacy Notice'
@@ -162,14 +182,17 @@ def search():
         # Join products and categories tables
         results = db(
             (db.products.category_id == db.categories.id) & 
-            (db.products.brand_id == db.brand.id) & 
-            
+            (db.products.brand_id == db.brand.id) &
+            (db.products.id == db.product_attribute.product_id) &
+            (db.product_attribute.attribute_id == db.attribute_description.id)&
             (
                 db.products.product_name.contains(keyword) |
                 db.categories.category_name.contains(keyword) |
-                db.brand.brand_name.contains(keyword)
+                db.brand.brand_name.contains(keyword)|
+                db.attribute_description.attribute_name.contains(keyword) |
+                db.product_attribute.attribute_value.contains(keyword)
             )
-        ).select(db.products.ALL, db.categories.ALL, db.brand.ALL)
+        ).select(db.products.ALL, db.categories.ALL, db.brand.ALL,db.product_attribute.ALL, db.attribute_description.attribute_name, db.product_attribute.attribute_value)
 
     response.title = f'MISE - Search results for "{keyword}"'
 
@@ -312,6 +335,7 @@ def filtered_products(cat_id, filter_dict, order):
         product_list = [product for product in product_list if min_price <= product['price'] <= max_price] # only adds a product_id if it fits within selected range
 
     if not filter_dict:
+        product_list.sort(key=lambda p: int(p['stock_qty']) < 1)
         return product_list # if there aren't any more filters, return the list of products
 
     for attribute, values in filter_dict.items():
@@ -332,6 +356,8 @@ def filtered_products(cat_id, filter_dict, order):
 
     # filters common_product_ids for ids in the correct category and in the selected price range
     products = [p for p in product_list if p['id'] in common_product_ids]
+    products.sort(key=lambda p: int(p['stock_qty']) < 1)
+
     return products
 
 
@@ -688,7 +714,8 @@ def update_cart():
         cart_total=total,
         total_items=total_items,
         product_id=product_id,
-        quantity=quantity
+        quantity=quantity,
+        cart_counter=cart_counter
     ))
 
 
