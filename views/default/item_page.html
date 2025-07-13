@@ -2,69 +2,69 @@
 {{block head}}
 <style>
 	.ccs-cc-inline .ccs-logo-windows11-home .ccs-cc-inline-windows11-outer {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -ms-flex-flow: column nowrap;
-  flex-flow: column nowrap;
-  font-family: "Segoe UI",wf_SegoeUI,Arial,Helvetica,sans-serif;
-}
+		display: -webkit-box;
+		display: -ms-flexbox;
+		display: flex;
+		-webkit-box-orient: vertical;
+		-webkit-box-direction: normal;
+		-ms-flex-flow: column nowrap;
+		flex-flow: column nowrap;
+		font-family: "Segoe UI", wf_SegoeUI, Arial, Helvetica, sans-serif;
+	}
 
-.ccs-cc-inline .ccs-logo-windows11-home .ccs-cc-inline-windows11-outer {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-  -ms-flex-flow: column nowrap;
-  flex-flow: column nowrap;
-  font-family: "Segoe UI",wf_SegoeUI,Arial,Helvetica,sans-serif;
-}
+	.ccs-cc-inline .ccs-logo-windows11-home .ccs-cc-inline-windows11-outer {
+		display: -webkit-box;
+		display: -ms-flexbox;
+		display: flex;
+		-webkit-box-orient: vertical;
+		-webkit-box-direction: normal;
+		-ms-flex-flow: column nowrap;
+		flex-flow: column nowrap;
+		font-family: "Segoe UI", wf_SegoeUI, Arial, Helvetica, sans-serif;
+	}
 
-.description > img {
-	width:100%;
-	padding:1rem;
-}
+	.description>img {
+		width: 100%;
+		padding: 1rem;
+	}
 
-.description .row {
-	width:75%;
-	padding:1rem;
-	margin:1rem auto;
-}
+	.description .row {
+		width: 75%;
+		padding: 1rem;
+		margin: 1rem auto;
+	}
 
-.description .row h3 {
-	margin:1rem 0;
-}
+	.description .row h3 {
+		margin: 1rem 0;
+	}
 
-.description .row .col-6 {
-	margin:auto;
-}
+	.description .row .col-6 {
+		margin: auto;
+	}
 
-.spec-body {
-	border: 0;
-    border-bottom-width: 0px;
-    border-bottom-style: none;
-    border-bottom-color: currentcolor;
-  border-bottom: 1px solid #dfdfdf;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  justify-content: space-between;
-  font-size: inherit;
-  overflow: visible;
-  overflow: initial;
-  width: auto;
-}
+	.spec-body {
+		border: 0;
+		border-bottom-width: 0px;
+		border-bottom-style: none;
+		border-bottom-color: currentcolor;
+		border-bottom: 1px solid #dfdfdf;
+		display: -webkit-box;
+		display: -ms-flexbox;
+		display: flex;
+		justify-content: space-between;
+		font-size: inherit;
+		overflow: visible;
+		overflow: initial;
+		width: auto;
+	}
 
-.spec-body > div {
-	width:50%;
-}
+	.spec-body>div {
+		width: 50%;
+	}
 
-.spec-body > div:first-of-type {
-	font-weight: bold;
-}
+	.spec-body>div:first-of-type {
+		font-weight: bold;
+	}
 </style>
 {{end head}}
 
@@ -79,14 +79,16 @@
 		<!-- BEGIN IMAGE SLIDER THING -->
 		<div class="swiper-window border border-peach rounded-2 py-3">
 			{{if not stock_qty:}}
-				<div class="out-of-stock over-image">OUT OF STOCK</div>
+			<div class="out-of-stock over-image">OUT OF STOCK</div>
 			{{pass}}
 			<div class="swiper-wrapper" style="translate: 0px;">
 				{{for image in images:
 				img_src = image['image_filename']
 				img_alt = image['image_alt']
 				}}
-				<div class="swiper-item"><img src={{=URL(f'static/images/{cat}/{brand}', img_src)}} onerror="this.onerror=null;this.src='{{=URL('static', 'images/default-img.png')}}';" alt={{=img_alt}}>
+				<div class="swiper-item"><img src={{=URL(f'static/images/{cat}/{brand}', img_src)}}
+						onerror="this.onerror=null;this.src='{{=URL('static', 'images/default-img.png')}}';"
+						alt={{=img_alt}}>
 				</div>
 				{{pass}}
 			</div>
@@ -97,7 +99,8 @@
 			img_src = image['image_filename']
 			img_alt = image['image_alt']
 			}}
-			<div class="thumbnail" data-count={{=count}}><img src={{=URL(f'static/images/{cat}/{brand}', img_src)}} onerror="this.onerror=null;this.src='{{=URL('static', 'images/default-img.png')}}';"
+			<div class="thumbnail" data-count={{=count}}><img src={{=URL(f'static/images/{cat}/{brand}', img_src)}}
+					onerror="this.onerror=null;this.src='{{=URL('static', 'images/default-img.png')}}';"
 					alt={{=img_alt}}></div>
 			{{pass}}
 		</div>
@@ -107,22 +110,22 @@
 	<div class="col-md-6">
 		<h2 class="font-weight-bold mb-4 d-none d-md-block">{{=product['product_name']}}</h2>
 		{{if not stock_qty:}}
-			<h3 class="d-none d-md-block"><s>${{=f"{product['price']:,.2f}"}}</s></h3>
+		<h3 class="d-none d-md-block"><s>${{=f"{product['price']:,.2f}"}}</s></h3>
 		{{else:}}
-			<h3 class="mb-5 d-none d-md-block">${{=f"{product['price']:,.2f}"}}</h3>
+		<h3 class="mb-5 d-none d-md-block">${{=f"{product['price']:,.2f}"}}</h3>
 		{{pass}}
 		<h5 class="border-bottom p-1 text-uppercase">Key Features</h5>
 		<ul class="mb-5">
 			{{
-            features = db((db.product_attribute.product_id == product_id)).select()
+			features = db((db.product_attribute.product_id == product_id)).select()
 
-            for i in features:
-				desc = db(db.attribute_description.id == i.attribute_id).select().first()
+			for i in features:
+			desc = db(db.attribute_description.id == i.attribute_id).select().first()
 			}}
-		
-				<li><i>{{=desc.longhand}}</i>: {{=i.attribute_value}}</li>
-				{{pass}}
-				{{pass}}
+
+			<li><i>{{=desc.longhand}}</i>: {{=i.attribute_value}}</li>
+			{{pass}}
+			{{pass}}
 
 			{{pass}}
 		</ul>
@@ -136,19 +139,20 @@
 				{{if stock_qty:}}
 				<div class="d-flex align-items">
 					<label for="quantity" class="mr-2 mb-0"><span class="align-middle">QTY.</span></label>
-					<input type="number" value="1" name="quantity" id="quantity" class="input-num-w-3" min="1" max="{{=stock_qty}}">
+					<input type="number" value="1" name="quantity" id="quantity" class="input-num-w-3" min="1"
+						max="{{=stock_qty}}">
 				</div>
 				{{pass}}
 				<div class="flex-fill">
 					{{if stock_qty:}}
 					<button type="submit" class="btn btn-mise-accent w-100">
-					<i class="fa fa-plus mr-1" aria-hidden="true"></i>
-					Add to Cart
-					{{else:}}
-					<button type="submit" class="btn btn-mise-accent w-100 btn-out-of-stock" disabled>
-					Out of Stock
-					{{pass}}
-					</button>
+						<i class="fa fa-plus mr-1" aria-hidden="true"></i>
+						Add to Cart
+						{{else:}}
+						<button type="submit" class="btn btn-mise-accent w-100 btn-out-of-stock" disabled>
+							Out of Stock
+							{{pass}}
+						</button>
 				</div>
 			</div>
 		</form>
@@ -167,39 +171,89 @@
 {{block page_js}}
 <script>
 
-	const stock_qty = {{=stock_qty}};
+	const stock_qty = {{=stock_qty }};
 
 	// only add to cart if there is stock
-    if (stock_qty) {
-        jQuery('#add-to-cart').submit(function () {
-            ajax('{{=URL('add_to_cart')}}',
-                ['product_id', 'quantity', 'user_id', 'session_id'], 'target');
-            return false;
-        });
-    } 
-	// TODO not sure this is needed
-	// else {
-    //     // Disable the add to cart button and change its text
-    //     jQuery('button#add-to-cart')
-    //         .prop('disabled', true)
-    //         .text('Out Of Stock');
-    // }
+	//     if (stock_qty) {
+	//         jQuery('#add-to-cart').submit(function () {
+	//             ajax('{{=URL('add_to_cart')}}',
+	//                 ['product_id', 'quantity', 'user_id', 'session_id'], 'target');
+	//             return false;
+	//         });
+	//     } 
 
+	function addToCart(formData) {
+		$.ajax({
+			url: '{{=URL("add_to_cart")}}',
+			type: 'POST',
+			data: formData,
+			dataType: 'json',
+			success: function (response) {
+				if (response.success) {
+					// Update cart counter
+					$('#cart-counter').text(response.cart_counter);
 
+					// Show success message
+					var successHtml = `
+                    <div class="pie mb-2">
+                        <div class="img-holder">
+                            <img src="${response.image_url}">
+                        </div> 
+                        <div class="words">
+                            ${response.quantity} × <strong>${response.product_name}</strong> was added to your cart.
+                        </div> 
+                    </div>
+                    <hr>
+                    <div class="w-100">
+                        <span>${response.cart_counter} items in cart</span><br>
+                        <span>Cart subtotal: $${response.cart_subtotal.toFixed(2)}</span>
+                    </div>
+                    <hr>
+                    <div class="w-100">
+                        <a class="btn btn-secondary w-100 flash-cart-btn" href="${response.cart_url}">
+                            Go to cart
+                        </a>
+                    </div>
+                `;
+
+					// Display the message (adjust selector as needed)
+					$('.w2p_flash').html(successHtml).show();
+
+				} else {
+					// Handle error
+					$('#cart-counter').text(response.cart_counter);
+					$('.w2p_flash').html(response.error).show();
+				}
+			},
+			error: function (xhr, status, error) {
+				console.error('AJAX Error:', error);
+				$('.w2p_flash').html('An error occurred. Please try again.').show();
+			}
+		});
+	}
+
+	if (stock_qty) {
+		// Example usage with a form
+		$(document).on('submit', '#add-to-cart', function (e) {
+			e.preventDefault();
+			var formData = $(this).serialize();
+			addToCart(formData);
+		});
+	}
 
 </script>
 
 <script src={{=URL('static','js/mise_slider.js')}}></script>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    var flashDiv = document.querySelector('.w2p_flash');
-    if (flashDiv && flashDiv.innerHTML) {
-        flashDiv.innerHTML = flashDiv.innerHTML
-            .replace(/&lt;/g, '<')
-            .replace(/&gt;/g, '>')
-            .replace(/&amp;/g, '&');
-    }
-});
+	document.addEventListener('DOMContentLoaded', function () {
+		var flashDiv = document.querySelector('.w2p_flash');
+		if (flashDiv && flashDiv.innerHTML) {
+			flashDiv.innerHTML = flashDiv.innerHTML
+				.replace(/&lt;/g, '<')
+				.replace(/&gt;/g, '>')
+				.replace(/&amp;/g, '&');
+		}
+	});
 </script>
 {{end page_js}}

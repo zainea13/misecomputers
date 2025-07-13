@@ -466,6 +466,14 @@ def add_to_cart():
     # ----------------------------------
     # # Add to cart
     # ----------------------------------
+    
+    # Initialize variables outside the form.accepts block
+    added_successful = False
+    cat = ""
+    brand = ""
+    img_src = ""
+    quantity = 0
+    added_product = None
 
     # Define the form being used
     form = SQLFORM(db.shopping_cart2)
@@ -487,8 +495,6 @@ def add_to_cart():
         product = None
         existing_quantity = 0
 
-        # Flag
-        added_successful = False
 
         # Flag used if the item already exists in the cart
         matched_cart = False
@@ -542,48 +548,24 @@ def add_to_cart():
     cart_counter = shopping_cart_count()
     cart_subtotal = shopping_cart_subtotal()
 
-    success_message =   XML(f"""
-                                <div class="pie mb-2">
-                                    <div class="img-holder">
-                                        <img src="{URL(f'static/images/{cat}/{brand}/', img_src)}">
-                                    </div> 
-                                    <div class="words">
-                                        {quantity} × <strong>{added_product.product_name}</strong> was added to your cart.
-                                    </div> 
-                                </div>
-                                <hr>
-                                <div class="w-100">
-                                    <span>{cart_counter} items in cart</span><br>
-                                    <span>Cart subtotal: ${cart_subtotal:,.2f}</span>
-                                </div>
-                                <hr>
-                                <div class="w-100">
-                                    <a class="btn btn-secondary w-100 flash-cart-btn" href="{URL('default','shopping_cart2')}">
-                                        Go to cart
-                                    </a>
-                                </div>
-                                """)
-
-    if added_successful:          
-        response.flash = success_message
-    
-    # hacky fix for flash response, turns html into html
-    # last line "cart counter" updates the cart_counter
-    response.js = '''
-                $(document).ready(function() {
-                    var flashDiv = $(".w2p_flash");
-                    if (flashDiv.length && flashDiv.html()) {
-                        var content = flashDiv.html()
-                            .replace(/&lt;/g, "<")
-                            .replace(/&gt;/g, ">")
-                            .replace(/&amp;/g, "&");
-                        flashDiv.html(content);
-                    } 
-                });
-                ''' + f'$("#cart-counter").text("{cart_counter}");' 
-                
-
-    return locals()
+        # Return JSON response for AJAX requests
+    if request.ajax:
+        if added_successful:
+            return response.json({
+                'success': True,
+                'cart_counter': cart_counter,
+                'cart_subtotal': cart_subtotal,
+                'product_name': added_product.product_name,
+                'quantity': quantity,
+                'image_url': URL(f'static/images/{cat}/{brand}/', img_src),
+                'cart_url': URL('default', 'shopping_cart2')
+            })
+        else:
+            return response.json({
+                'success': False,
+                'error': error_message,
+                'cart_counter': cart_counter
+            })
 
 
 def shopping_cart2():
@@ -720,19 +702,7 @@ def update_cart():
 
     # hacky fix for flash response, turns html into html
     # last line "cart counter" updates the cart_counter
-    javascript_code = '''
-                $(document).ready(function() {
-                    var flashDiv = $(".w2p_flash");
-                    if (flashDiv.length && flashDiv.html()) {
-                        var content = flashDiv.html()
-                            .replace(/&lt;/g, "<")
-                            .replace(/&gt;/g, ">")
-                            .replace(/&amp;/g, "&");
-                        flashDiv.html(content);
-                        flashDiv.delay(3000).fadeOut(500);
-                    } 
-                });
-                ''' + f'$("#cart-counter").text("{cart_counter}");'
+    javascript_code =  f'$("#cart-counter").text("{cart_counter}");'
 
     response.js = javascript_code
 
@@ -1510,19 +1480,7 @@ def checkout():
 
             # hacky fix for flash response, turns html into html
             # last line "cart counter" updates the cart_counter
-            javascript_code = '''
-                        $(document).ready(function() {
-                            var flashDiv = $(".w2p_flash");
-                            if (flashDiv.length && flashDiv.html()) {
-                                var content = flashDiv.html()
-                                    .replace(/&lt;/g, "<")
-                                    .replace(/&gt;/g, ">")
-                                    .replace(/&amp;/g, "&");
-                                flashDiv.html(content);
-                                flashDiv.delay(3000).fadeOut(500);
-                            } 
-                        });
-                        ''' + f'$("#cart-counter").text("{cart_counter}");'
+            javascript_code = f'$("#cart-counter").text("{cart_counter}");'
 
             response.js = javascript_code
 
