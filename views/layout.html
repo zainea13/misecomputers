@@ -61,8 +61,11 @@
 		<div class="container mb-0 flex-gap-2">
 
 			<!-- MISE Computers logo -->
-			<a class="navbar-brand m-0 mise-logo" href="{{=URL('default','index')}}">
+			<a class="navbar-brand m-0 mise-logo d-none d-md-block" href="{{=URL('default','index')}}">
 				<img src="/misecomputers/static/images/miselogolong2.png" alt="Company Logo" class="w-100">
+			</a>
+			<a class="navbar-brand m-0 mise-logo d-md-none short-logo" href="{{=URL('default','index')}}">
+				<img src="/misecomputers/static/images/miselogoshort.png" alt="Company Logo" class="w-100">
 			</a>
 
 			<!-- CATEGORIES DROP DOWN MENU-->
@@ -296,7 +299,7 @@
 	<!-- Here is where you can add custom header section on any page without
 	having to edit the layout.html page -->
 	{{block header}}
-	{{end}}
+	{{end header}}
 
 	<!-- Main ========================================= -->
 	<!-- Begin page content -->

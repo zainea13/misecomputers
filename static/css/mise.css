@@ -203,6 +203,11 @@ a.text-primary:active {
 }
 
 
+.breadcrumb {
+    margin-top: -1.5rem;
+    margin-bottom: 1.5rem;
+}
+
 /*-------------------------------------------------------------------------------------------------------------------*/
 /* CUSTOM UTILITY CLASSES ------------------------- */
 
@@ -278,6 +283,10 @@ a.text-primary:active {
 
 .mise-logo {
     width: min(28%, 160px);
+}
+
+.mise-logo.short-logo {
+    width: min(20%, 160px);
 }
 
 #accordion {

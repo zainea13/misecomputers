@@ -2,8 +2,8 @@
 
 
 {{if 'breadcrumbs' in locals():}}
-    <nav aria-label="breadcrumb">
-      <ol class="breadcrumb">
+    <nav aria-label="breadcrumb" class="row">
+      <ol class="breadcrumb w-100">
         {{for crumb in breadcrumbs[:-1]:}}
             <li class="breadcrumb-item"><a href="{{=crumb['url']}}">{{=crumb['name']}}</a></li>
         {{pass}}
@@ -15,7 +15,7 @@
 
 <!--FILTER CODE BEGINS-->
 <section id='filter_sort' class='d-flex flex-wrap row'>
-    <form id="filter_form" class="d-flex w-100 h-100 flex-wrap" method=GET>
+    <form id="filter_form" class="d-flex w-100 h-100 flex-wrap" method="GET">
         <ul class="d-flex flex-wrap text-primary list-unstyled col-lg-10 p-0">
             {{
             for key, value in options.items():
@@ -69,7 +69,7 @@
         </ul>
     </form>
     <!-- <p class='small text-muted td-ul mtneg-1rem'>{#{#=f"{len(products)} {link_arg[1]} found"}}</p> -->
-    <hr class="w-100">
+    <hr class="w-100" style="margin-top: -.5rem; margin-bottom: 1.5rem;">
 </section>
 <!--SORT CODE ENDS-->
 
